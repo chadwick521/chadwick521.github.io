@@ -93,16 +93,16 @@
 
 
 
-<meta name="description" content="Resin和Tomcat都是目前极其出色的Web容器，本文介绍了Linux环境下使用Resin和Tomcat部署SpringMVC+Maven项目。  一、Resin4部署Maven项目1. 下载Resin官网下载 并解压到你的Linux机器的某个目录： 1tar -zxvf resin-4.0.52.tar.gz 2. 修改配置文件12cd XX/resin-4.0.52/confresin.">
+<meta name="description" content="Resin和Tomcat都是目前极其出色的Web容器，本文介绍了Linux环境下使用Resin和Tomcat部署SpringMVC+Maven项目。  一、Resin4部署Maven项目1. 下载Resin官网下载 并解压到你的Linux机器的某个目录： 1tar -zxvf resin-4.0.52.tar.gz">
 <meta property="og:type" content="article">
 <meta property="og:title" content="resin and tomcat">
 <meta property="og:url" content="http://yoursite.com/2017/07/17/resin-and-tomcat/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
-<meta property="og:description" content="Resin和Tomcat都是目前极其出色的Web容器，本文介绍了Linux环境下使用Resin和Tomcat部署SpringMVC+Maven项目。  一、Resin4部署Maven项目1. 下载Resin官网下载 并解压到你的Linux机器的某个目录： 1tar -zxvf resin-4.0.52.tar.gz 2. 修改配置文件12cd XX/resin-4.0.52/confresin.">
-<meta property="og:updated_time" content="2017-07-17T08:49:46.000Z">
+<meta property="og:description" content="Resin和Tomcat都是目前极其出色的Web容器，本文介绍了Linux环境下使用Resin和Tomcat部署SpringMVC+Maven项目。  一、Resin4部署Maven项目1. 下载Resin官网下载 并解压到你的Linux机器的某个目录： 1tar -zxvf resin-4.0.52.tar.gz">
+<meta property="og:updated_time" content="2017-07-17T09:34:02.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="resin and tomcat">
-<meta name="twitter:description" content="Resin和Tomcat都是目前极其出色的Web容器，本文介绍了Linux环境下使用Resin和Tomcat部署SpringMVC+Maven项目。  一、Resin4部署Maven项目1. 下载Resin官网下载 并解压到你的Linux机器的某个目录： 1tar -zxvf resin-4.0.52.tar.gz 2. 修改配置文件12cd XX/resin-4.0.52/confresin.">
+<meta name="twitter:description" content="Resin和Tomcat都是目前极其出色的Web容器，本文介绍了Linux环境下使用Resin和Tomcat部署SpringMVC+Maven项目。  一、Resin4部署Maven项目1. 下载Resin官网下载 并解压到你的Linux机器的某个目录： 1tar -zxvf resin-4.0.52.tar.gz">
 
 
 
@@ -325,6 +325,7 @@
 <h2 id="一、Resin4部署Maven项目"><a href="#一、Resin4部署Maven项目" class="headerlink" title="一、Resin4部署Maven项目"></a>一、Resin4部署Maven项目</h2><h3 id="1-下载Resin"><a href="#1-下载Resin" class="headerlink" title="1. 下载Resin"></a>1. 下载Resin</h3><p><a href="http://caucho.com/products/resin/download" target="_blank" rel="external">官网下载</a></p>
 <p>并解压到你的Linux机器的某个目录：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tar -zxvf resin-4.0.52.tar.gz</div></pre></td></tr></table></figure>
+<a id="more"></a>
 <h3 id="2-修改配置文件"><a href="#2-修改配置文件" class="headerlink" title="2. 修改配置文件"></a>2. 修改配置文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd XX/resin-4.0.52/conf</div><div class="line">resin.properties</div></pre></td></tr></table></figure>
 <p>打开resin的属性配置文件并修改80端口：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">app.http          : 80</div><div class="line"># app.https         : 8443</div><div class="line"></div><div class="line">web.http          : 80</div><div class="line"># web.https         : 8443</div></pre></td></tr></table></figure>
