@@ -93,12 +93,24 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="zhaoyh&#39;s blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="前言：SpringMVC是一款轻量级的Web开发框架，非常有利于新手上手，对于持久化层，目前可选择的是Hibernate和Mybatis，而Mybatis的学习曲线较为平整，因此本文介绍了利用Intellij Idea创建基于Maven的SpringMVC／MyBatis的项目，该项目实现了简单的用户插入和导出，其实什么项目无所谓，主要目的还是供大家掌握MyBatis和SpringMVC的实现过程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Intellij创建基于Maven的SpringMVC+MyBatis项目">
+<meta property="og:url" content="http://yoursite.com/2017/07/17/Intellij创建基于Maven的SpringMVC-MyBatis项目/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
+<meta property="og:description" content="前言：SpringMVC是一款轻量级的Web开发框架，非常有利于新手上手，对于持久化层，目前可选择的是Hibernate和Mybatis，而Mybatis的学习曲线较为平整，因此本文介绍了利用Intellij Idea创建基于Maven的SpringMVC／MyBatis的项目，该项目实现了简单的用户插入和导出，其实什么项目无所谓，主要目的还是供大家掌握MyBatis和SpringMVC的实现过程">
+<meta property="og:image" content="http://oqk1omg4e.bkt.clouddn.com/1newModule.png">
+<meta property="og:image" content="http://oqk1omg4e.bkt.clouddn.com/2groupId.png">
+<meta property="og:image" content="http://oqk1omg4e.bkt.clouddn.com/3maven.png">
+<meta property="og:image" content="http://oqk1omg4e.bkt.clouddn.com/4initAll.png">
+<meta property="og:image" content="http://oqk1omg4e.bkt.clouddn.com/5markAsRoot.png">
+<meta property="og:image" content="http://oqk1omg4e.bkt.clouddn.com/6varioudProperties.png">
+<meta property="og:image" content="http://oqk1omg4e.bkt.clouddn.com/7final.png">
+<meta property="og:updated_time" content="2017-07-17T09:11:44.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="zhaoyh&#39;s blog">
+<meta name="twitter:title" content="Intellij创建基于Maven的SpringMVC+MyBatis项目">
+<meta name="twitter:description" content="前言：SpringMVC是一款轻量级的Web开发框架，非常有利于新手上手，对于持久化层，目前可选择的是Hibernate和Mybatis，而Mybatis的学习曲线较为平整，因此本文介绍了利用Intellij Idea创建基于Maven的SpringMVC／MyBatis的项目，该项目实现了简单的用户插入和导出，其实什么项目无所谓，主要目的还是供大家掌握MyBatis和SpringMVC的实现过程">
+<meta name="twitter:image" content="http://oqk1omg4e.bkt.clouddn.com/1newModule.png">
 
 
 
@@ -126,13 +138,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/07/17/Intellij创建基于Maven的SpringMVC-MyBatis项目/"/>
 
 
 
 
 
-  <title>zhaoyh's blog</title>
+  <title>Intellij创建基于Maven的SpringMVC+MyBatis项目 | zhaoyh's blog</title>
   
 
 
@@ -157,9 +169,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-   page-home 
- ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -242,9 +252,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -270,9 +280,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/17/Intellij创建基于Maven的SpringMVC-MyBatis项目/" itemprop="url">Intellij创建基于Maven的SpringMVC+MyBatis项目</a></h1>
+          <h1 class="post-title" itemprop="name headline">Intellij创建基于Maven的SpringMVC+MyBatis项目</h1>
         
 
         <div class="post-meta">
@@ -319,9 +327,7 @@
       
 
       
-        
-          
-            <p><em>前言：SpringMVC是一款轻量级的Web开发框架，非常有利于新手上手，对于持久化层，目前可选择的是Hibernate和Mybatis，而Mybatis的学习曲线较为平整，因此本文介绍了利用Intellij Idea创建基于Maven的SpringMVC／MyBatis的项目，该项目实现了简单的用户插入和导出，其实什么项目无所谓，主要目的还是供大家掌握MyBatis和SpringMVC的实现过程。</em></p>
+        <p><em>前言：SpringMVC是一款轻量级的Web开发框架，非常有利于新手上手，对于持久化层，目前可选择的是Hibernate和Mybatis，而Mybatis的学习曲线较为平整，因此本文介绍了利用Intellij Idea创建基于Maven的SpringMVC／MyBatis的项目，该项目实现了简单的用户插入和导出，其实什么项目无所谓，主要目的还是供大家掌握MyBatis和SpringMVC的实现过程。</em></p>
 <p>完成本文的项目创建，你需要以下软件的支持：</p>
 <table>
 <thead>
@@ -432,20 +438,27 @@
 <p>Idea配置Tomcat并运行项目的过程可参考：<a href="http://blog.csdn.net/zyh920521/article/details/50596820" target="_blank" rel="external">点我</a></p>
 <p><em>至此完成了整个项目的创建和配置，下面就是你发挥的时间啦！</em></p>
 
-          
+      
+    </div>
+
+    <div>
+      
         
+
       
     </div>
 
     <div>
       
-    </div>
+        
 
-    <div>
       
     </div>
 
     <div>
+      
+        
+
       
     </div>
 
@@ -453,160 +466,38 @@
       
 
       
-
-      
-
       
       
-        <div class="post-eof"></div>
+
       
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/17/resin-and-tomcat/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="zhaoyh">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="zhaoyh's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/17/resin-and-tomcat/" itemprop="url">resin and tomcat</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Veröffentlicht am</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-17T16:48:45+08:00">
-                2017-07-17
-              </time>
+              <a href="/2017/07/17/resin-and-tomcat/" rel="next" title="resin and tomcat">
+                <i class="fa fa-chevron-left"></i> resin and tomcat
+              </a>
             
+          </div>
 
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <blockquote>
-<p>Resin和Tomcat都是目前极其出色的Web容器，本文介绍了Linux环境下使用Resin和Tomcat部署SpringMVC+Maven项目。</p>
-</blockquote>
-<h2 id="一、Resin4部署Maven项目"><a href="#一、Resin4部署Maven项目" class="headerlink" title="一、Resin4部署Maven项目"></a>一、Resin4部署Maven项目</h2><h3 id="1-下载Resin"><a href="#1-下载Resin" class="headerlink" title="1. 下载Resin"></a>1. 下载Resin</h3><p><a href="http://caucho.com/products/resin/download" target="_blank" rel="external">官网下载</a></p>
-<p>并解压到你的Linux机器的某个目录：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tar -zxvf resin-4.0.52.tar.gz</div></pre></td></tr></table></figure>
-<h3 id="2-修改配置文件"><a href="#2-修改配置文件" class="headerlink" title="2. 修改配置文件"></a>2. 修改配置文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd XX/resin-4.0.52/conf</div><div class="line">resin.properties</div></pre></td></tr></table></figure>
-<p>打开resin的属性配置文件并修改80端口：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">app.http          : 80</div><div class="line"># app.https         : 8443</div><div class="line"></div><div class="line">web.http          : 80</div><div class="line"># web.https         : 8443</div></pre></td></tr></table></figure>
-<p>保存并退出，打开resin.xml配置文件，配置你的war包：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;host id=&quot;&quot; root-directory=&quot;.&quot;&gt;</div><div class="line">      &lt;!--</div><div class="line">         - webapps can be overridden/extended in the resin.xml</div><div class="line">        --&gt;</div><div class="line">      &lt;web-app id=&quot;/&quot; root-directory=&quot;webapps/SomeProject&quot; archive-path=&quot;XXX/SomeProject/target/SomeProject.war&quot;/&gt;</div><div class="line">&lt;/host&gt;</div></pre></td></tr></table></figure>
-<p>其中SomeProject是你的Maven项目名。</p>
-<h3 id="3-启动Resin"><a href="#3-启动Resin" class="headerlink" title="3. 启动Resin"></a>3. 启动Resin</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd XX/resin-4.0.52/bin</div><div class="line">./resin.sh start</div></pre></td></tr></table></figure>
-<p>之后resin就会读取你的war包并自动解压到自己的webapps下，打开浏览器访问你服务器的80端口就可以看到项目的运行结果啦！</p>
-<p>关闭Resin的命令是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./resin.sh stop</div></pre></td></tr></table></figure>
-<h2 id="二、Tomcat8部署Maven项目"><a href="#二、Tomcat8部署Maven项目" class="headerlink" title="二、Tomcat8部署Maven项目"></a>二、Tomcat8部署Maven项目</h2><h3 id="1-下载Tomcat"><a href="#1-下载Tomcat" class="headerlink" title="1. 下载Tomcat"></a>1. 下载Tomcat</h3><p><a href="https://tomcat.apache.org/download-80.cgi" target="_blank" rel="external">官网下载</a></p>
-<p>解压：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tar -zxvf apache-tomcat-8.5.13.tar.gz</div></pre></td></tr></table></figure>
-<h3 id="2-修改配置文件-1"><a href="#2-修改配置文件-1" class="headerlink" title="2. 修改配置文件"></a>2. 修改配置文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd XX/apache-tomcat-8.5.13/conf</div><div class="line">vi server.xml</div></pre></td></tr></table></figure>
-<p>首先修改端口号：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;Connector port=&quot;80&quot; protocol=&quot;HTTP/1.1&quot;</div><div class="line">               connectionTimeout=&quot;20000&quot;</div><div class="line">               redirectPort=&quot;8443&quot; URIEncoding=&quot;UTF-8&quot; /&gt;</div></pre></td></tr></table></figure>
-<p>其次配置你的项目：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;Host name=&quot;localhost&quot;  appBase=&quot;webapps&quot;</div><div class="line">            unpackWARs=&quot;true&quot; autoDeploy=&quot;true&quot;&gt;</div><div class="line">        &lt;Context path=&quot;/&quot; docBase=&quot;XX/apache-tomcat-8.5.13/webapps/SomeProject&quot; debug=&quot;0&quot; reloadable=&quot;true&quot; /&gt;</div></pre></td></tr></table></figure>
-<h3 id="3-启动Tomcat"><a href="#3-启动Tomcat" class="headerlink" title="3. 启动Tomcat"></a>3. 启动Tomcat</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd XX/apache-tomcat-8.5.13/bin</div><div class="line">./startup.sh</div></pre></td></tr></table></figure>
-<p>启动的之前首先保证你的项目已经拷贝到了Tomcat的webapps下，如果没有，则可以用如下的方式打包并拷贝：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">cd XX/SomeProject</div><div class="line">mvn clean</div><div class="line">mvn package</div><div class="line">cd target</div><div class="line">cp /XX/SomeProject/target/SomeProject.war /XX/apache-tomcat-8.5.13/webapps/</div></pre></td></tr></table></figure>
-<p>这样就把你的war包拷贝好，然后再启动Tomcat即可！</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -614,6 +505,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -634,8 +529,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Übersicht
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -679,6 +583,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一-新建项目"><span class="nav-number">1.</span> <span class="nav-text">一 新建项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二-配置文件"><span class="nav-number">2.</span> <span class="nav-text">二 配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三-文件内容和Java方法"><span class="nav-number">3.</span> <span class="nav-text">三 文件内容和Java方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四-配置编译运行"><span class="nav-number">4.</span> <span class="nav-text">四 配置编译运行</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -792,10 +712,10 @@
   
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
 
-  
+
 
   
 
