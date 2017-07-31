@@ -103,7 +103,7 @@
 <meta property="og:image" content="http://odddluozs.bkt.clouddn.com/firstFind.jpg">
 <meta property="og:image" content="http://odddluozs.bkt.clouddn.com/findCookie.jpg">
 <meta property="og:image" content="http://odddluozs.bkt.clouddn.com/result.jpg">
-<meta property="og:updated_time" content="2017-07-31T07:27:05.000Z">
+<meta property="og:updated_time" content="2017-07-31T07:40:12.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基于WebMagic的爬虫实现(一)">
 <meta name="twitter:description" content="WebMagic是一个简单灵活的Java爬虫框架，基于WebMagic，你可以快速开发出一个高效、易维护的爬虫程序。 你可以直接去官网查看说明文档，也可以跟随本文，一步一步地实现一个简单的知乎答案图片下载爬虫程序。">
@@ -339,7 +339,7 @@
 <p>你可以直接去官网查看<a href="http://webmagic.io/" target="_blank" rel="external">说明文档</a>，也可以跟随本文，一步一步地实现一个简单的知乎答案图片下载爬虫程序。</p>
 </blockquote>
 <a id="more"></a>
-<h3 id="新建Maven项目"><a href="#新建Maven项目" class="headerlink" title="新建Maven项目"></a>新建Maven项目</h3><p>在Intellij Idea中新建一个基于Maven的Module，如果你不清楚怎么新建项目，可以参考 <a href="http://note.youdao.com/noteshare?id=f32cccea579dc15d0935a77c2c21772f/" target="_blank" rel="external">如何新建基于Maven的Module </a>，确保你新建好的项目能正确运行。</p>
+<h3 id="新建Maven项目"><a href="#新建Maven项目" class="headerlink" title="新建Maven项目"></a>新建Maven项目</h3><p>在Intellij Idea中新建一个基于Maven的Module，如果你不清楚怎么新建项目，可以参考 <a href="http://t.cn/R9culOI" target="_blank" rel="external">如何新建基于Maven的Module </a> ，确保你新建好的项目能正确运行。</p>
 <h3 id="添加依赖，编写代码"><a href="#添加依赖，编写代码" class="headerlink" title="添加依赖，编写代码"></a>添加依赖，编写代码</h3><p>在你的pom.xml文件中，加入WebMagic的依赖，我使用的是最新版的：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>us.codecraft<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>webmagic-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.7.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>us.codecraft<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>webmagic-extension<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.7.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
 <p>新建一个ZhihuPictureSpider.java类，类的内容：</p>
