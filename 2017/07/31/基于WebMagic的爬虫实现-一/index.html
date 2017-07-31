@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="WebMagic,知乎爬虫,Java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="WebMagic是一个简单灵活的Java爬虫框架，基于WebMagic，你可以快速开发出一个高效、易维护的爬虫程序。 你可以直接去官网查看说明文档，也可以跟随本文，一步一步地实现一个简单的知乎答案图片下载爬虫程序。">
+<meta name="keywords" content="WebMagic,知乎爬虫,Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于WebMagic的爬虫实现(一)">
+<meta property="og:url" content="http://www.zhaoyh.com.cn/2017/07/31/基于WebMagic的爬虫实现-一/index.html">
+<meta property="og:site_name" content="zhaoyh&#39;s blog">
+<meta property="og:description" content="WebMagic是一个简单灵活的Java爬虫框架，基于WebMagic，你可以快速开发出一个高效、易维护的爬虫程序。 你可以直接去官网查看说明文档，也可以跟随本文，一步一步地实现一个简单的知乎答案图片下载爬虫程序。">
+<meta property="og:image" content="http://odddluozs.bkt.clouddn.com/firstFind.jpg">
+<meta property="og:image" content="http://odddluozs.bkt.clouddn.com/findCookie.jpg">
+<meta property="og:image" content="http://odddluozs.bkt.clouddn.com/result.jpg">
+<meta property="og:updated_time" content="2017-07-31T07:27:05.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于WebMagic的爬虫实现(一)">
+<meta name="twitter:description" content="WebMagic是一个简单灵活的Java爬虫框架，基于WebMagic，你可以快速开发出一个高效、易维护的爬虫程序。 你可以直接去官网查看说明文档，也可以跟随本文，一步一步地实现一个简单的知乎答案图片下载爬虫程序。">
+<meta name="twitter:image" content="http://odddluozs.bkt.clouddn.com/firstFind.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.zhaoyh.com.cn/2017/07/31/基于WebMagic的爬虫实现-一/"/>
+
+
+
+
+
+  <title>基于WebMagic的爬虫实现(一) | zhaoyh's blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?a691f1427476a927cc964aa3136dffc5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zhaoyh's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2017/07/31/基于WebMagic的爬虫实现-一/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhaoyh">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myPicture.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zhaoyh's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">基于WebMagic的爬虫实现(一)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-31T15:25:41+08:00">
+                2017-07-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>WebMagic是一个简单灵活的Java爬虫框架，基于WebMagic，你可以快速开发出一个高效、易维护的爬虫程序。</p>
+<p>你可以直接去官网查看<a href="http://webmagic.io/" target="_blank" rel="external">说明文档</a>，也可以跟随本文，一步一步地实现一个简单的知乎答案图片下载爬虫程序。</p>
+</blockquote>
+<a id="more"></a>
+<h3 id="新建Maven项目"><a href="#新建Maven项目" class="headerlink" title="新建Maven项目"></a>新建Maven项目</h3><p>在Intellij Idea中新建一个基于Maven的Module，如果你不清楚怎么新建项目，可以参考 <a href="http://note.youdao.com/noteshare?id=f32cccea579dc15d0935a77c2c21772f/" target="_blank" rel="external">如何新建基于Maven的Module </a>，确保你新建好的项目能正确运行。</p>
+<h3 id="添加依赖，编写代码"><a href="#添加依赖，编写代码" class="headerlink" title="添加依赖，编写代码"></a>添加依赖，编写代码</h3><p>在你的pom.xml文件中，加入WebMagic的依赖，我使用的是最新版的：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>us.codecraft<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>webmagic-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.7.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>us.codecraft<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>webmagic-extension<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.7.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>新建一个ZhihuPictureSpider.java类，类的内容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.zhaoyh.main;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.zhaoyh.utils.DownloadUtils;</div><div class="line"><span class="keyword">import</span> com.zhaoyh.utils.ValidatorUtils;</div><div class="line"><span class="keyword">import</span> us.codecraft.webmagic.Page;</div><div class="line"><span class="keyword">import</span> us.codecraft.webmagic.Site;</div><div class="line"><span class="keyword">import</span> us.codecraft.webmagic.Spider;</div><div class="line"><span class="keyword">import</span> us.codecraft.webmagic.processor.PageProcessor;</div><div class="line"><span class="keyword">import</span> java.io.File;</div><div class="line"><span class="keyword">import</span> java.util.ArrayList;</div><div class="line"><span class="keyword">import</span> java.util.List;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by zhaoyh on 2017/07/31.</div><div class="line"> * 知乎图片下载</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ZhihuPictureSpider</span> <span class="keyword">implements</span> <span class="title">PageProcessor</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> String basePath = <span class="keyword">null</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> String z_c0 = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Site site = Site.me().setRetryTimes(<span class="number">5</span>).setSleepTime(<span class="number">5000</span>).setTimeOut(<span class="number">5000</span>)</div><div class="line">            .addCookie(<span class="string">"Domain"</span>, <span class="string">"zhihu.com"</span>)</div><div class="line">            .addCookie(<span class="string">"z_c0"</span>, z_c0)</div><div class="line">            .setUserAgent(<span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.89 Safari/537.36"</span>);</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 开始处理</div><div class="line">     * <span class="doctag">@param</span> page</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">(Page page)</span> </span>&#123;</div><div class="line">        List&lt;String&gt; urlList  = page.getHtml().xpath(<span class="string">"//div[@class=RichContent-inner]//img/@data-original"</span>).all();</div><div class="line">        String questionTitle = page.getHtml().xpath(<span class="string">"//h1[@class=QuestionHeader-title]/text()"</span>).toString();</div><div class="line">        System.out.println(<span class="string">"问题题目："</span> + questionTitle);</div><div class="line"></div><div class="line">        List&lt;String&gt; picUrlList = <span class="keyword">new</span> ArrayList&lt;String&gt;();</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; urlList.size(); i = i + <span class="number">2</span>) &#123;</div><div class="line">            String url = urlList.get(i);</div><div class="line">            <span class="keyword">if</span> (ValidatorUtils.isLegalUrl(url)) &#123;</div><div class="line">                picUrlList.add(urlList.get(i));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        System.out.println(<span class="string">"图片个数："</span> + picUrlList.size());</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            downLoadPics(picUrlList, questionTitle, <span class="keyword">this</span>.basePath);</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 下载图片</div><div class="line">     * <span class="doctag">@param</span> imgUrls</div><div class="line">     * <span class="doctag">@param</span> title</div><div class="line">     * <span class="doctag">@param</span> filePath</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     * <span class="doctag">@throws</span> Exception</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">downLoadPics</span><span class="params">(List&lt;String&gt; imgUrls, String title, String filePath)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        <span class="keyword">boolean</span> isSuccess = <span class="keyword">true</span>;</div><div class="line">        <span class="comment">//标题</span></div><div class="line">        String storagePath = filePath + File.separator + title;</div><div class="line">        File fileDir = <span class="keyword">new</span> File(storagePath);</div><div class="line">        <span class="keyword">if</span> (imgUrls.size() &gt; <span class="number">0</span> &amp;&amp; !fileDir.exists()) &#123;</div><div class="line">            fileDir.mkdirs();</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">int</span> i = <span class="number">1</span>;</div><div class="line"></div><div class="line">        <span class="comment">//循环下载图片</span></div><div class="line">        <span class="keyword">for</span> (String imgUrl : imgUrls) &#123;</div><div class="line">            System.out.println(<span class="string">"开始下载下载 "</span> + imgUrl + <span class="string">" "</span> + i);</div><div class="line">            String ext = imgUrl.substring(imgUrl.lastIndexOf(<span class="string">"."</span>) + <span class="number">1</span>);</div><div class="line">            String fullPath = storagePath + File.separator + <span class="string">"pic_"</span> + System.currentTimeMillis() + <span class="string">"_"</span> + i + <span class="string">"."</span> + ext;</div><div class="line">            DownloadUtils.downloadPictureFromUrl(imgUrl, fullPath);</div><div class="line">            i++;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> isSuccess;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 获取站点</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> Site <span class="title">getSite</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> site;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBasePath</span><span class="params">(String basePath)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.basePath = basePath;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        <span class="comment">//配置</span></div><div class="line">        String z_c0 = <span class="string">"XXXXXXX"</span>;</div><div class="line">        String basePath = <span class="string">"XXXXX"</span>;</div><div class="line">        String answerUrl =  <span class="string">"XXXXX"</span>;</div><div class="line"></div><div class="line">        <span class="comment">//初始化</span></div><div class="line">        ZhihuPictureSpider.z_c0 = z_c0;</div><div class="line">        ZhihuPictureSpider zhihuProcessor = <span class="keyword">new</span> ZhihuPictureSpider();</div><div class="line">        zhihuProcessor.setBasePath(basePath);</div><div class="line"></div><div class="line">        <span class="comment">//启动</span></div><div class="line">        Spider spider = Spider.create(zhihuProcessor);</div><div class="line">        spider.addUrl(answerUrl);</div><div class="line">        spider.thread(<span class="number">2</span>);</div><div class="line">        spider.run();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="写入配置并启动"><a href="#写入配置并启动" class="headerlink" title="写入配置并启动"></a>写入配置并启动</h3><p>在ZhihuPictureSpider.java类的main方法，前三行是你需要配置的内容，其中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">String z_c0 = &quot;XXXXXXX&quot;;</div></pre></td></tr></table></figure>
+<p>是你登陆状态下知乎的Cookie，如果你不知道怎么查找这个Cookie的内容，可以打开你的知乎首页，然后点击chrome浏览器的如下图的位置：<br><img src="http://odddluozs.bkt.clouddn.com/firstFind.jpg" alt="image"><br>然后找到你的该Cookie的Value：<br><img src="http://odddluozs.bkt.clouddn.com/findCookie.jpg" alt="image"></p>
+<p>其次配置好你的图片存储目录，填上你常用的目录即可。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">String basePath = &quot;XXXXX&quot;;</div></pre></td></tr></table></figure></p>
+<p>最后是找到知乎你感兴趣的某个回答，或者某个链接，填入到：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">String answerUrl =  &quot;XXXXX&quot;;</div></pre></td></tr></table></figure>
+<p>以上你就完成了第一个爬虫程序的所有配置步骤，右击点击run即可查看运行效果，下图是我本地的运行效果：</p>
+<p><img src="http://odddluozs.bkt.clouddn.com/result.jpg" alt="image"></p>
+<p>代码下载：<a href="https://github.com/chadwick521/SpiderProgram" target="_blank" rel="external">github</a></p>
+<hr>
+<blockquote>
+<p>Author：zhaoyh</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/WebMagic/" rel="tag"># WebMagic</a>
+          
+            <a href="/tags/知乎爬虫/" rel="tag"># 知乎爬虫</a>
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/21/Jar包的签名和验签/" rel="next" title="Jar包的签名和验签">
+                <i class="fa fa-chevron-left"></i> Jar包的签名和验签
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/myPicture.jpg"
+               alt="zhaoyh" />
+          <p class="site-author-name" itemprop="name">zhaoyh</p>
+           
+              <p class="site-description motion-element" itemprop="description">小时候的梦想是改变世界，长大了只想好好工作和生活！</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#新建Maven项目"><span class="nav-number">1.</span> <span class="nav-text">新建Maven项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加依赖，编写代码"><span class="nav-number">2.</span> <span class="nav-text">添加依赖，编写代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#写入配置并启动"><span class="nav-number">3.</span> <span class="nav-text">写入配置并启动</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhaoyh</span>
+</div>
+
+
+<a href="http://www.miitbeian.gov.cn/">京ICP备16047594号</a>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
