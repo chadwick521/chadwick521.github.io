@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="SpringBoot," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="本篇会对SpringBoot中常见的注解做解释和分析，其中大部分对于SpringMVC也都适用！  1. @Controller和@RestController">
+<meta name="keywords" content="SpringBoot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBoot微框架三之常用注解分析">
+<meta property="og:url" content="http://www.zhaoyh.com.cn/2017/09/04/SpringBoot微框架三之常用注解分析/index.html">
+<meta property="og:site_name" content="zhaoyh&#39;s blog">
+<meta property="og:description" content="本篇会对SpringBoot中常见的注解做解释和分析，其中大部分对于SpringMVC也都适用！  1. @Controller和@RestController">
+<meta property="og:updated_time" content="2017-09-04T08:19:22.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SpringBoot微框架三之常用注解分析">
+<meta name="twitter:description" content="本篇会对SpringBoot中常见的注解做解释和分析，其中大部分对于SpringMVC也都适用！  1. @Controller和@RestController">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.zhaoyh.com.cn/2017/09/04/SpringBoot微框架三之常用注解分析/"/>
+
+
+
+
+
+  <title>SpringBoot微框架三之常用注解分析 | zhaoyh's blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?a691f1427476a927cc964aa3136dffc5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zhaoyh's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2017/09/04/SpringBoot微框架三之常用注解分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhaoyh">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/myPicture.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zhaoyh's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">SpringBoot微框架三之常用注解分析</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-04T16:18:08+08:00">
+                2017-09-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SpringBoot/" itemprop="url" rel="index">
+                    <span itemprop="name">SpringBoot</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><em>本篇会对SpringBoot中常见的注解做解释和分析，其中大部分对于SpringMVC也都适用！</em></p>
+</blockquote>
+<h3 id="1-Controller和-RestController"><a href="#1-Controller和-RestController" class="headerlink" title="1. @Controller和@RestController"></a>1. @Controller和@RestController</h3><a id="more"></a>
+<p>首先@Controller是SpringMVC用于标记Controller类的注解，在<a href="http://note.youdao.com/" target="_blank" rel="external">Java文档</a>=中是这样解释@RestController的：</p>
+<blockquote>
+<p>A convenience annotation that is itself annotated with @Controller and @ResponseBody.</p>
+</blockquote>
+<p>所以，下面两种类的注解是具有同样的意义的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Controller</span></div><div class="line"><span class="meta">@ResponseBody</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyController</span> </span>&#123; &#125;</div><div class="line"></div><div class="line"><span class="meta">@RestController</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyRestController</span> </span>&#123; &#125;</div></pre></td></tr></table></figure>
+<p><strong>如果只使用@RestController注解某个Controller类，则Controller中的方法无法返回jsp/html/vm页面。</strong>@RestController适合返回JSON、XML类型的数据。</p>
+<h3 id="2-RequestMapping注解"><a href="#2-RequestMapping注解" class="headerlink" title="2. @RequestMapping注解"></a>2. @RequestMapping注解</h3><p>@RequestMapping也是Spring中通用的注解方式，用来映射请求，通过它来指定Controller类可以处理哪些URL请求，我们来看它的源代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">@Target(&#123;ElementType.METHOD, ElementType.TYPE&#125;)</div><div class="line">@Retention(RetentionPolicy.RUNTIME)</div><div class="line">@Documented</div><div class="line">@Mapping</div><div class="line">public @interface RequestMapping &#123;</div><div class="line">    String name() default &quot;&quot;;</div><div class="line"></div><div class="line">    @AliasFor(&quot;path&quot;)</div><div class="line">    String[] value() default &#123;&#125;;</div><div class="line"></div><div class="line">    @AliasFor(&quot;value&quot;)</div><div class="line">    String[] path() default &#123;&#125;;</div><div class="line"></div><div class="line">    RequestMethod[] method() default &#123;&#125;;</div><div class="line"></div><div class="line">    String[] params() default &#123;&#125;;</div><div class="line"></div><div class="line">    String[] headers() default &#123;&#125;;</div><div class="line"></div><div class="line">    String[] consumes() default &#123;&#125;;</div><div class="line"></div><div class="line">    String[] produces() default &#123;&#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Target属性指定了可用于方法和类，path和value都可用于判断接收的URL参数。</p>
+<p>如果只将注解用在方法上，如下段代码所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">@Controller</div><div class="line">public class MyController &#123;</div><div class="line"></div><div class="line">	@RequestMapping(&quot;/login&quot;)</div><div class="line">	public String login() &#123;</div><div class="line">		return &quot;success&quot;;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>匹配的是根目录的方法，URL便是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://XXX.com/login</div></pre></td></tr></table></figure>
+<p>如果将注解同时用于Controller和方法，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@Controller</div><div class="line">@RequestMapping(&quot;/login&quot;)</div><div class="line">public class MyController &#123;</div><div class="line"></div><div class="line">	@RequestMapping(&quot;/showlogin&quot;)</div><div class="line">	public String login() &#123;</div><div class="line">		return &quot;success&quot;;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>则匹配的REST形式的URL链接便是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://XXX.com/login/showlogin</div></pre></td></tr></table></figure>
+<p>如果你不喜欢这种REST形式URL风格，也可以指定参数的方式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@Controller</div><div class="line">@RequestMapping(&quot;/login.do&quot;)</div><div class="line">public class MyController &#123;</div><div class="line"></div><div class="line">	@RequestMapping(params=&quot;method=showlogin&quot;)</div><div class="line">	public String login() &#123;</div><div class="line">		return &quot;success&quot;;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>则匹配的URL链接便是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://XXX.com/login.do?method=showlogin</div></pre></td></tr></table></figure>
+<p>对于@RequestMapping如果需要，也可以加上请求类型，常见的类型如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">package org.springframework.web.bind.annotation;</div><div class="line">public enum RequestMethod &#123;</div><div class="line">    GET,</div><div class="line">    HEAD,</div><div class="line">    POST,</div><div class="line">    PUT,</div><div class="line">    PATCH,</div><div class="line">    DELETE,</div><div class="line">    OPTIONS,</div><div class="line">    TRACE;</div><div class="line">    private RequestMethod() &#123;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="3-SpringBootApplication注解"><a href="#3-SpringBootApplication注解" class="headerlink" title="3. @SpringBootApplication注解"></a>3. @SpringBootApplication注解</h3><p>SpringBoot提供了一个方便的@SpringBootApplication，<br>该注解等价于以默认属性使用@Configuration，@EnableAutoConfiguration和@ComponentScan。</p>
+<h3 id="4-Component注解"><a href="#4-Component注解" class="headerlink" title="4. @Component注解"></a>4. @Component注解</h3><p>@Component被用在要被自动扫描和装配的类上，使用注解@Component就类似于@Service、@Controller等注解。在SpringBoot中，如果你的启动类中没有配置@ComponentScan，则默认扫描同包下的@Component注解的类，如果在启动类中增加以下方式配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">@ComponentScan(basePackages = &quot;com.hts.utils&quot;)</div></pre></td></tr></table></figure>
+<p>则只会扫描com.hts.utils下带有@Component注解的类。</p>
+<h3 id="5-EnableScheduling注解"><a href="#5-EnableScheduling注解" class="headerlink" title="5. @EnableScheduling注解"></a>5. @EnableScheduling注解</h3><p>该注解可让Spring执行任务调度，在你的SpringBoot的启动类中加入@EnableScheduling注解后，可以设置任务类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">@Component</div><div class="line">public class TestTask &#123;</div><div class="line">    /**</div><div class="line">     * 每隔5秒运行</div><div class="line">     */</div><div class="line">    @Scheduled(fixedRate = 5000)</div><div class="line">    public void runTask() &#123;</div><div class="line">        System.out.println(&quot;Execute in every 5s!&quot;);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    /**</div><div class="line">     * 每天18:11运行</div><div class="line">     */</div><div class="line">    @Scheduled(cron = &quot;00 11 18 * * ?&quot;)</div><div class="line">    public void runTask2() &#123;</div><div class="line">        System.out.println(&quot;Execute in every 18:11!&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="6-Bean"><a href="#6-Bean" class="headerlink" title="6. @Bean"></a>6. @Bean</h3><p>@Bean注解用在类的方法上，来显式声明要用生成的类，等价于Spring的XML中配置的bean。<br>例如新建一个测试类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * Created by zhaoyh on 2017/9/4.</div><div class="line"> */</div><div class="line">public class TestBean &#123;</div><div class="line"></div><div class="line">    private String name;</div><div class="line"></div><div class="line">    public TestBean(String name) &#123;</div><div class="line">        this.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void test() &#123;</div><div class="line">        System.out.println(&quot;Bean: &quot; + name);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果在启动类中加入如下方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 显示生成类</div><div class="line"> * @return</div><div class="line"> */</div><div class="line">@Bean</div><div class="line">public TestBean getBean() &#123;</div><div class="line">	TestBean testBean = new TestBean(&quot;zhaoyh&quot;);</div><div class="line">	return testBean;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>则会新建一个bean，其他的类或方法使用自动装配就可以使用该bean：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">@Autowired</div><div class="line">private TestBean testBean;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>以上内容就是关于SpringBoot微框架三之常用注解分析的全部内容了，谢谢你阅读到了这里！</p>
+<p>Author:zhaoyh</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/SpringBoot/" rel="tag"># SpringBoot</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/01/SpringBoot微框架二之打包运行/" rel="next" title="SpringBoot微框架二之打包运行">
+                <i class="fa fa-chevron-left"></i> SpringBoot微框架二之打包运行
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="uyan_frame"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/myPicture.jpg"
+               alt="zhaoyh" />
+          <p class="site-author-name" itemprop="name">zhaoyh</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Controller和-RestController"><span class="nav-number">1.</span> <span class="nav-text">1. @Controller和@RestController</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-RequestMapping注解"><span class="nav-number">2.</span> <span class="nav-text">2. @RequestMapping注解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-SpringBootApplication注解"><span class="nav-number">3.</span> <span class="nav-text">3. @SpringBootApplication注解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Component注解"><span class="nav-number">4.</span> <span class="nav-text">4. @Component注解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-EnableScheduling注解"><span class="nav-number">5.</span> <span class="nav-text">5. @EnableScheduling注解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-Bean"><span class="nav-number">6.</span> <span class="nav-text">6. @Bean</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhaoyh</span>
+</div>
+
+
+<a href="http://www.miitbeian.gov.cn/">京ICP备16047594号</a>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2140401"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
