@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Resin,Tomcat," />
+  <meta name="keywords" content="Resin,Nginx," />
 
 
 
@@ -93,17 +93,17 @@
 
 
 
-<meta name="description" content="Resin和Tomcat都是目前极其出色的Web容器，本文介绍了Linux环境下使用Resin和Tomcat部署SpringMVC+Maven项目。  一、Resin4部署Maven项目1. 下载Resin官网下载">
-<meta name="keywords" content="Resin,Tomcat">
+<meta name="description" content="最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。  安装NginxMacOS下可参考：Mac安装Nginx 或者 点击这里；">
+<meta name="keywords" content="Resin,Nginx">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Linux环境下在Resin4和Tomcat8容器中部署项目">
-<meta property="og:url" content="http://www.zhaoyh.com.cn/2017/04/17/Linux环境下在Resin4和Tomcat8容器中部署项目/index.html">
+<meta property="og:title" content="基于Nginx和Resin配置负载均衡的集群">
+<meta property="og:url" content="http://www.zhaoyh.com.cn/2017/09/18/基于Nginx和Resin配置负载均衡的集群/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
-<meta property="og:description" content="Resin和Tomcat都是目前极其出色的Web容器，本文介绍了Linux环境下使用Resin和Tomcat部署SpringMVC+Maven项目。  一、Resin4部署Maven项目1. 下载Resin官网下载">
-<meta property="og:updated_time" content="2017-08-04T08:47:52.000Z">
+<meta property="og:description" content="最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。  安装NginxMacOS下可参考：Mac安装Nginx 或者 点击这里；">
+<meta property="og:updated_time" content="2017-09-18T07:37:19.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Linux环境下在Resin4和Tomcat8容器中部署项目">
-<meta name="twitter:description" content="Resin和Tomcat都是目前极其出色的Web容器，本文介绍了Linux环境下使用Resin和Tomcat部署SpringMVC+Maven项目。  一、Resin4部署Maven项目1. 下载Resin官网下载">
+<meta name="twitter:title" content="基于Nginx和Resin配置负载均衡的集群">
+<meta name="twitter:description" content="最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。  安装NginxMacOS下可参考：Mac安装Nginx 或者 点击这里；">
 
 
 
@@ -131,13 +131,13 @@
 
 
 
-  <link rel="canonical" href="http://www.zhaoyh.com.cn/2017/04/17/Linux环境下在Resin4和Tomcat8容器中部署项目/"/>
+  <link rel="canonical" href="http://www.zhaoyh.com.cn/2017/09/18/基于Nginx和Resin配置负载均衡的集群/"/>
 
 
 
 
 
-  <title>Linux环境下在Resin4和Tomcat8容器中部署项目 | zhaoyh's blog</title>
+  <title>基于Nginx和Resin配置负载均衡的集群 | zhaoyh's blog</title>
   
 
 
@@ -276,7 +276,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2017/04/17/Linux环境下在Resin4和Tomcat8容器中部署项目/">
+    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2017/09/18/基于Nginx和Resin配置负载均衡的集群/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zhaoyh">
@@ -293,7 +293,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">Linux环境下在Resin4和Tomcat8容器中部署项目</h2>
+          <h2 class="post-title" itemprop="name headline">基于Nginx和Resin配置负载均衡的集群</h2>
         
 
         <div class="post-meta">
@@ -305,8 +305,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-17T18:42:58+08:00">
-                2017-04-17
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-18T15:35:07+08:00">
+                2017-09-18
               </time>
             
 
@@ -341,34 +341,29 @@
 
       
         <blockquote>
-<p>Resin和Tomcat都是目前极其出色的Web容器，本文介绍了Linux环境下使用Resin和Tomcat部署SpringMVC+Maven项目。</p>
+<p>最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。</p>
 </blockquote>
-<h2 id="一、Resin4部署Maven项目"><a href="#一、Resin4部署Maven项目" class="headerlink" title="一、Resin4部署Maven项目"></a>一、Resin4部署Maven项目</h2><h3 id="1-下载Resin"><a href="#1-下载Resin" class="headerlink" title="1. 下载Resin"></a>1. 下载Resin</h3><p><a href="http://caucho.com/products/resin/download" target="_blank" rel="external">官网下载</a></p>
-<a id="more"></a>
-<p>并解压到你的Linux机器的某个目录：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tar -zxvf resin-4.0.52.tar.gz</div></pre></td></tr></table></figure>
-<h3 id="2-修改配置文件"><a href="#2-修改配置文件" class="headerlink" title="2. 修改配置文件"></a>2. 修改配置文件</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd XX/resin-4.0.52/conf</div><div class="line">resin.properties</div></pre></td></tr></table></figure>
-<p>打开resin的属性配置文件并修改80端口：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">app.http          : 80</div><div class="line"># app.https         : 8443</div><div class="line"></div><div class="line">web.http          : 80</div><div class="line"># web.https         : 8443</div></pre></td></tr></table></figure>
-<p>保存并退出，打开resin.xml配置文件，配置你的war包：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">host</span> <span class="attr">id</span>=<span class="string">""</span> <span class="attr">root-directory</span>=<span class="string">"."</span>&gt;</span></div><div class="line">      <span class="comment">&lt;!--</span></div><div class="line">         - webapps can be overridden/extended in the resin.xml</div><div class="line">        --&gt;</div><div class="line">      <span class="tag">&lt;<span class="name">web-app</span> <span class="attr">id</span>=<span class="string">"/"</span> <span class="attr">root-directory</span>=<span class="string">"webapps/SomeProject"</span> <span class="attr">archive-path</span>=<span class="string">"XXX/SomeProject/target/SomeProject.war"</span>/&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">host</span>&gt;</span></div></pre></td></tr></table></figure>
-<p>其中SomeProject是你的Maven项目名。</p>
-<h3 id="3-启动Resin"><a href="#3-启动Resin" class="headerlink" title="3. 启动Resin"></a>3. 启动Resin</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd XX/resin-4.0.52/bin</div><div class="line">./resin.sh start</div></pre></td></tr></table></figure>
-<p>之后resin就会读取你的war包并自动解压到自己的webapps下，打开浏览器访问你服务器的80端口就可以看到项目的运行结果啦！</p>
-<p>关闭Resin的命令是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./resin.sh stop</div></pre></td></tr></table></figure>
-<h2 id="二、Tomcat8部署Maven项目"><a href="#二、Tomcat8部署Maven项目" class="headerlink" title="二、Tomcat8部署Maven项目"></a>二、Tomcat8部署Maven项目</h2><h3 id="1-下载Tomcat"><a href="#1-下载Tomcat" class="headerlink" title="1. 下载Tomcat"></a>1. 下载Tomcat</h3><p><a href="https://tomcat.apache.org/download-80.cgi" target="_blank" rel="external">官网下载</a></p>
-<p>解压：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tar -zxvf apache-tomcat-8.5.13.tar.gz</div></pre></td></tr></table></figure>
-<h3 id="2-修改配置文件-1"><a href="#2-修改配置文件-1" class="headerlink" title="2. 修改配置文件"></a>2. 修改配置文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd XX/apache-tomcat-8.5.13/conf</div><div class="line">vi server.xml</div></pre></td></tr></table></figure>
-<p>首先修改端口号：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;Connector port=&quot;80&quot; protocol=&quot;HTTP/1.1&quot;</div><div class="line">               connectionTimeout=&quot;20000&quot;</div><div class="line">               redirectPort=&quot;8443&quot; URIEncoding=&quot;UTF-8&quot; /&gt;</div></pre></td></tr></table></figure>
-<p>其次配置你的项目：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;Host name=&quot;localhost&quot;  appBase=&quot;webapps&quot;</div><div class="line">            unpackWARs=&quot;true&quot; autoDeploy=&quot;true&quot;&gt;</div><div class="line">        &lt;Context path=&quot;/&quot; docBase=&quot;XX/apache-tomcat-8.5.13/webapps/SomeProject&quot; debug=&quot;0&quot; reloadable=&quot;true&quot; /&gt;</div></pre></td></tr></table></figure>
-<h3 id="3-启动Tomcat"><a href="#3-启动Tomcat" class="headerlink" title="3. 启动Tomcat"></a>3. 启动Tomcat</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd XX/apache-tomcat-8.5.13/bin</div><div class="line">./startup.sh</div></pre></td></tr></table></figure>
-<p>启动的之前首先保证你的项目已经拷贝到了Tomcat的webapps下，如果没有，则可以用如下的方式打包并拷贝：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">cd XX/SomeProject</div><div class="line">mvn clean</div><div class="line">mvn package</div><div class="line">cd target</div><div class="line">cp /XX/SomeProject/target/SomeProject.war /XX/apache-tomcat-8.5.13/webapps/</div></pre></td></tr></table></figure>
-<p>这样就把你的war包拷贝好，然后再启动Tomcat即可！</p>
+<h3 id="安装Nginx"><a href="#安装Nginx" class="headerlink" title="安装Nginx"></a>安装Nginx</h3><p>MacOS下可参考：<a href="http://note.youdao.com/noteshare?id=833f067c752edc1c5cd71e8e86f7e0dc" target="_blank" rel="external">Mac安装Nginx</a> 或者 <a href="http://www.jianshu.com/p/d5114a2a2052" target="_blank" rel="external">点击这里</a>；<br><a id="more"></a>&gt;</p>
+<p>CentOS下可参考：<a href="https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-centos-7" target="_blank" rel="external">CentOS安装Nginx</a></p>
+<p>安装成功后可在浏览器输入默认的访问地址：<a href="http://你的IP:8080，即可测试是否安装成功！" target="_blank" rel="external">http://你的IP:8080，即可测试是否安装成功！</a></p>
+<h3 id="配置Resin"><a href="#配置Resin" class="headerlink" title="配置Resin"></a>配置Resin</h3><p>确保你安装好了Resin并配置了可访问的Web项目，Linux下配置Resin的Web项目可查看之前的<a href="http://zhaoyh.com.cn/2017/04/17/Linux%E7%8E%AF%E5%A2%83%E4%B8%8B%E5%9C%A8Resin4%E5%92%8CTomcat8%E5%AE%B9%E5%99%A8%E4%B8%AD%E9%83%A8%E7%BD%B2%E9%A1%B9%E7%9B%AE/" target="_blank" rel="external">博文</a>。</p>
+<h3 id="配置Nginx负载均衡"><a href="#配置Nginx负载均衡" class="headerlink" title="配置Nginx负载均衡"></a>配置Nginx负载均衡</h3><p>以我目前的offernews为例，我使用的第一个服务器是腾讯云的，访问地址是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://123.206.7.154</div></pre></td></tr></table></figure></p>
+<p>搬瓦工的VPS上配置的访问链接是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://xx.xx.xx:8091</div></pre></td></tr></table></figure>
+<p>为了安全我隐藏了该VPS的IP地址，不过这不影响你的配置哈！</p>
+<p>进入到你Nginx的安装目录，例如我的是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd /usr/local/etc/nginx</div><div class="line">vi nginx.conf</div></pre></td></tr></table></figure>
+<p>在http模块中加入upstream配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">upstream offernews &#123;</div><div class="line">        server xx.xx.xx:8091 weight=1;</div><div class="line">        server 123.206.7.154:80 weight=4;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>此处我采用的是按照weight权重来控制访问比例，你可以根据你的服务器的配置来控制概率，我这里的访问比率是4:1。</p>
+<p>在server模块的location中加入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">location / &#123;</div><div class="line">            access_log on;</div><div class="line">            proxy_pass http://offernews;</div><div class="line">            proxy_set_header X-Real-IP $remote_addr;</div><div class="line">            proxy_set_header Host $host;</div><div class="line">            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</div><div class="line">            client_max_body_size    10m;</div><div class="line">            client_body_buffer_size 128k;</div><div class="line">        &#125;</div></pre></td></tr></table></figure>
+<p>其中proxy_pass 的配置是你刚才定义的upstream的名称，使用<a href="http://offernews来表述" target="_blank" rel="external">http://offernews来表述</a>;</p>
+<p>此时再输入你配置了Nginx的服务器IP地址加端口号即可以负载均衡的策略来访问你的Web项目了，本文只是展示了最简单的按照权重的负载均衡策略，后续你也可以根据实际需求来配置自己的负载均衡策略！</p>
+<blockquote>
+<p>以上内容就是基于Nginx和Resin配置负载均衡的集群的全部内容了，谢谢你阅读到了这里！</p>
+<p>Author:zhaoyh</p>
+</blockquote>
 
       
     </div>
@@ -400,7 +395,7 @@
           
             <a href="/tags/Resin/" rel="tag"># Resin</a>
           
-            <a href="/tags/Tomcat/" rel="tag"># Tomcat</a>
+            <a href="/tags/Nginx/" rel="tag"># Nginx</a>
           
         </div>
       
@@ -413,8 +408,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/08/24/彻底解决项目中的中文乱码问题/" rel="next" title="彻底解决项目中的中文乱码问题">
-                <i class="fa fa-chevron-left"></i> 彻底解决项目中的中文乱码问题
+              <a href="/2017/09/04/SpringBoot微框架三之常用注解分析/" rel="next" title="SpringBoot微框架三之常用注解分析">
+                <i class="fa fa-chevron-left"></i> SpringBoot微框架三之常用注解分析
               </a>
             
           </div>
@@ -422,10 +417,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/07/31/基于WebMagic的爬虫实现-一/" rel="prev" title="基于WebMagic的爬虫实现(一)">
-                基于WebMagic的爬虫实现(一) <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -557,7 +548,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、Resin4部署Maven项目"><span class="nav-number">1.</span> <span class="nav-text">一、Resin4部署Maven项目</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-下载Resin"><span class="nav-number">1.1.</span> <span class="nav-text">1. 下载Resin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-修改配置文件"><span class="nav-number">1.2.</span> <span class="nav-text">2. 修改配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-启动Resin"><span class="nav-number">1.3.</span> <span class="nav-text">3. 启动Resin</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、Tomcat8部署Maven项目"><span class="nav-number">2.</span> <span class="nav-text">二、Tomcat8部署Maven项目</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-下载Tomcat"><span class="nav-number">2.1.</span> <span class="nav-text">1. 下载Tomcat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-修改配置文件-1"><span class="nav-number">2.2.</span> <span class="nav-text">2. 修改配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-启动Tomcat"><span class="nav-number">2.3.</span> <span class="nav-text">3. 启动Tomcat</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装Nginx"><span class="nav-number">1.</span> <span class="nav-text">安装Nginx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置Resin"><span class="nav-number">2.</span> <span class="nav-text">配置Resin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置Nginx负载均衡"><span class="nav-number">3.</span> <span class="nav-text">配置Nginx负载均衡</span></a></li></ol></div>
             
 
           </div>
