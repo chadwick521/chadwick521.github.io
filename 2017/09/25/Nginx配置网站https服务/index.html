@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Nginx,Resin," />
+  <meta name="keywords" content="Nginx,https," />
 
 
 
@@ -93,17 +93,17 @@
 
 
 
-<meta name="description" content="最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。  安装NginxMacOS下可参考：Mac安装Nginx 或者 点击这里；">
-<meta name="keywords" content="Nginx,Resin">
+<meta name="description" content="本文介绍了如何使用Nginx配置你的站点的https服务。  一、https基础1. httphttp协议是一种应用层的协议，协议本身没有做加密措施，所有信息都是用明文传播，因此就会有一些风险：">
+<meta name="keywords" content="Nginx,https">
 <meta property="og:type" content="article">
-<meta property="og:title" content="基于Nginx和Resin配置负载均衡的集群">
-<meta property="og:url" content="http://www.zhaoyh.com.cn/2017/09/18/基于Nginx和Resin配置负载均衡的集群/index.html">
+<meta property="og:title" content="Nginx配置网站https服务">
+<meta property="og:url" content="http://www.zhaoyh.com.cn/2017/09/25/Nginx配置网站https服务/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
-<meta property="og:description" content="最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。  安装NginxMacOS下可参考：Mac安装Nginx 或者 点击这里；">
-<meta property="og:updated_time" content="2017-09-18T07:44:22.000Z">
+<meta property="og:description" content="本文介绍了如何使用Nginx配置你的站点的https服务。  一、https基础1. httphttp协议是一种应用层的协议，协议本身没有做加密措施，所有信息都是用明文传播，因此就会有一些风险：">
+<meta property="og:updated_time" content="2017-09-25T10:20:00.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="基于Nginx和Resin配置负载均衡的集群">
-<meta name="twitter:description" content="最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。  安装NginxMacOS下可参考：Mac安装Nginx 或者 点击这里；">
+<meta name="twitter:title" content="Nginx配置网站https服务">
+<meta name="twitter:description" content="本文介绍了如何使用Nginx配置你的站点的https服务。  一、https基础1. httphttp协议是一种应用层的协议，协议本身没有做加密措施，所有信息都是用明文传播，因此就会有一些风险：">
 
 
 
@@ -131,13 +131,13 @@
 
 
 
-  <link rel="canonical" href="http://www.zhaoyh.com.cn/2017/09/18/基于Nginx和Resin配置负载均衡的集群/"/>
+  <link rel="canonical" href="http://www.zhaoyh.com.cn/2017/09/25/Nginx配置网站https服务/"/>
 
 
 
 
 
-  <title>基于Nginx和Resin配置负载均衡的集群 | zhaoyh's blog</title>
+  <title>Nginx配置网站https服务 | zhaoyh's blog</title>
   
 
 
@@ -276,7 +276,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2017/09/18/基于Nginx和Resin配置负载均衡的集群/">
+    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2017/09/25/Nginx配置网站https服务/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zhaoyh">
@@ -293,7 +293,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">基于Nginx和Resin配置负载均衡的集群</h2>
+          <h2 class="post-title" itemprop="name headline">Nginx配置网站https服务</h2>
         
 
         <div class="post-meta">
@@ -305,8 +305,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-18T15:35:07+08:00">
-                2017-09-18
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-25T18:17:12+08:00">
+                2017-09-25
               </time>
             
 
@@ -341,28 +341,30 @@
 
       
         <blockquote>
-<p>最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。</p>
+<p>本文介绍了如何使用Nginx配置你的站点的https服务。</p>
 </blockquote>
-<h3 id="安装Nginx"><a href="#安装Nginx" class="headerlink" title="安装Nginx"></a>安装Nginx</h3><p>MacOS下可参考：<a href="http://note.youdao.com/noteshare?id=833f067c752edc1c5cd71e8e86f7e0dc" target="_blank" rel="external">Mac安装Nginx</a> 或者 <a href="http://www.jianshu.com/p/d5114a2a2052" target="_blank" rel="external">点击这里</a>；<br><a id="more"></a></p>
-<p>CentOS下可参考：<a href="https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-centos-7" target="_blank" rel="external">CentOS安装Nginx</a></p>
-<p>安装成功后可在浏览器输入默认的访问地址：<a href="http://你的IP:8080" target="_blank" rel="external">http://你的IP:8080</a> , 即可测试是否安装成功。</p>
-<h3 id="配置Resin"><a href="#配置Resin" class="headerlink" title="配置Resin"></a>配置Resin</h3><p>确保你安装好了Resin并配置了可访问的Web项目，Linux下配置Resin的Web项目可查看之前的<a href="http://zhaoyh.com.cn/2017/04/17/Linux%E7%8E%AF%E5%A2%83%E4%B8%8B%E5%9C%A8Resin4%E5%92%8CTomcat8%E5%AE%B9%E5%99%A8%E4%B8%AD%E9%83%A8%E7%BD%B2%E9%A1%B9%E7%9B%AE/" target="_blank" rel="external">博文</a>。</p>
-<h3 id="配置Nginx负载均衡"><a href="#配置Nginx负载均衡" class="headerlink" title="配置Nginx负载均衡"></a>配置Nginx负载均衡</h3><p>以我目前的offernews为例，我使用的第一个服务器是腾讯云的，访问地址是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://123.206.7.154</div></pre></td></tr></table></figure></p>
-<p>搬瓦工的VPS上配置的访问链接是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://xx.xx.xx:8091</div></pre></td></tr></table></figure>
-<p>为了安全我隐藏了该VPS的IP地址，不过这不影响你的配置哈！</p>
-<p>进入到你Nginx的安装目录，例如我的是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd /usr/local/etc/nginx</div><div class="line">vi nginx.conf</div></pre></td></tr></table></figure>
-<p>在http模块中加入upstream配置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">upstream offernews &#123;</div><div class="line">        server xx.xx.xx:8091 weight=1;</div><div class="line">        server 123.206.7.154:80 weight=4;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<p>此处我采用的是按照weight权重来控制访问比例，你可以根据你的服务器的配置来控制概率，我这里的访问比率是4:1。</p>
-<p>在server模块的location中加入：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">location / &#123;</div><div class="line">            access_log on;</div><div class="line">            proxy_pass http://offernews;</div><div class="line">            proxy_set_header X-Real-IP $remote_addr;</div><div class="line">            proxy_set_header Host $host;</div><div class="line">            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</div><div class="line">            client_max_body_size    10m;</div><div class="line">            client_body_buffer_size 128k;</div><div class="line">        &#125;</div></pre></td></tr></table></figure>
-<p>其中proxy_pass 的配置是你刚才定义的upstream的名称，使用 <a href="http://offernews" target="_blank" rel="external">http://offernews</a> 来表述。</p>
-<p>此时再输入你配置了Nginx的服务器IP地址加端口号即可以负载均衡的策略来访问你的Web项目了，本文只是展示了最简单的按照权重的负载均衡策略，后续你也可以根据实际需求来配置自己的负载均衡策略。</p>
+<h2 id="一、https基础"><a href="#一、https基础" class="headerlink" title="一、https基础"></a>一、https基础</h2><h3 id="1-http"><a href="#1-http" class="headerlink" title="1. http"></a>1. http</h3><p><a href="https://zh.wikipedia.org/wiki/%E8%B6%85%E6%96%87%E6%9C%AC%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE" target="_blank" rel="external">http</a>协议是一种应用层的协议，协议本身没有做加密措施，所有信息都是用明文传播，因此就会有一些风险：<br><a id="more"></a></p>
 <blockquote>
-<p>以上内容就是基于Nginx和Resin配置负载均衡的集群的全部内容了，谢谢你阅读到了这里！</p>
-<p>Author: zhaoyh</p>
+<p>窃听风险（eavesdropping）：第三方可以获知通信内容。<br>篡改风险（tampering）：第三方可以修改通信内容。<br>冒充风险（pretending）：第三方可以冒充他人身份参与通信。-阮一峰</p>
+</blockquote>
+<p>我用白话翻译一下就是：我登陆的网址并不能保证是我想要登陆的网址，即你登录的网址假如被第三方篡改或者监听、或者第三方冒充时你都不知道，所以就会带来一系列的风险。</p>
+<h3 id="2-https和SSL-TLS"><a href="#2-https和SSL-TLS" class="headerlink" title="2. https和SSL/TLS"></a>2. https和SSL/TLS</h3><p>SSL(Secure Sockets Layer)协议是网景公司设计的，就是为了解决上述Web传输的安全问题，后来IETF就把SSL标准化。标准化之后的名称改为TLS(Transport Layer Security)，因此后续我们就把两者并称。</p>
+<p>SSL/TLS协议使用 <a href="https://zh.wikipedia.org/wiki/%E5%85%AC%E5%BC%80%E5%AF%86%E9%92%A5%E5%8A%A0%E5%AF%86" target="_blank" rel="external">公钥加密算法</a>，即使用公钥加码，私钥解密的方式。对应到实际的Web传输过程就是：用户客户端向服务器请求公钥，然后用公钥加密信息成密文，服务端收到密文后用私钥解密。SSL将公钥放在数字证书中，只要证书是可信任的，则公钥就是可信任的。下一部分就介绍了获取数字证书的过程，你可以逐步地创建自己网站的数字证书！</p>
+<h2 id="二、获取证书"><a href="#二、获取证书" class="headerlink" title="二、获取证书"></a>二、获取证书</h2><h3 id="1-个人配置"><a href="#1-个人配置" class="headerlink" title="1 个人配置"></a>1 个人配置</h3><p>首先需要安装 <a href="https://www.openssl.org/" target="_blank" rel="external">openssl</a>，利用openssl命令可以生成私钥文件XXX.key和证书请求文件XXX.csr。</p>
+<p>生成密钥／证书文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout XXX.key -out XXX.crt</div></pre></td></tr></table></figure></p>
+<p>按照提示输入信息和密码即可！后面配置Nginx的Https服务的时候需要本步骤生成的XXX.crt和XXX.key文件。</p>
+<p>个人加密的CA证书目前不受Chrome等主流浏览器的认可，会提示给用户安全问题，因此不建议使用个人生成的CA证书！</p>
+<h3 id="2-第三方服务"><a href="#2-第三方服务" class="headerlink" title="2 第三方服务"></a>2 第三方服务</h3><h4 id="2-1-腾讯云／阿里云"><a href="#2-1-腾讯云／阿里云" class="headerlink" title="2.1 腾讯云／阿里云"></a>2.1 腾讯云／阿里云</h4><p>可以直接在 <a href="https://www.qcloud.com/product/ssl" target="_blank" rel="external">腾讯云</a> 或者 <a href="https://www.aliyun.com/product/cas/" target="_blank" rel="external">阿里云</a> 上购买为期一年的Symantec个人DV SSL证书。</p>
+<p><strong>注：个人用户推荐用此方式申请证书！</strong></p>
+<h4 id="2-2-startssl"><a href="#2-2-startssl" class="headerlink" title="2.2 startssl"></a>2.2 startssl</h4><p>美国的SSL服务商 <a href="https://www.startcomca.com/" target="_blank" rel="external">startssl</a>，不过由于安全问题，chrome、safari等主流浏览器均不再信任其数字证书，所以不推荐该SSL服务商。</p>
+<h2 id="三、集成到Nginx"><a href="#三、集成到Nginx" class="headerlink" title="三、集成到Nginx"></a>三、集成到Nginx</h2><p>现在假设你已经通过上述手段得到了密钥文件XXX.key和证书文件XXX.crt，这一步就要进入到Nginx的配置中。</p>
+<p>首先，打开nginx.cnf文件，在server模块里加入以下配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">listen       443 ssl;</div><div class="line">server_name  localhost;</div><div class="line">root /etc/nginx/data/XXX;</div><div class="line">ssl on;</div><div class="line">ssl_certificate /root/security/XXX.crt;</div><div class="line">ssl_certificate_key /root/security/XXX.key;</div><div class="line">ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;</div><div class="line">ssl_ciphers         HIGH:!aNULL:!MD5;</div><div class="line">location / &#123;</div><div class="line">    access_log on;</div><div class="line">    proxy_pass http://offernews;</div><div class="line">    proxy_set_header X-Real-IP $remote_addr;</div><div class="line">    proxy_set_header Host $host;</div><div class="line">    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</div><div class="line">    client_max_body_size    10m;</div><div class="line">    client_body_buffer_size 128k;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这样就加上了你的crt文件和key文件，之后重启Nginx即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">service nginx stop</div><div class="line">service nginx start</div></pre></td></tr></table></figure>
+<blockquote>
+<p>以上内容就是关于Nginx配置网站https服务的全部内容了，谢谢你阅读到了这里！</p>
+<p>Author:zhaoyh</p>
 </blockquote>
 
       
@@ -395,7 +397,7 @@
           
             <a href="/tags/Nginx/" rel="tag"># Nginx</a>
           
-            <a href="/tags/Resin/" rel="tag"># Resin</a>
+            <a href="/tags/https/" rel="tag"># https</a>
           
         </div>
       
@@ -408,8 +410,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/09/04/SpringBoot微框架三之常用注解分析/" rel="next" title="SpringBoot微框架三之常用注解分析">
-                <i class="fa fa-chevron-left"></i> SpringBoot微框架三之常用注解分析
+              <a href="/2017/09/18/基于Nginx和Resin配置负载均衡的集群/" rel="next" title="基于Nginx和Resin配置负载均衡的集群">
+                <i class="fa fa-chevron-left"></i> 基于Nginx和Resin配置负载均衡的集群
               </a>
             
           </div>
@@ -417,10 +419,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/09/25/Nginx配置网站https服务/" rel="prev" title="Nginx配置网站https服务">
-                Nginx配置网站https服务 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -552,7 +550,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装Nginx"><span class="nav-number">1.</span> <span class="nav-text">安装Nginx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置Resin"><span class="nav-number">2.</span> <span class="nav-text">配置Resin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置Nginx负载均衡"><span class="nav-number">3.</span> <span class="nav-text">配置Nginx负载均衡</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、https基础"><span class="nav-number">1.</span> <span class="nav-text">一、https基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-http"><span class="nav-number">1.1.</span> <span class="nav-text">1. http</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-https和SSL-TLS"><span class="nav-number">1.2.</span> <span class="nav-text">2. https和SSL/TLS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、获取证书"><span class="nav-number">2.</span> <span class="nav-text">二、获取证书</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-个人配置"><span class="nav-number">2.1.</span> <span class="nav-text">1 个人配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-第三方服务"><span class="nav-number">2.2.</span> <span class="nav-text">2 第三方服务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-腾讯云／阿里云"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.1 腾讯云／阿里云</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-startssl"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2 startssl</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、集成到Nginx"><span class="nav-number">3.</span> <span class="nav-text">三、集成到Nginx</span></a></li></ol></div>
             
 
           </div>
