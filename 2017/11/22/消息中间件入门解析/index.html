@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="SpringBoot," />
+  <meta name="keywords" content="消息中间件,RabbitMQ,Kafka," />
 
 
 
@@ -93,17 +93,19 @@
 
 
 
-<meta name="description" content="在上一篇文章中介绍了如何使用Intellij Idea创建SpringBoot项目，本篇介绍了如何在你的服务器上使用Maven或者Ant+Ivy打包并运行项目。  本篇所使用的代码请戳： github Maven打包mvnw.sh中配置环境变量">
-<meta name="keywords" content="SpringBoot">
+<meta name="description" content="消息队列属于大型网站系统中间件的重要组件，主要解决了应用耦合、异步消息、流量削峰等问题，对于网站实现高性能、可伸缩的架构有很大的帮助。  1. 常用的消息队列ActiveMQApache ActiveMQ是Apache软件基金会所研发的开放源代码消息中间件；由于ActiveMQ是一个纯Java程序，因此只需要操作系统支持Java虚拟机，ActiveMQ便可运行。">
+<meta name="keywords" content="消息中间件,RabbitMQ,Kafka">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SpringBoot微框架二之打包运行">
-<meta property="og:url" content="http://www.zhaoyh.com.cn/2017/09/01/SpringBoot微框架二之打包运行/index.html">
+<meta property="og:title" content="消息中间件入门解析">
+<meta property="og:url" content="http://www.zhaoyh.com.cn/2017/11/22/消息中间件入门解析/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
-<meta property="og:description" content="在上一篇文章中介绍了如何使用Intellij Idea创建SpringBoot项目，本篇介绍了如何在你的服务器上使用Maven或者Ant+Ivy打包并运行项目。  本篇所使用的代码请戳： github Maven打包mvnw.sh中配置环境变量">
-<meta property="og:updated_time" content="2017-09-04T08:22:44.000Z">
+<meta property="og:description" content="消息队列属于大型网站系统中间件的重要组件，主要解决了应用耦合、异步消息、流量削峰等问题，对于网站实现高性能、可伸缩的架构有很大的帮助。  1. 常用的消息队列ActiveMQApache ActiveMQ是Apache软件基金会所研发的开放源代码消息中间件；由于ActiveMQ是一个纯Java程序，因此只需要操作系统支持Java虚拟机，ActiveMQ便可运行。">
+<meta property="og:image" content="http://p04gt4ifc.bkt.clouddn.com/mq.png">
+<meta property="og:updated_time" content="2017-11-29T09:39:31.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SpringBoot微框架二之打包运行">
-<meta name="twitter:description" content="在上一篇文章中介绍了如何使用Intellij Idea创建SpringBoot项目，本篇介绍了如何在你的服务器上使用Maven或者Ant+Ivy打包并运行项目。  本篇所使用的代码请戳： github Maven打包mvnw.sh中配置环境变量">
+<meta name="twitter:title" content="消息中间件入门解析">
+<meta name="twitter:description" content="消息队列属于大型网站系统中间件的重要组件，主要解决了应用耦合、异步消息、流量削峰等问题，对于网站实现高性能、可伸缩的架构有很大的帮助。  1. 常用的消息队列ActiveMQApache ActiveMQ是Apache软件基金会所研发的开放源代码消息中间件；由于ActiveMQ是一个纯Java程序，因此只需要操作系统支持Java虚拟机，ActiveMQ便可运行。">
+<meta name="twitter:image" content="http://p04gt4ifc.bkt.clouddn.com/mq.png">
 
 
 
@@ -131,13 +133,13 @@
 
 
 
-  <link rel="canonical" href="http://www.zhaoyh.com.cn/2017/09/01/SpringBoot微框架二之打包运行/"/>
+  <link rel="canonical" href="http://www.zhaoyh.com.cn/2017/11/22/消息中间件入门解析/"/>
 
 
 
 
 
-  <title>SpringBoot微框架二之打包运行 | zhaoyh's blog</title>
+  <title>消息中间件入门解析 | zhaoyh's blog</title>
   
 
 
@@ -276,7 +278,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2017/09/01/SpringBoot微框架二之打包运行/">
+    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2017/11/22/消息中间件入门解析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zhaoyh">
@@ -293,7 +295,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">SpringBoot微框架二之打包运行</h2>
+          <h2 class="post-title" itemprop="name headline">消息中间件入门解析</h2>
         
 
         <div class="post-meta">
@@ -305,8 +307,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-01T15:06:11+08:00">
-                2017-09-01
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-22T11:36:42+08:00">
+                2017-11-22
               </time>
             
 
@@ -328,8 +330,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/SpringBoot/" itemprop="url" rel="index">
-                    <span itemprop="name">SpringBoot</span>
+                  <a href="/categories/消息中间件/" itemprop="url" rel="index">
+                    <span itemprop="name">消息中间件</span>
                   </a>
                 </span>
 
@@ -363,24 +365,31 @@
 
       
         <blockquote>
-<p>在上一篇文章中介绍了如何使用Intellij Idea创建SpringBoot项目，本篇介绍了如何在你的服务器上使用Maven或者Ant+Ivy打包并运行项目。</p>
+<p>消息队列属于大型网站系统中间件的重要组件，主要解决了应用耦合、异步消息、流量削峰等问题，对于网站实现高性能、可伸缩的架构有很大的帮助。</p>
 </blockquote>
-<p><strong>本篇所使用的代码请戳： <a href="https://github.com/chadwick521/SpringBootInAction" target="_blank" rel="external">github</a></strong></p>
-<h2 id="Maven打包"><a href="#Maven打包" class="headerlink" title="Maven打包"></a>Maven打包</h2><h3 id="mvnw-sh中配置环境变量"><a href="#mvnw-sh中配置环境变量" class="headerlink" title="mvnw.sh中配置环境变量"></a>mvnw.sh中配置环境变量</h3><a id="more"></a>
-<p>SpringBoot的官方文档中推荐使用Java8来运行，所以在打包之前先配置一下你的jdk路径，如果你的环境变量中已有，可以忽略这个步骤：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">JAVA_HOME=/usr/java/jdk1.8.0_60/</div><div class="line">export JAVA_HOME</div><div class="line"></div><div class="line">M3_HOME=/global/sww/apache-maven-3.0.3/</div><div class="line">export M3_HOME</div></pre></td></tr></table></figure>
-<h3 id="打包运行"><a href="#打包运行" class="headerlink" title="打包运行"></a>打包运行</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">./mvnw.sh clean install</div><div class="line">./startTask.sh target/XXX.jar</div></pre></td></tr></table></figure>
-<p>此时会生成编译好的target目录，因为我们在新建项目是选择的输出是jar，因此在target目录下就会有一个生成好的jar文件，你也可以直接到目录下执行：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd target</div><div class="line">java -jar XXX.jar</div></pre></td></tr></table></figure>
-<p>通过这种方式能很方便地启动Spring Boot程序。</p>
-<h2 id="Ant-Ivy打包并运行"><a href="#Ant-Ivy打包并运行" class="headerlink" title="Ant+Ivy打包并运行"></a>Ant+Ivy打包并运行</h2><h3 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">#!/bin/sh</div><div class="line">JAVA_HOME=/usr/java/jdk1.8.0_60/;</div><div class="line">export JAVA_HOME</div><div class="line">ant -lib lib/ivy-2.3.0.jar:clean manual</div></pre></td></tr></table></figure>
-<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./startTask.sh target/XXX.jar</div></pre></td></tr></table></figure>
-<h2 id="停止SpringBoot"><a href="#停止SpringBoot" class="headerlink" title="停止SpringBoot"></a>停止SpringBoot</h2><p>我使用的方式是在启动时纪录进程的PID，停止时直接杀掉进程就可以，所以在启动脚本里：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nohup /usr/java/jdk1.8.0_60/bin/java -Xms1024m -Xmx4096m -jar $1 &amp; echo $! &gt; ./pid.file &amp;</div></pre></td></tr></table></figure>
-<p>启动时在同级目录下会新建一个pid.file的文件，纪录了本次运行的PID，这样在stopTask.sh脚本里杀掉该进程：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">#!/bin/sh</div><div class="line">kill $(cat ./pid.file)</div><div class="line">rm pid.file</div></pre></td></tr></table></figure>
+<h2 id="1-常用的消息队列"><a href="#1-常用的消息队列" class="headerlink" title="1. 常用的消息队列"></a>1. 常用的消息队列</h2><h4 id="ActiveMQ"><a href="#ActiveMQ" class="headerlink" title="ActiveMQ"></a><a href="http://activemq.apache.org/" target="_blank" rel="external">ActiveMQ</a></h4><p>Apache ActiveMQ是Apache软件基金会所研发的开放源代码消息中间件；由于ActiveMQ是一个纯Java程序，因此只需要操作系统支持Java虚拟机，ActiveMQ便可运行。</p>
+<a id="more"></a>
+<h4 id="RabbitMQ"><a href="#RabbitMQ" class="headerlink" title="RabbitMQ"></a><a href="https://www.rabbitmq.com/getstarted.html" target="_blank" rel="external">RabbitMQ</a></h4><p>RabbitMQ是实现了高级消息队列协议（AMQP:Advanced Message Queuing Protocol）的开源消息代理（亦称面向消息的中间件）。RabbitMQ适用于对数据一致性和可靠性的场景，对吞吐量的场景要求其次。RabbitMQ服务器是用Erlang语言编写。</p>
+<h4 id="ZeroMQ"><a href="#ZeroMQ" class="headerlink" title="ZeroMQ"></a><a href="http://zeromq.org/" target="_blank" rel="external">ZeroMQ</a></h4><p>ØMQ （也拼写作ZeroMQ，0MQ或ZMQ)是一个为可伸缩的分布式或并发应用程序设计的高性能异步消息库。它提供一个消息队列, 但是与面向消息的中间件不同，ZeroMQ的运行不需要专门的消息代理（message broker）。该库设计成常见的套接字风格的API。</p>
+<p>与RabbitMQ相比，ZMQ并不像是一个传统意义上的消息队列服务器，事实上，它也根本不是一个服务器，更像一个底层的网络通讯库，在Socket API之上做了一层封装，将网络通讯、进程通讯和线程通讯抽象为统一的API接口。简而言之socket之上、MQ之下。</p>
+<h4 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a><a href="https://kafka.apache.org/" target="_blank" rel="external">Kafka</a></h4><p><a href="https://www.ibm.com/developerworks/cn/opensource/os-cn-kafka/index.html" target="_blank" rel="external">IBM介绍Kafka的博客</a></p>
+<p>Kafka是由LinkedIn开发的一个分布式的消息系统，使用Scala编写，它以可水平扩展和高吞吐率而被广泛使用。目前越来越多的开源分布式处理系统如Cloudera、ApacheStorm、Spark都支持与Kafka集成。适合产生大量数据的互联网服务的数据收集业务。</p>
+<h4 id="RocketMQ"><a href="#RocketMQ" class="headerlink" title="RocketMQ"></a><a href="https://rocketmq.apache.org/" target="_blank" rel="external">RocketMQ</a></h4><p>RocketMQ 是阿里的开源产品，用 Java 语言实现，在设计时参考了 Kafka，并做出了自己的一些改进，消息可靠性上比 Kafka 更好。</p>
+<p><img src="http://p04gt4ifc.bkt.clouddn.com/mq.png" alt="image"></p>
+<h2 id="2-MQ的应用场景"><a href="#2-MQ的应用场景" class="headerlink" title="2. MQ的应用场景"></a>2. MQ的应用场景</h2><h3 id="2-1-应用系统解耦"><a href="#2-1-应用系统解耦" class="headerlink" title="2.1 应用系统解耦"></a>2.1 应用系统解耦</h3><blockquote>
+<p>耦合性(Coupling)，也叫耦合度，是对模块间关联程度的度量。耦合的强弱取决于模块间接口的复杂性、调用模块的方式以及通过界面传送数据的多少。模块间的耦合度是指模块之间的依赖关系，包括控制关系、调用关系、数据传递关系。模块间联系越多，其耦合性越强，同时表明其独立性越差。软件设计中通常用耦合度和内聚度作为衡量模块独立程度的标准。划分模块的一个准则就是高内聚低耦合。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">graph LR</div><div class="line">A[订单系统]--&gt;B[库存系统]</div></pre></td></tr></table></figure>
+<p>以简单的订单库存管理为例，客户下单后，需要通知减库存。传统的做法是订单系统调用库存系统的接口，以串行的方式等待库存系统的结果，这样订单系统和库存系统就有一种耦合关系。加入了消息队列机制后：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">graph LR</div><div class="line">A[订单系统]--&gt; |发布消息| B[消息队列]</div><div class="line">C[库存系统]--&gt; |订阅消息| B[消息队列]</div></pre></td></tr></table></figure>
+<p>订单系统下单后，将消息写入队列并返回下单成功；库存系统订阅消息，获取了下单的消息，做相应的减库存操作；这样每个模块只需要做自己的工作，实现了订单系统和库存系统的解耦。</p>
+<h3 id="2-2-流量削峰"><a href="#2-2-流量削峰" class="headerlink" title="2.2 流量削峰"></a>2.2 流量削峰</h3><p>在高并发场景下，流量过大，导致服务负载过高甚至挂掉，为了解决这个问题，也可以引入消息队列：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">graph LR</div><div class="line">A[用户请求]--&gt;|发布请求| B[消息队列]</div><div class="line">C[服务处理]--&gt;|读取请求| B[消息队列]</div></pre></td></tr></table></figure>
+<p>用户的请求，服务器接收后，首先写入消息队列。假如消息队列长度超过最大数量，则直接抛弃用户请求或跳转到错误页面。</p>
+<h3 id="2-3-日志处理"><a href="#2-3-日志处理" class="headerlink" title="2.3 日志处理"></a>2.3 日志处理</h3><p>将消息队列用在日志采集和处理中，解决大量日志传输的问题。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">graph LR</div><div class="line">A[日志采集]--&gt;|发布日志| B[消息队列]</div><div class="line">C[日志处理]--&gt;|读取日志| B[消息队列]</div></pre></td></tr></table></figure>
 <blockquote>
-<p>以上内容就是关于SpringBoot微框架二之打包运行的全部内容了，谢谢你阅读到了这里！</p>
+<p>以上内容就是关于消息中间件入门解析的全部内容了，谢谢你阅读到了这里！</p>
 <p>Author:zhaoyh</p>
 </blockquote>
 
@@ -412,7 +421,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/SpringBoot/" rel="tag"># SpringBoot</a>
+            <a href="/tags/消息中间件/" rel="tag"># 消息中间件</a>
+          
+            <a href="/tags/RabbitMQ/" rel="tag"># RabbitMQ</a>
+          
+            <a href="/tags/Kafka/" rel="tag"># Kafka</a>
           
         </div>
       
@@ -425,8 +438,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/08/29/SpringBoot微框架一之IDE项目部署/" rel="next" title="SpringBoot微框架一之IDE项目部署">
-                <i class="fa fa-chevron-left"></i> SpringBoot微框架一之IDE项目部署
+              <a href="/2017/10/22/开源日志框架slf4j、log4j、logback的关系及介绍/" rel="next" title="开源日志框架slf4j、log4j、logback的关系及介绍">
+                <i class="fa fa-chevron-left"></i> 开源日志框架slf4j、log4j、logback的关系及介绍
               </a>
             
           </div>
@@ -434,10 +447,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/09/04/SpringBoot微框架三之常用注解分析/" rel="prev" title="SpringBoot微框架三之常用注解分析">
-                SpringBoot微框架三之常用注解分析 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -569,7 +578,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Maven打包"><span class="nav-number">1.</span> <span class="nav-text">Maven打包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mvnw-sh中配置环境变量"><span class="nav-number">1.1.</span> <span class="nav-text">mvnw.sh中配置环境变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#打包运行"><span class="nav-number">1.2.</span> <span class="nav-text">打包运行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ant-Ivy打包并运行"><span class="nav-number">2.</span> <span class="nav-text">Ant+Ivy打包并运行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#打包"><span class="nav-number">2.1.</span> <span class="nav-text">打包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行"><span class="nav-number">2.2.</span> <span class="nav-text">运行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#停止SpringBoot"><span class="nav-number">3.</span> <span class="nav-text">停止SpringBoot</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-常用的消息队列"><span class="nav-number">1.</span> <span class="nav-text">1. 常用的消息队列</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ActiveMQ"><span class="nav-number">1.0.1.</span> <span class="nav-text">ActiveMQ</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RabbitMQ"><span class="nav-number">1.0.2.</span> <span class="nav-text">RabbitMQ</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ZeroMQ"><span class="nav-number">1.0.3.</span> <span class="nav-text">ZeroMQ</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Kafka"><span class="nav-number">1.0.4.</span> <span class="nav-text">Kafka</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RocketMQ"><span class="nav-number">1.0.5.</span> <span class="nav-text">RocketMQ</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-MQ的应用场景"><span class="nav-number">2.</span> <span class="nav-text">2. MQ的应用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-应用系统解耦"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 应用系统解耦</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-流量削峰"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 流量削峰</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-日志处理"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 日志处理</span></a></li></ol></li></ol></div>
             
 
           </div>
