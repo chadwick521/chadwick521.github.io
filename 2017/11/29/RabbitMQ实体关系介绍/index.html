@@ -93,20 +93,20 @@
 
 
 
-<meta name="description" content="首先认识以下RabbitMQ中的实体： 1. 发布者/生产者(producer)发布消息的应用程序。 2. 交换机(exchange)连接发布者和队列的中间组件。接收生产者发送的消息，并根据Bingding规则将消息发送到队列中，ExchangeType决定了Exchange路由消息的行为。 3. 绑定(Binding)是一种方式，表明Exchange和Queue是如何联系的。生产者在将消息发送给">
+<meta name="description" content="首先认识以下RabbitMQ中的实体： 1. 发布者/生产者(producer)发布消息的应用程序。 2. 交换机(exchange)连接发布者和队列的中间组件。接收生产者发送的消息，并根据Bingding规则将消息发送到队列中，ExchangeType决定了Exchange路由消息的行为。">
 <meta name="keywords" content="RabbitMQ">
 <meta property="og:type" content="article">
 <meta property="og:title" content="RabbitMQ实体关系介绍">
 <meta property="og:url" content="http://www.zhaoyh.com.cn/2017/11/29/RabbitMQ实体关系介绍/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
-<meta property="og:description" content="首先认识以下RabbitMQ中的实体： 1. 发布者/生产者(producer)发布消息的应用程序。 2. 交换机(exchange)连接发布者和队列的中间组件。接收生产者发送的消息，并根据Bingding规则将消息发送到队列中，ExchangeType决定了Exchange路由消息的行为。 3. 绑定(Binding)是一种方式，表明Exchange和Queue是如何联系的。生产者在将消息发送给">
+<meta property="og:description" content="首先认识以下RabbitMQ中的实体： 1. 发布者/生产者(producer)发布消息的应用程序。 2. 交换机(exchange)连接发布者和队列的中间组件。接收生产者发送的消息，并根据Bingding规则将消息发送到队列中，ExchangeType决定了Exchange路由消息的行为。">
 <meta property="og:image" content="http://nos.netease.com/knowledge/48bd4e44-80dc-4b9b-987d-68f4d59c8da0">
 <meta property="og:image" content="http://nos.netease.com/knowledge/6799a274-3c94-4908-bad3-895d11a32d4b">
 <meta property="og:image" content="http://nos.netease.com/knowledge/84ac7345-ded0-4fbf-b119-a6d7fc1fa7f4">
-<meta property="og:updated_time" content="2017-11-29T09:44:33.000Z">
+<meta property="og:updated_time" content="2017-11-29T09:46:08.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RabbitMQ实体关系介绍">
-<meta name="twitter:description" content="首先认识以下RabbitMQ中的实体： 1. 发布者/生产者(producer)发布消息的应用程序。 2. 交换机(exchange)连接发布者和队列的中间组件。接收生产者发送的消息，并根据Bingding规则将消息发送到队列中，ExchangeType决定了Exchange路由消息的行为。 3. 绑定(Binding)是一种方式，表明Exchange和Queue是如何联系的。生产者在将消息发送给">
+<meta name="twitter:description" content="首先认识以下RabbitMQ中的实体： 1. 发布者/生产者(producer)发布消息的应用程序。 2. 交换机(exchange)连接发布者和队列的中间组件。接收生产者发送的消息，并根据Bingding规则将消息发送到队列中，ExchangeType决定了Exchange路由消息的行为。">
 <meta name="twitter:image" content="http://nos.netease.com/knowledge/48bd4e44-80dc-4b9b-987d-68f4d59c8da0">
 
 
@@ -369,6 +369,7 @@
         <p>首先认识以下RabbitMQ中的实体：</p>
 <h3 id="1-发布者-生产者-producer"><a href="#1-发布者-生产者-producer" class="headerlink" title="1. 发布者/生产者(producer)"></a>1. 发布者/生产者(producer)</h3><p>发布消息的应用程序。</p>
 <h3 id="2-交换机-exchange"><a href="#2-交换机-exchange" class="headerlink" title="2. 交换机(exchange)"></a>2. 交换机(exchange)</h3><p>连接发布者和队列的中间组件。接收生产者发送的消息，并根据Bingding规则将消息发送到队列中，ExchangeType决定了Exchange路由消息的行为。</p>
+<a id="more"></a>
 <h3 id="3-绑定-Binding"><a href="#3-绑定-Binding" class="headerlink" title="3. 绑定(Binding)"></a>3. 绑定(Binding)</h3><p>是一种方式，表明Exchange和Queue是如何联系的。生产者在将消息发送给Exchange的时候，一般会指定一个routing key，来指定这个消息的路由规则。这个routing key需要与Exchange Type及binding key联合使用才能生效。在正常使用时，一般Exchange Type与binding key都已经固定了，我们的生产者就可以在发送消息给Exchange时，只需要通过指定routing key来决定消息流向哪里。对于消费者来说，只用知道virtual host 和queue的名称就可以了。而对于生产者，则需要知道exchange和routing key的名称，相对而言queue的名称就不那么重要了。</p>
 <h3 id="4-队列-queue"><a href="#4-队列-queue" class="headerlink" title="4. 队列(queue)"></a>4. 队列(queue)</h3><p>消息存储的缓冲，等待消费者来取。</p>
 <h3 id="5-消费者-consumer"><a href="#5-消费者-consumer" class="headerlink" title="5. 消费者(consumer)"></a>5. 消费者(consumer)</h3><p>接收消息的应用程序。</p>
