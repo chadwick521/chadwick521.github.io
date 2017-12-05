@@ -100,7 +100,7 @@
 <meta property="og:url" content="http://www.zhaoyh.com.cn/2015/11/21/Jar包的签名和验签/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
 <meta property="og:description" content="Jar包经过签名后，内置入了数字签名和public key，验证者可以使用这两项数据进行验证，从而可以使用Jar包。  JDK 提供了 keytool 和 jarsigner 两个工具用来进行 Jar 包签名和验证。keytool 用来生成和管理 keystore。keystore 是一个数据文件，存储了 key pair 有关的2种数据：private key 和 certificate，而">
-<meta property="og:updated_time" content="2017-08-29T08:52:53.000Z">
+<meta property="og:updated_time" content="2017-12-05T10:49:12.189Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Jar包的签名和验签">
 <meta name="twitter:description" content="Jar包经过签名后，内置入了数字签名和public key，验证者可以使用这两项数据进行验证，从而可以使用Jar包。  JDK 提供了 keytool 和 jarsigner 两个工具用来进行 Jar 包签名和验证。keytool 用来生成和管理 keystore。keystore 是一个数据文件，存储了 key pair 有关的2种数据：private key 和 certificate，而">
@@ -345,14 +345,14 @@
 </blockquote>
 <p>JDK 提供了 keytool 和 jarsigner 两个工具用来进行 Jar 包签名和验证。keytool 用来生成和管理 keystore。keystore 是一个数据文件，存储了 key pair 有关的2种数据：private key 和 certificate，而 certificate 包含了 public key。jarsigner 读取 keystore，为 Jar 包进行数字签名。jarsigner 也可以对签名的 Jar 包进行验证。以下方法适用于JDK1.8环境。</p>
 <a id="more"></a>
-<h3 id="用keytool生成keystore"><a href="#用keytool生成keystore" class="headerlink" title="用keytool生成keystore"></a>用keytool生成keystore</h3><p>对于在本地生成的Jar包，首先要生成一个keystore:</p>
+<h3 id="1-用keytool生成keystore"><a href="#1-用keytool生成keystore" class="headerlink" title="1. 用keytool生成keystore"></a>1. 用keytool生成keystore</h3><p>对于在本地生成的Jar包，首先要生成一个keystore:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">keytool -genkey -alias zhaoyh -keyalg RSA -validity 2000 -keystore zhaoyh.keystore</div></pre></td></tr></table></figure>
 <p>输入所需要的数据即可！</p>
 <p>查看签名信息：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">keytool -list -keystore &quot;zhaoyh.keystore&quot;</div></pre></td></tr></table></figure>
-<h3 id="用jarsigner对Jar包进行签名"><a href="#用jarsigner对Jar包进行签名" class="headerlink" title="用jarsigner对Jar包进行签名"></a>用jarsigner对Jar包进行签名</h3><p>对于Jar包Ds.jar而言：</p>
+<h3 id="2-用jarsigner对Jar包进行签名"><a href="#2-用jarsigner对Jar包进行签名" class="headerlink" title="2. 用jarsigner对Jar包进行签名"></a>2. 用jarsigner对Jar包进行签名</h3><p>对于Jar包Ds.jar而言：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">jarsigner -tsa http://timestamp.digicert.com -sigalg SHA1withRSA -digestalg SHA1 -verbose  -keystore zhaoyh.keystore -signedjar XX_Signed.jar XX.jar zhaoyh</div></pre></td></tr></table></figure>
-<h3 id="Jar包异地验证"><a href="#Jar包异地验证" class="headerlink" title="Jar包异地验证"></a>Jar包异地验证</h3><p>异地需要XX_Signed.jar和密钥文件zhaoyh.keystore，验证签名：</p>
+<h3 id="3-Jar包异地验证"><a href="#3-Jar包异地验证" class="headerlink" title="3. Jar包异地验证"></a>3. Jar包异地验证</h3><p>异地需要XX_Signed.jar和密钥文件zhaoyh.keystore，验证签名：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">jarsigner -verify -verbose -keystore zhaoyh.keystore XX_Signed.jar</div></pre></td></tr></table></figure>
 <p>此时Jar包就可以正常使用了！</p>
 
@@ -543,7 +543,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#用keytool生成keystore"><span class="nav-text">用keytool生成keystore</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用jarsigner对Jar包进行签名"><span class="nav-text">用jarsigner对Jar包进行签名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Jar包异地验证"><span class="nav-text">Jar包异地验证</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-用keytool生成keystore"><span class="nav-text">1. 用keytool生成keystore</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-用jarsigner对Jar包进行签名"><span class="nav-text">2. 用jarsigner对Jar包进行签名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Jar包异地验证"><span class="nav-text">3. Jar包异地验证</span></a></li></ol></div>
             
 
           </div>
