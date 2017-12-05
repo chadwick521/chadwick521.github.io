@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="RabbitMQ,消息中间件,RPC," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="RPC(Remote Procedure Call,远程过程调用)，是一种计算机通信协议。对于两台机器而言，就是A服务器上的应用程序调用B服务器上的函数或者方法，由于不在同一个内存空间或机器上运行，因此需要借助于网络通信。  1. RPC框架我们首先通过一张图理解RPC的工作流程：">
+<meta name="keywords" content="RabbitMQ,消息中间件,RPC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于消息中间件RabbitMQ实现简单的RPC服务">
+<meta property="og:url" content="http://www.zhaoyh.com.cn/2017/12/05/基于消息中间件RabbitMQ实现简单的RPC服务/index.html">
+<meta property="og:site_name" content="zhaoyh&#39;s blog">
+<meta property="og:description" content="RPC(Remote Procedure Call,远程过程调用)，是一种计算机通信协议。对于两台机器而言，就是A服务器上的应用程序调用B服务器上的函数或者方法，由于不在同一个内存空间或机器上运行，因此需要借助于网络通信。  1. RPC框架我们首先通过一张图理解RPC的工作流程：">
+<meta property="og:image" content="http://owzi8e1as.bkt.clouddn.com/rpc_show.jpg">
+<meta property="og:image" content="http://owzi8e1as.bkt.clouddn.com/rpc_rabbit.jpg">
+<meta property="og:image" content="http://owzi8e1as.bkt.clouddn.com/sender.jpg">
+<meta property="og:image" content="http://owzi8e1as.bkt.clouddn.com/server.jpg">
+<meta property="og:image" content="http://owzi8e1as.bkt.clouddn.com/sender_receive.jpg">
+<meta property="og:updated_time" content="2017-12-05T09:20:57.132Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于消息中间件RabbitMQ实现简单的RPC服务">
+<meta name="twitter:description" content="RPC(Remote Procedure Call,远程过程调用)，是一种计算机通信协议。对于两台机器而言，就是A服务器上的应用程序调用B服务器上的函数或者方法，由于不在同一个内存空间或机器上运行，因此需要借助于网络通信。  1. RPC框架我们首先通过一张图理解RPC的工作流程：">
+<meta name="twitter:image" content="http://owzi8e1as.bkt.clouddn.com/rpc_show.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.zhaoyh.com.cn/2017/12/05/基于消息中间件RabbitMQ实现简单的RPC服务/"/>
+
+
+
+
+
+  <title>基于消息中间件RabbitMQ实现简单的RPC服务 | zhaoyh's blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?a691f1427476a927cc964aa3136dffc5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zhaoyh's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2017/12/05/基于消息中间件RabbitMQ实现简单的RPC服务/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhaoyh">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/kobe.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zhaoyh's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">基于消息中间件RabbitMQ实现简单的RPC服务</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-05T17:18:04+08:00">
+                2017-12-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/消息中间件/" itemprop="url" rel="index">
+                    <span itemprop="name">消息中间件</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>RPC(Remote Procedure Call,远程过程调用)，是一种计算机通信协议。对于两台机器而言，就是A服务器上的应用程序调用B服务器上的函数或者方法，由于不在同一个内存空间或机器上运行，因此需要借助于网络通信。</p>
+</blockquote>
+<h3 id="1-RPC框架"><a href="#1-RPC框架" class="headerlink" title="1. RPC框架"></a>1. RPC框架</h3><p>我们首先通过一张图理解RPC的工作流程：</p>
+<p><img src="http://owzi8e1as.bkt.clouddn.com/rpc_show.jpg" alt="image"></p>
+<a id="more"></a>
+<p>因此，实现一个最简单的RPC服务，只需要Client、Server和Network，本文就是利用消息中间件RabbitMQ作为Network载体传输信息，实现简单的RPC服务。简单原理可如下图所示：</p>
+<p><img src="http://owzi8e1as.bkt.clouddn.com/rpc_rabbit.jpg" alt="image"></p>
+<p>即：当Client发送RPC请求时，Client端是消息生产者，Server端是消息消费者；当Server返回结果时，Server端是消息生产者，Client是消息消费者；发送和返回使用不同的队列。</p>
+<p>接下来我们通过代码，详细展示一个计算斐波那契数列的RPC服务。</p>
+<h3 id="2-RPCServer实现"><a href="#2-RPCServer实现" class="headerlink" title="2. RPCServer实现"></a>2. RPCServer实现</h3><h4 id="2-1-Server初始化"><a href="#2-1-Server初始化" class="headerlink" title="2.1 Server初始化"></a>2.1 Server初始化</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 队列名、交换机名、路由键</div><div class="line"> */</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String EXCHANGE_NAME = <span class="string">"rpc_exchange"</span>;</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String QUEUE_NAME = <span class="string">"request_rpc_queue"</span>;</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String ROUTING_KEY = <span class="string">"rpc_routing_key"</span>;</div><div class="line"></div><div class="line"><span class="keyword">private</span> Connection connection = <span class="keyword">null</span>;</div><div class="line"><span class="keyword">private</span> Channel channel = <span class="keyword">null</span>;</div><div class="line"><span class="keyword">private</span> QueueingConsumer consumer = <span class="keyword">null</span>;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Server的构造函数</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">private</span> <span class="title">RPCServer</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        <span class="comment">//创建链接</span></div><div class="line">        ConnectionFactory factory = <span class="keyword">new</span> ConnectionFactory();</div><div class="line">        factory.setHost(Config.HOST);</div><div class="line">        factory.setPort(Config.PORT);</div><div class="line">        factory.setUsername(Config.USER);</div><div class="line">        factory.setPassword(Config.PASSWORD);</div><div class="line">        connection = factory.newConnection();</div><div class="line">        </div><div class="line">        <span class="comment">//创建信道</span></div><div class="line">        channel = connection.createChannel();</div><div class="line">        </div><div class="line">        <span class="comment">//设置AMQP的通信结构</span></div><div class="line">        channel.exchangeDeclare(EXCHANGE_NAME, <span class="string">"direct"</span>);</div><div class="line">        channel.queueDeclare(QUEUE_NAME, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</div><div class="line">        channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, ROUTING_KEY);</div><div class="line"></div><div class="line">        <span class="comment">//设置消费者</span></div><div class="line">        consumer = <span class="keyword">new</span> QueueingConsumer(channel);</div><div class="line">        channel.basicConsume(QUEUE_NAME, <span class="keyword">false</span>, QUEUE_NAME, consumer);</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            LOG.error(<span class="string">"build connection failed!"</span>, e);</div><div class="line">        &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>初始化就是声明RabbitMQ的链接工厂、链接、信道、队列、交换机等等，并做了绑定，由此构成了AMQP的通信结构。</p>
+<h4 id="2-2-监听队列并反馈"><a href="#2-2-监听队列并反馈" class="headerlink" title="2.2 监听队列并反馈"></a>2.2 监听队列并反馈</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 开启server</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">startServer</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        LOG.info(<span class="string">"Waiting for RPC calls....."</span>);</div><div class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">            <span class="comment">//获得文本消息</span></div><div class="line">            QueueingConsumer.Delivery delivery = consumer.nextDelivery();</div><div class="line">            BasicProperties props = delivery.getProperties();</div><div class="line"></div><div class="line">            <span class="comment">//返回消息的属性</span></div><div class="line">            BasicProperties replyProps = <span class="keyword">new</span> BasicProperties.Builder()</div><div class="line">                    .correlationId(props.getCorrelationId())</div><div class="line">                    .build();</div><div class="line">            <span class="keyword">long</span> receiveTime = System.currentTimeMillis();</div><div class="line">            JSONObject json = <span class="keyword">new</span> JSONObject();</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                String message = <span class="keyword">new</span> String(delivery.getBody(), <span class="string">"UTF-8"</span>);</div><div class="line">                <span class="keyword">int</span> n = Integer.parseInt(message);</div><div class="line">                LOG.info(<span class="string">"Got a request: fib("</span> + message + <span class="string">")"</span>);</div><div class="line">                json.put(<span class="string">"status"</span>, <span class="string">"success"</span>);</div><div class="line">                json.put(<span class="string">"result"</span>, fib(n));</div><div class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">                json.put(<span class="string">"status"</span>, <span class="string">"fail"</span>);</div><div class="line">                json.put(<span class="string">"reason"</span>, <span class="string">"Not a Number!"</span>);</div><div class="line">                LOG.error(<span class="string">"receive message failed!"</span>, e);</div><div class="line">            &#125; <span class="keyword">finally</span> &#123;</div><div class="line">                <span class="keyword">long</span> responseTime = System.currentTimeMillis();</div><div class="line">                json.put(<span class="string">"calculateTime"</span>, (responseTime - receiveTime));</div><div class="line">                channel.basicPublish(<span class="string">""</span>, props.getReplyTo(), replyProps, json.toString().getBytes(<span class="string">"UTF-8"</span>));</div><div class="line">                channel.basicAck(delivery.getEnvelope().getDeliveryTag(), <span class="keyword">false</span>);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">catch</span>  (Exception e) &#123;</div><div class="line">        LOG.error(<span class="string">"server failed!"</span>, e);</div><div class="line">    &#125; <span class="keyword">finally</span> &#123;</div><div class="line">        <span class="keyword">if</span> (connection != <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                connection.close();</div><div class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">                LOG.error(<span class="string">"close failed!"</span>, e);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在该方法中使用了一个无限循环，每次处理一条消息。通过调用消费者对象的nextDelivery方法来获得RabbitMQ队列的最新一条消息。同时通过getProperties获取到消息中的反馈信息属性，用于标记客户端Client的属性。然后计算斐波那契数列的结果。<br>最后通过basicAck使用消息信封向RabbitMQ确认了该消息。</p>
+<p>到这里就实现了计算斐波那契数列RPC服务的Server端。</p>
+<h3 id="3-RPCClient实现"><a href="#3-RPCClient实现" class="headerlink" title="3. RPCClient实现"></a>3. RPCClient实现</h3><h4 id="3-1-初始化CLient"><a href="#3-1-初始化CLient" class="headerlink" title="3.1 初始化CLient"></a>3.1 初始化CLient</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 消息请求的队列名、交换机名、路由键</div><div class="line"> */</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String EXCHANGE_NAME = <span class="string">"rpc_exchange"</span>;</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String QUEUE_NAME = <span class="string">"request_rpc_queue"</span>;</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String ROUTING_KEY = <span class="string">"rpc_routing_key"</span>;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 消息返回的队列名、交换机名、路由键</div><div class="line"> */</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String RESPONSE_QUEUE = <span class="string">"response_rpc_queue"</span>;</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String RESPONSE_ROUTING_KEY = <span class="string">"response_rpc_routing_key"</span>;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * RabbitMQ的实体</div><div class="line"> */</div><div class="line"><span class="keyword">private</span> Connection connection = <span class="keyword">null</span>;</div><div class="line"><span class="keyword">private</span> Channel channel = <span class="keyword">null</span>;</div><div class="line"><span class="keyword">private</span> QueueingConsumer consumer = <span class="keyword">null</span>;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 构造客户端</div><div class="line"> * <span class="doctag">@throws</span> Exception</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">private</span> <span class="title">RPCClient</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">    ConnectionFactory factory = <span class="keyword">new</span> ConnectionFactory();</div><div class="line">    factory.setHost(Config.HOST);</div><div class="line">    factory.setPort(Config.PORT);</div><div class="line">    factory.setUsername(Config.USER);</div><div class="line">    factory.setPassword(Config.PASSWORD);</div><div class="line">    connection = factory.newConnection();</div><div class="line"></div><div class="line">    channel = connection.createChannel();</div><div class="line">    channel.exchangeDeclare(EXCHANGE_NAME, <span class="string">"direct"</span>);</div><div class="line">    channel.queueDeclare(QUEUE_NAME, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</div><div class="line">    channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, ROUTING_KEY);</div><div class="line"></div><div class="line"></div><div class="line">    channel.queueDeclare(RESPONSE_QUEUE, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</div><div class="line">    channel.queueBind(RESPONSE_QUEUE, EXCHANGE_NAME, RESPONSE_ROUTING_KEY);</div><div class="line">    consumer = <span class="keyword">new</span> QueueingConsumer(channel);</div><div class="line">    channel.basicConsume(RESPONSE_QUEUE, <span class="keyword">true</span>, consumer);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里声明AMQP结构体的方式和Server端类似，只不过Client端需要多声明一个队列，用于RPC的response。</p>
+<h4 id="3-2-发送-接收消息"><a href="#3-2-发送-接收消息" class="headerlink" title="3.2 发送/接收消息"></a>3.2 发送/接收消息</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 请求server</div><div class="line"> * <span class="doctag">@param</span> message</div><div class="line"> * <span class="doctag">@return</span></div><div class="line"> * <span class="doctag">@throws</span> Exception</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">private</span> String <span class="title">requestMessage</span><span class="params">(String message)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">    String response = <span class="keyword">null</span>;</div><div class="line">    String corrId = UUID.randomUUID().toString();</div><div class="line">    BasicProperties props = <span class="keyword">new</span> BasicProperties.Builder().correlationId(corrId).replyTo(RESPONSE_QUEUE).build();</div><div class="line">    channel.basicPublish(<span class="string">""</span>, QUEUE_NAME, props, message.getBytes(<span class="string">"UTF-8"</span>));</div><div class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">        QueueingConsumer.Delivery delivery = consumer.nextDelivery();</div><div class="line">        <span class="keyword">if</span> (delivery.getProperties().getCorrelationId().equals(corrId)) &#123;</div><div class="line">            response = <span class="keyword">new</span> String(delivery.getBody(),<span class="string">"UTF-8"</span>);</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> response;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>BasicProperties用于存储你请求消息的属性，这里我设置了correlationId和replyTo属性，用于Server端的返回识别。</p>
+<h3 id="4-运行测试"><a href="#4-运行测试" class="headerlink" title="4. 运行测试"></a>4. 运行测试</h3><p>Client端发送：</p>
+<p><img src="http://owzi8e1as.bkt.clouddn.com/sender.jpg" alt="image"></p>
+<p>Server端接收并处理：<br><img src="http://owzi8e1as.bkt.clouddn.com/server.jpg" alt="image"></p>
+<p>Client收到计算结果：<br><img src="http://owzi8e1as.bkt.clouddn.com/sender_receive.jpg" alt="image"></p>
+<p>由于我运行RabbitMQ的服务器是租用的阿里云的，差不多传输时延在60ms左右，如果把RPC服务和消息中间件同机房部署的话延时基本上就在ms级别。</p>
+<h3 id="5-FAQ"><a href="#5-FAQ" class="headerlink" title="5. FAQ"></a>5. FAQ</h3><h4 id="5-1-说明"><a href="#5-1-说明" class="headerlink" title="5.1 说明"></a>5.1 说明</h4><p>需要体验完整的过程，你需要如下环境：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">JDK1.6以上 + Maven + RabbitMQ</div></pre></td></tr></table></figure>
+<h4 id="5-2-源代码"><a href="#5-2-源代码" class="headerlink" title="5.2 源代码"></a>5.2 源代码</h4><p>完整代码代码请戳：<a href="https://github.com/chadwick521/rabbitmqdemo" target="_blank" rel="external">github</a></p>
+<p>其中Server的代码在：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rpc.RPCServer</div></pre></td></tr></table></figure>
+<p>Client端的代码位置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rpc.RPCClient</div></pre></td></tr></table></figure>
+<blockquote>
+<p>以上内容就是关于基于消息中间件RabbitMQ实现简单的RPC服务的全部内容了，谢谢你阅读到了这里！</p>
+<p>Author:zhaoyh</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/RabbitMQ/" rel="tag"># RabbitMQ</a>
+          
+            <a href="/tags/消息中间件/" rel="tag"># 消息中间件</a>
+          
+            <a href="/tags/RPC/" rel="tag"># RPC</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/29/RabbitMQ实体关系介绍/" rel="next" title="RabbitMQ实体关系介绍">
+                <i class="fa fa-chevron-left"></i> RabbitMQ实体关系介绍
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMDY5Mi83MjQ3"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/kobe.jpg"
+               alt="zhaoyh" />
+          <p class="site-author-name" itemprop="name">zhaoyh</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-RPC框架"><span class="nav-number">1.</span> <span class="nav-text">1. RPC框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-RPCServer实现"><span class="nav-number">2.</span> <span class="nav-text">2. RPCServer实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-Server初始化"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 Server初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-监听队列并反馈"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 监听队列并反馈</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-RPCClient实现"><span class="nav-number">3.</span> <span class="nav-text">3. RPCClient实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-初始化CLient"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 初始化CLient</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-发送-接收消息"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 发送/接收消息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-运行测试"><span class="nav-number">4.</span> <span class="nav-text">4. 运行测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-FAQ"><span class="nav-number">5.</span> <span class="nav-text">5. FAQ</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#5-1-说明"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-2-源代码"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 源代码</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhaoyh</span>
+</div>
+
+
+<a href="http://www.miitbeian.gov.cn/">京ICP备16047594号</a>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
