@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Nginx,Resin," />
+  <meta name="keywords" content="Resin,Nginx," />
 
 
 
@@ -93,17 +93,17 @@
 
 
 
-<meta name="description" content="最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。  安装NginxMacOS下可参考：Mac安装Nginx 或者 点击这里；">
-<meta name="keywords" content="Nginx,Resin">
+<meta name="description" content="最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。  1. 安装NginxMacOS下可参考：Mac安装Nginx 或者 点击这里；">
+<meta name="keywords" content="Resin,Nginx">
 <meta property="og:type" content="article">
 <meta property="og:title" content="基于Nginx和Resin配置负载均衡的集群">
 <meta property="og:url" content="http://www.zhaoyh.com.cn/2017/09/18/基于Nginx和Resin配置负载均衡的集群/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
-<meta property="og:description" content="最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。  安装NginxMacOS下可参考：Mac安装Nginx 或者 点击这里；">
-<meta property="og:updated_time" content="2017-09-18T07:44:22.000Z">
+<meta property="og:description" content="最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。  1. 安装NginxMacOS下可参考：Mac安装Nginx 或者 点击这里；">
+<meta property="og:updated_time" content="2017-12-05T09:57:45.416Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基于Nginx和Resin配置负载均衡的集群">
-<meta name="twitter:description" content="最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。  安装NginxMacOS下可参考：Mac安装Nginx 或者 点击这里；">
+<meta name="twitter:description" content="最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。  1. 安装NginxMacOS下可参考：Mac安装Nginx 或者 点击这里；">
 
 
 
@@ -343,11 +343,11 @@
         <blockquote>
 <p>最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。</p>
 </blockquote>
-<h3 id="安装Nginx"><a href="#安装Nginx" class="headerlink" title="安装Nginx"></a>安装Nginx</h3><p>MacOS下可参考：<a href="http://note.youdao.com/noteshare?id=833f067c752edc1c5cd71e8e86f7e0dc" target="_blank" rel="external">Mac安装Nginx</a> 或者 <a href="http://www.jianshu.com/p/d5114a2a2052" target="_blank" rel="external">点击这里</a>；<br><a id="more"></a></p>
+<h3 id="1-安装Nginx"><a href="#1-安装Nginx" class="headerlink" title="1. 安装Nginx"></a>1. 安装Nginx</h3><p>MacOS下可参考：<a href="http://note.youdao.com/noteshare?id=833f067c752edc1c5cd71e8e86f7e0dc" target="_blank" rel="external">Mac安装Nginx</a> 或者 <a href="http://www.jianshu.com/p/d5114a2a2052" target="_blank" rel="external">点击这里</a>；<br><a id="more"></a></p>
 <p>CentOS下可参考：<a href="https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-centos-7" target="_blank" rel="external">CentOS安装Nginx</a></p>
 <p>安装成功后可在浏览器输入默认的访问地址：<a href="http://你的IP:8080" target="_blank" rel="external">http://你的IP:8080</a> , 即可测试是否安装成功。</p>
-<h3 id="配置Resin"><a href="#配置Resin" class="headerlink" title="配置Resin"></a>配置Resin</h3><p>确保你安装好了Resin并配置了可访问的Web项目，Linux下配置Resin的Web项目可查看之前的<a href="http://zhaoyh.com.cn/2017/04/17/Linux%E7%8E%AF%E5%A2%83%E4%B8%8B%E5%9C%A8Resin4%E5%92%8CTomcat8%E5%AE%B9%E5%99%A8%E4%B8%AD%E9%83%A8%E7%BD%B2%E9%A1%B9%E7%9B%AE/" target="_blank" rel="external">博文</a>。</p>
-<h3 id="配置Nginx负载均衡"><a href="#配置Nginx负载均衡" class="headerlink" title="配置Nginx负载均衡"></a>配置Nginx负载均衡</h3><p>以我目前的offernews为例，我使用的第一个服务器是腾讯云的，访问地址是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://123.206.7.154</div></pre></td></tr></table></figure></p>
+<h3 id="2-配置Resin"><a href="#2-配置Resin" class="headerlink" title="2. 配置Resin"></a>2. 配置Resin</h3><p>确保你安装好了Resin并配置了可访问的Web项目，Linux下配置Resin的Web项目可查看之前的<a href="http://zhaoyh.com.cn/2017/04/17/Linux%E7%8E%AF%E5%A2%83%E4%B8%8B%E5%9C%A8Resin4%E5%92%8CTomcat8%E5%AE%B9%E5%99%A8%E4%B8%AD%E9%83%A8%E7%BD%B2%E9%A1%B9%E7%9B%AE/" target="_blank" rel="external">博文</a>。</p>
+<h3 id="3-配置Nginx负载均衡"><a href="#3-配置Nginx负载均衡" class="headerlink" title="3. 配置Nginx负载均衡"></a>3. 配置Nginx负载均衡</h3><p>以我目前的offernews为例，我使用的第一个服务器是腾讯云的，访问地址是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://123.206.7.154</div></pre></td></tr></table></figure></p>
 <p>搬瓦工的VPS上配置的访问链接是：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://xx.xx.xx:8091</div></pre></td></tr></table></figure>
 <p>为了安全我隐藏了该VPS的IP地址，不过这不影响你的配置哈！</p>
@@ -393,9 +393,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Nginx/" rel="tag"># Nginx</a>
-          
             <a href="/tags/Resin/" rel="tag"># Resin</a>
+          
+            <a href="/tags/Nginx/" rel="tag"># Nginx</a>
           
         </div>
       
@@ -552,7 +552,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装Nginx"><span class="nav-text">安装Nginx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置Resin"><span class="nav-text">配置Resin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置Nginx负载均衡"><span class="nav-text">配置Nginx负载均衡</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-安装Nginx"><span class="nav-text">1. 安装Nginx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-配置Resin"><span class="nav-text">2. 配置Resin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-配置Nginx负载均衡"><span class="nav-text">3. 配置Nginx负载均衡</span></a></li></ol></div>
             
 
           </div>
