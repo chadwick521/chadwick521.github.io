@@ -367,20 +367,20 @@
 
       
         <p>首先认识以下RabbitMQ中的实体：</p>
-<h3 id="1-发布者-生产者-producer"><a href="#1-发布者-生产者-producer" class="headerlink" title="1. 发布者/生产者(producer)"></a>1. 发布者/生产者(producer)</h3><p>发布消息的应用程序。</p>
-<h3 id="2-交换机-exchange"><a href="#2-交换机-exchange" class="headerlink" title="2. 交换机(exchange)"></a>2. 交换机(exchange)</h3><p>连接发布者和队列的中间组件。接收生产者发送的消息，并根据Bingding规则将消息发送到队列中，ExchangeType决定了Exchange路由消息的行为。</p>
+<h3><span id="1-发布者生产者producer">1. 发布者/生产者(producer)</span></h3><p>发布消息的应用程序。</p>
+<h3><span id="2-交换机exchange">2. 交换机(exchange)</span></h3><p>连接发布者和队列的中间组件。接收生产者发送的消息，并根据Bingding规则将消息发送到队列中，ExchangeType决定了Exchange路由消息的行为。</p>
 <a id="more"></a>
-<h3 id="3-绑定-Binding"><a href="#3-绑定-Binding" class="headerlink" title="3. 绑定(Binding)"></a>3. 绑定(Binding)</h3><p>是一种方式，表明Exchange和Queue是如何联系的。生产者在将消息发送给Exchange的时候，一般会指定一个routing key，来指定这个消息的路由规则。这个routing key需要与Exchange Type及binding key联合使用才能生效。在正常使用时，一般Exchange Type与binding key都已经固定了，我们的生产者就可以在发送消息给Exchange时，只需要通过指定routing key来决定消息流向哪里。对于消费者来说，只用知道virtual host 和queue的名称就可以了。而对于生产者，则需要知道exchange和routing key的名称，相对而言queue的名称就不那么重要了。</p>
-<h3 id="4-队列-queue"><a href="#4-队列-queue" class="headerlink" title="4. 队列(queue)"></a>4. 队列(queue)</h3><p>消息存储的缓冲，等待消费者来取。</p>
-<h3 id="5-消费者-consumer"><a href="#5-消费者-consumer" class="headerlink" title="5. 消费者(consumer)"></a>5. 消费者(consumer)</h3><p>接收消息的应用程序。</p>
+<h3><span id="3-绑定binding">3. 绑定(Binding)</span></h3><p>是一种方式，表明Exchange和Queue是如何联系的。生产者在将消息发送给Exchange的时候，一般会指定一个routing key，来指定这个消息的路由规则。这个routing key需要与Exchange Type及binding key联合使用才能生效。在正常使用时，一般Exchange Type与binding key都已经固定了，我们的生产者就可以在发送消息给Exchange时，只需要通过指定routing key来决定消息流向哪里。对于消费者来说，只用知道virtual host 和queue的名称就可以了。而对于生产者，则需要知道exchange和routing key的名称，相对而言queue的名称就不那么重要了。</p>
+<h3><span id="4-队列queue">4. 队列(queue)</span></h3><p>消息存储的缓冲，等待消费者来取。</p>
+<h3><span id="5-消费者consumer">5. 消费者(consumer)</span></h3><p>接收消息的应用程序。</p>
 <blockquote>
 <p>RabbitMQ消息模型的核心理念是：发布者（producer）不会直接发送任何消息给队列。事实上，发布者（producer）甚至不知道消息是否已经被投递到队列。</p>
 </blockquote>
-<h3 id="6-介绍交换机"><a href="#6-介绍交换机" class="headerlink" title="6. 介绍交换机"></a>6. 介绍交换机</h3><p>对于交换机，它一边从发布者方接收消息，一边把消息推送到队列。交换机必须知道如何处理它接收到的消息，是应该推送到指定的队列还是是多个队列，或者是直接忽略消息。这些规则是通过交换机类型（exchange type）来定义的。下面介绍最常见的三种Exchange Type: direct、fanout、topic。</p>
-<h4 id="6-1-direct规则"><a href="#6-1-direct规则" class="headerlink" title="6.1 direct规则"></a>6.1 direct规则</h4><p><img src="http://nos.netease.com/knowledge/48bd4e44-80dc-4b9b-987d-68f4d59c8da0" alt="image"></p>
+<h3><span id="6-介绍交换机">6. 介绍交换机</span></h3><p>对于交换机，它一边从发布者方接收消息，一边把消息推送到队列。交换机必须知道如何处理它接收到的消息，是应该推送到指定的队列还是是多个队列，或者是直接忽略消息。这些规则是通过交换机类型（exchange type）来定义的。下面介绍最常见的三种Exchange Type: direct、fanout、topic。</p>
+<h4><span id="61-direct规则">6.1 direct规则</span></h4><p><img src="http://nos.netease.com/knowledge/48bd4e44-80dc-4b9b-987d-68f4d59c8da0" alt="image"></p>
 <p>如果是direct类型，就会将消息中的RoutingKey与该Exchange关联的所有Binding中的BindingKey进行比较，如果相等，则发送到该Binding对应的Queue中。有一个需要注意的地方：如果找不到指定的exchange，就会报错。但routing key找不到的话，不会报错，这条消息会直接丢失，所以此处要小心。</p>
-<h4 id="6-2-fanout规则"><a href="#6-2-fanout规则" class="headerlink" title="6.2 fanout规则"></a>6.2 fanout规则</h4><p><img src="http://nos.netease.com/knowledge/6799a274-3c94-4908-bad3-895d11a32d4b" alt="image"><br>fanout 扇形队列，顾名思义，就是像风扇吹面粉一样，吹得到处都是。如果使用fanout类型的exchange，那么routing key就不需要了。因为凡是绑定到这个exchange的queue，都会收到消息。因此这种规则实现了常用的<strong>发布／订阅</strong>模式。如果交换机没有绑定任何Queue，则消息就会被丢弃。</p>
-<h4 id="6-3-topic规则"><a href="#6-3-topic规则" class="headerlink" title="6.3 topic规则"></a>6.3 topic规则</h4><p><img src="http://nos.netease.com/knowledge/84ac7345-ded0-4fbf-b119-a6d7fc1fa7f4" alt="image"></p>
+<h4><span id="62-fanout规则">6.2 fanout规则</span></h4><p><img src="http://nos.netease.com/knowledge/6799a274-3c94-4908-bad3-895d11a32d4b" alt="image"><br>fanout 扇形队列，顾名思义，就是像风扇吹面粉一样，吹得到处都是。如果使用fanout类型的exchange，那么routing key就不需要了。因为凡是绑定到这个exchange的queue，都会收到消息。因此这种规则实现了常用的<strong>发布／订阅</strong>模式。如果交换机没有绑定任何Queue，则消息就会被丢弃。</p>
+<h4><span id="63-topic规则">6.3 topic规则</span></h4><p><img src="http://nos.netease.com/knowledge/84ac7345-ded0-4fbf-b119-a6d7fc1fa7f4" alt="image"></p>
 <p>这种模式类似于模糊匹配，每个交换机都绑定到自己关心的routingkey到Queue的绑定上，因此与direct交换机一样，必须指定routingkey。匹配模式可看上述例子，如果交换机没有匹配任何Queue，则消息会被丢弃。</p>
 <blockquote>
 <p>以上内容就是关于RabbitMQ实体关系介绍的全部内容了，谢谢你阅读到了这里！</p>
@@ -572,7 +572,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-发布者-生产者-producer"><span class="nav-number">1.</span> <span class="nav-text">1. 发布者/生产者(producer)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-交换机-exchange"><span class="nav-number">2.</span> <span class="nav-text">2. 交换机(exchange)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-绑定-Binding"><span class="nav-number">3.</span> <span class="nav-text">3. 绑定(Binding)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-队列-queue"><span class="nav-number">4.</span> <span class="nav-text">4. 队列(queue)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-消费者-consumer"><span class="nav-number">5.</span> <span class="nav-text">5. 消费者(consumer)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-介绍交换机"><span class="nav-number">6.</span> <span class="nav-text">6. 介绍交换机</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#6-1-direct规则"><span class="nav-number">6.1.</span> <span class="nav-text">6.1 direct规则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-fanout规则"><span class="nav-number">6.2.</span> <span class="nav-text">6.2 fanout规则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-3-topic规则"><span class="nav-number">6.3.</span> <span class="nav-text">6.3 topic规则</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-number">1.</span> <span class="nav-text">1. 发布者/生产者(producer)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-number">2.</span> <span class="nav-text">2. 交换机(exchange)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-number">3.</span> <span class="nav-text">3. 绑定(Binding)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-number">4.</span> <span class="nav-text">4. 队列(queue)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-number">5.</span> <span class="nav-text">5. 消费者(consumer)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#undefined"><span class="nav-number">6.</span> <span class="nav-text">6. 介绍交换机</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#undefined"><span class="nav-number">6.1.</span> <span class="nav-text">6.1 direct规则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#undefined"><span class="nav-number">6.2.</span> <span class="nav-text">6.2 fanout规则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#undefined"><span class="nav-number">6.3.</span> <span class="nav-text">6.3 topic规则</span></a></li></ol></li></ol></div>
             
 
           </div>
