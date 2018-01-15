@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Resin,Nginx,负载均衡," />
+  <meta name="keywords" content="Eureka,Ribbon,负载均衡," />
 
 
 
@@ -93,17 +93,28 @@
 
 
 
-<meta name="description" content="最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。  1. 安装NginxMacOS下可参考：Mac安装Nginx 或者 点击这里；">
-<meta name="keywords" content="Resin,Nginx,负载均衡">
+<meta name="description" content="Eureka是Spring Cloud Eureka的简称，是Netflix提供的组件之一。通过Eureka可以提供服务注册、发现、负载均衡、降级、熔断等功能。本篇主要介绍Eureka作为服务注册中心，以及实现一个基本的负载均衡服务。">
+<meta name="keywords" content="Eureka,Ribbon,负载均衡">
 <meta property="og:type" content="article">
-<meta property="og:title" content="基于Nginx和Resin配置负载均衡的集群">
-<meta property="og:url" content="http://www.zhaoyh.com.cn/2017/09/18/基于Nginx和Resin配置负载均衡的集群/index.html">
+<meta property="og:title" content="Spring Cloud服务治理之基于Eureka和Ribbon的负载均衡实现">
+<meta property="og:url" content="http://www.zhaoyh.com.cn/2018/01/15/Spring-Cloud服务治理之基于Eureka和Ribbon的负载均衡实现/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
-<meta property="og:description" content="最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。  1. 安装NginxMacOS下可参考：Mac安装Nginx 或者 点击这里；">
-<meta property="og:updated_time" content="2018-01-15T14:54:41.954Z">
+<meta property="og:description" content="Eureka是Spring Cloud Eureka的简称，是Netflix提供的组件之一。通过Eureka可以提供服务注册、发现、负载均衡、降级、熔断等功能。本篇主要介绍Eureka作为服务注册中心，以及实现一个基本的负载均衡服务。">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/A_Request_B.jpg">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/Multi_Request.jpg">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/A_eureka_B.jpg">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/Eureka_entity.jpg">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/eureka_server.jpg">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/eureka_server_list.jpg">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/eureka_client.jpg">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/eureka_result_9092.jpg">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/eureka_result_9093.jpg">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/eureka_result_9094.jpg">
+<meta property="og:updated_time" content="2018-01-15T14:55:27.142Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="基于Nginx和Resin配置负载均衡的集群">
-<meta name="twitter:description" content="最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。  1. 安装NginxMacOS下可参考：Mac安装Nginx 或者 点击这里；">
+<meta name="twitter:title" content="Spring Cloud服务治理之基于Eureka和Ribbon的负载均衡实现">
+<meta name="twitter:description" content="Eureka是Spring Cloud Eureka的简称，是Netflix提供的组件之一。通过Eureka可以提供服务注册、发现、负载均衡、降级、熔断等功能。本篇主要介绍Eureka作为服务注册中心，以及实现一个基本的负载均衡服务。">
+<meta name="twitter:image" content="http://p2dfdqzbu.bkt.clouddn.com/A_Request_B.jpg">
 
 
 
@@ -131,13 +142,13 @@
 
 
 
-  <link rel="canonical" href="http://www.zhaoyh.com.cn/2017/09/18/基于Nginx和Resin配置负载均衡的集群/"/>
+  <link rel="canonical" href="http://www.zhaoyh.com.cn/2018/01/15/Spring-Cloud服务治理之基于Eureka和Ribbon的负载均衡实现/"/>
 
 
 
 
 
-  <title>基于Nginx和Resin配置负载均衡的集群 | zhaoyh's blog</title>
+  <title>Spring Cloud服务治理之基于Eureka和Ribbon的负载均衡实现 | zhaoyh's blog</title>
   
 
 
@@ -310,7 +321,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2017/09/18/基于Nginx和Resin配置负载均衡的集群/">
+    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2018/01/15/Spring-Cloud服务治理之基于Eureka和Ribbon的负载均衡实现/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zhaoyh">
@@ -327,7 +338,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">基于Nginx和Resin配置负载均衡的集群</h2>
+          <h2 class="post-title" itemprop="name headline">Spring Cloud服务治理之基于Eureka和Ribbon的负载均衡实现</h2>
         
 
         <div class="post-meta">
@@ -339,8 +350,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-18T15:35:07+08:00">
-                2017-09-18
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-15T22:51:43+08:00">
+                2018-01-15
               </time>
             
 
@@ -349,6 +360,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring-Cloud/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring Cloud</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -374,29 +407,73 @@
       
 
       
-        <blockquote>
-<p>最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。</p>
-</blockquote>
-<h3 id="1-安装Nginx"><a href="#1-安装Nginx" class="headerlink" title="1. 安装Nginx"></a>1. 安装Nginx</h3><p>MacOS下可参考：<a href="http://note.youdao.com/noteshare?id=833f067c752edc1c5cd71e8e86f7e0dc" target="_blank" rel="external">Mac安装Nginx</a> 或者 <a href="http://www.jianshu.com/p/d5114a2a2052" target="_blank" rel="external">点击这里</a>；<br><a id="more"></a></p>
-<p>CentOS下可参考：<a href="https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-centos-7" target="_blank" rel="external">CentOS安装Nginx</a></p>
-<p>安装成功后可在浏览器输入默认的访问地址：<a href="http://你的IP:8080" target="_blank" rel="external">http://你的IP:8080</a> , 即可测试是否安装成功。</p>
-<h3 id="2-配置Resin"><a href="#2-配置Resin" class="headerlink" title="2. 配置Resin"></a>2. 配置Resin</h3><p>确保你安装好了Resin并配置了可访问的Web项目，Linux下配置Resin的Web项目可查看之前的<a href="http://zhaoyh.com.cn/2017/04/17/Linux%E7%8E%AF%E5%A2%83%E4%B8%8B%E5%9C%A8Resin4%E5%92%8CTomcat8%E5%AE%B9%E5%99%A8%E4%B8%AD%E9%83%A8%E7%BD%B2%E9%A1%B9%E7%9B%AE/" target="_blank" rel="external">博文</a>。</p>
-<h3 id="3-配置Nginx负载均衡"><a href="#3-配置Nginx负载均衡" class="headerlink" title="3. 配置Nginx负载均衡"></a>3. 配置Nginx负载均衡</h3><p>以我目前的offernews为例，我使用的第一个服务器是腾讯云的，访问地址是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://123.206.7.154</div></pre></td></tr></table></figure></p>
-<p>搬瓦工的VPS上配置的访问链接是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://xx.xx.xx:8091</div></pre></td></tr></table></figure>
-<p>为了安全我隐藏了该VPS的IP地址，不过这不影响你的配置哈！</p>
-<p>进入到你Nginx的安装目录，例如我的是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd /usr/local/etc/nginx</div><div class="line">vi nginx.conf</div></pre></td></tr></table></figure>
-<p>在http模块中加入upstream配置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">upstream offernews &#123;</div><div class="line">        server xx.xx.xx:8091 weight=1;</div><div class="line">        server 123.206.7.154:80 weight=4;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<p>此处我采用的是按照weight权重来控制访问比例，你可以根据你的服务器的配置来控制概率，我这里的访问比率是4:1。</p>
-<p>在server模块的location中加入：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">location / &#123;</div><div class="line">            access_log on;</div><div class="line">            proxy_pass http://offernews;</div><div class="line">            proxy_set_header X-Real-IP $remote_addr;</div><div class="line">            proxy_set_header Host $host;</div><div class="line">            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</div><div class="line">            client_max_body_size    10m;</div><div class="line">            client_body_buffer_size 128k;</div><div class="line">        &#125;</div></pre></td></tr></table></figure>
-<p>其中proxy_pass 的配置是你刚才定义的upstream的名称，使用 <a href="http://offernews" target="_blank" rel="external">http://offernews</a> 来表述。</p>
-<p>此时再输入你配置了Nginx的服务器IP地址加端口号即可以负载均衡的策略来访问你的Web项目了，本文只是展示了最简单的按照权重的负载均衡策略，后续你也可以根据实际需求来配置自己的负载均衡策略。</p>
+        <p>Eureka是Spring Cloud Eureka的简称，是Netflix提供的组件之一。<br>通过Eureka可以提供服务注册、发现、负载均衡、降级、熔断等功能。本篇主要介绍Eureka作为服务注册中心，以及实现一个基本的负载均衡服务。</p>
+<a id="more"></a>
+<h3 id="1-为什么需要Eureka"><a href="#1-为什么需要Eureka" class="headerlink" title="1. 为什么需要Eureka"></a>1. 为什么需要Eureka</h3><p>对于一个大型系统来说，不可避免的会存在各种子系统之间的调用关系，比如一个子系统A请求子系统B的服务：</p>
+<p><img src="http://p2dfdqzbu.bkt.clouddn.com/A_Request_B.jpg" alt="image"></p>
+<p>与此同时随着用户量的增加，或者服务本身的迭代，会加入更多的调用关系：</p>
+<p><img src="http://p2dfdqzbu.bkt.clouddn.com/Multi_Request.jpg" alt="image"></p>
+<p>如上图所示，子系统间的调用关系会随着项目迭代变得异常复杂，任何一个项目的改动，都会牵连好几个项目跟着重启。如果服务提供方（B、D）的IP变动，调用方就要重启以应对这种变化。</p>
+<p>Eureka提供了一种服务注册及发现的服务，当引入服务注册后，你的项目架构可变为：</p>
+<p><img src="http://p2dfdqzbu.bkt.clouddn.com/A_eureka_B.jpg" alt="image"></p>
+<p>通过服务注册中心，任何子系统就不再需要关注服务提供方的IP地址等信息，直接向服务中心请求调用即可。另外，Eureka也提供了负载均衡、监控节点、熔断机制去除故障节点等功能。因此，对于分布式应用来说，Eureka可以发挥很大的作用。</p>
+<h3 id="2-关于Eureka"><a href="#2-关于Eureka" class="headerlink" title="2. 关于Eureka"></a>2. 关于Eureka</h3><p>根据第一小节的分析，我们可以把Eureka归纳为以下一张图：</p>
+<p><img src="http://p2dfdqzbu.bkt.clouddn.com/Eureka_entity.jpg" alt="image"></p>
+<p>可以看到包含Eureka框架中主要包括三个实体：Eureka Server、Client、Producer。</p>
+<h4 id="2-1-Eureka-Server"><a href="#2-1-Eureka-Server" class="headerlink" title="2.1 Eureka Server"></a>2.1 Eureka Server</h4><p>服务注册和发现，统一管理各种服务。</p>
+<h4 id="2-2-Client"><a href="#2-2-Client" class="headerlink" title="2.2 Client"></a>2.2 Client</h4><p>消费者，面向客户，服务的调用方。</p>
+<h4 id="2-3-Producer"><a href="#2-3-Producer" class="headerlink" title="2.3 Producer"></a>2.3 Producer</h4><p>服务生产者，服务的被调用方。</p>
+<h3 id="3-关于Ribbon"><a href="#3-关于Ribbon" class="headerlink" title="3. 关于Ribbon"></a>3. 关于Ribbon</h3><p>Spring Cloud Ribbon也是Netflix公司开源的组件之一，主要提供了客户端的负载均衡服务，可配合Eureka一起使用。Ribbon客户端提供了一系列完善的配置选项，包括服务链接超时、重试机制等。Ribbon内置可插拔、可定制的负载均衡策略，包括：</p>
+<ul>
+<li>简单轮询策略</li>
+<li>加权响应时间</li>
+<li>区域感知</li>
+<li>随机负载</li>
+</ul>
+<h3 id="4-负载均衡案例实现"><a href="#4-负载均衡案例实现" class="headerlink" title="4. 负载均衡案例实现"></a>4. 负载均衡案例实现</h3><p>本案例就基于Eureka和Ribbon，做一个简单的具备服务注册发现和负载均衡的应用。</p>
+<p>案例需要你的主机配置如下环境：</p>
+<table>
+<thead>
+<tr>
+<th>软件</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JDK</td>
+<td>1.8</td>
+</tr>
+<tr>
+<td>Maven</td>
+<td>2.0+</td>
+</tr>
+</tbody>
+</table>
+<p>对于在第二节中介绍的三个实体，我们基于Spring Boot建立了三个对应的项目，都已push到github上了，可以直接点击对应的项目clone下来。</p>
+<p><a href="https://github.com/chadwick521/springboot-eureka-server.git" target="_blank" rel="external">github-Eureka Server</a></p>
+<p><a href="https://github.com/chadwick521/springboot-loadbalance-client.git" target="_blank" rel="external">github-Client</a></p>
+<p><a href="https://github.com/chadwick521/springboot-loadbalance-server.git" target="_blank" rel="external">github-Producer</a></p>
+<h4 id="4-1-案例说明"><a href="#4-1-案例说明" class="headerlink" title="4.1 案例说明"></a>4.1 案例说明</h4><p>实现一个简单的远程调用，计算斐波那契数列的值并返回。</p>
+<p>Client端：面向用户，用户输入网址查询斐波那契的结果。</p>
+<p>Producer端：提供计算结果。</p>
+<p>Eureka Server：提供服务注册。</p>
+<h4 id="4-2-启动Eureka-Server"><a href="#4-2-启动Eureka-Server" class="headerlink" title="4.2 启动Eureka Server"></a>4.2 启动Eureka Server</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">cd springboot-eureka-server</div><div class="line">./mvnw.sh clean install</div><div class="line">cd target</div><div class="line">java -jar springboot-eureka-server-0.0.1.jar</div></pre></td></tr></table></figure>
+<p>然后打开浏览器，输入<a href="http://localhost:1111查看结果，此时没有任何服务注册进来，会是一个初始界面如下：" target="_blank" rel="external">http://localhost:1111查看结果，此时没有任何服务注册进来，会是一个初始界面如下：</a><br><img src="http://p2dfdqzbu.bkt.clouddn.com/eureka_server.jpg" alt="image"></p>
+<h4 id="4-3-启动Producer"><a href="#4-3-启动Producer" class="headerlink" title="4.3 启动Producer"></a>4.3 启动Producer</h4><p>为了达到负载均衡的效果，接下来我们就要启动多个Producer的实例，首先：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cd springboot-loadbalance-server</div></pre></td></tr></table></figure>
+<p>修改applications.properties中port的值，每设置一个端口号，则打包一次：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">./mvnw.sh clean install</div><div class="line">cd target</div><div class="line">保存springboot-loadbalance-server-0.0.1.jar 到某个位置。</div></pre></td></tr></table></figure>
+<p>我启动了三个实例，分别是9092、9093、9094端口。重启后，在<a href="http://localhost:1111中查看Eureka" target="_blank" rel="external">http://localhost:1111中查看Eureka</a> Server已收到我注册的三个服务：</p>
+<p><img src="http://p2dfdqzbu.bkt.clouddn.com/eureka_server_list.jpg" alt="image"></p>
+<h4 id="4-4-启动Client"><a href="#4-4-启动Client" class="headerlink" title="4.4 启动Client"></a>4.4 启动Client</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">cd springboot-loadbalance-client</div><div class="line">./mvnw.sh clean install</div><div class="line">cd target</div><div class="line">java -jar springboot-loadbalance-client-0.0.1.jar</div></pre></td></tr></table></figure>
+<p>此时再打开注册中心就会发现该客户端也已经注册成功了：<br><img src="http://p2dfdqzbu.bkt.clouddn.com/eureka_client.jpg" alt="image"></p>
+<p>接下来就是要验证服务的时刻啦，因为Client的端口号我的设置是8090，打开<a href="http://localhost:8090/calculate?num=10，由于我们默认采用轮询的负载均衡策略，多刷新几次，会看到不同的实例依次返回计算结果：" target="_blank" rel="external">http://localhost:8090/calculate?num=10，由于我们默认采用轮询的负载均衡策略，多刷新几次，会看到不同的实例依次返回计算结果：</a></p>
+<p><img src="http://p2dfdqzbu.bkt.clouddn.com/eureka_result_9092.jpg" alt="image"><br><img src="http://p2dfdqzbu.bkt.clouddn.com/eureka_result_9093.jpg" alt="image"><br><img src="http://p2dfdqzbu.bkt.clouddn.com/eureka_result_9094.jpg" alt="image"></p>
+<p>至此我们的服务注册和简单轮询负载均衡就实现完了，有兴趣的小伙伴可以直接从上文所述的github上把代码clone下来体验。</p>
 <blockquote>
-<p>以上内容就是基于Nginx和Resin配置负载均衡的集群的全部内容了，谢谢你阅读到了这里！</p>
-<p>Author: zhaoyh</p>
+<p>以上内容就是关于基于Eureka和Ribbon的负载均衡实现的全部内容了，谢谢你阅读到了这里！</p>
+<p>Author:zhaoyh</p>
 </blockquote>
 
       
@@ -427,9 +504,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Resin/" rel="tag"># Resin</a>
+            <a href="/tags/Eureka/" rel="tag"># Eureka</a>
           
-            <a href="/tags/Nginx/" rel="tag"># Nginx</a>
+            <a href="/tags/Ribbon/" rel="tag"># Ribbon</a>
           
             <a href="/tags/负载均衡/" rel="tag"># 负载均衡</a>
           
@@ -444,8 +521,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/09/04/SpringBoot微框架三之常用注解分析/" rel="next" title="SpringBoot微框架三之常用注解分析">
-                <i class="fa fa-chevron-left"></i> SpringBoot微框架三之常用注解分析
+              <a href="/2018/01/08/Spring-Cloud入门介绍/" rel="next" title="Spring Cloud入门介绍">
+                <i class="fa fa-chevron-left"></i> Spring Cloud入门介绍
               </a>
             
           </div>
@@ -453,10 +530,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/09/25/Nginx配置网站https服务/" rel="prev" title="Nginx配置网站https服务">
-                Nginx配置网站https服务 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -588,7 +661,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-安装Nginx"><span class="nav-text">1. 安装Nginx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-配置Resin"><span class="nav-text">2. 配置Resin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-配置Nginx负载均衡"><span class="nav-text">3. 配置Nginx负载均衡</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-为什么需要Eureka"><span class="nav-text">1. 为什么需要Eureka</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-关于Eureka"><span class="nav-text">2. 关于Eureka</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-Eureka-Server"><span class="nav-text">2.1 Eureka Server</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-Client"><span class="nav-text">2.2 Client</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-Producer"><span class="nav-text">2.3 Producer</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-关于Ribbon"><span class="nav-text">3. 关于Ribbon</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-负载均衡案例实现"><span class="nav-text">4. 负载均衡案例实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-案例说明"><span class="nav-text">4.1 案例说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-启动Eureka-Server"><span class="nav-text">4.2 启动Eureka Server</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-启动Producer"><span class="nav-text">4.3 启动Producer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-4-启动Client"><span class="nav-text">4.4 启动Client</span></a></li></ol></li></ol></div>
             
 
           </div>
