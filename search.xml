@@ -67,8 +67,8 @@
     <url>%2F2017%2F09%2F18%2F%E5%9F%BA%E4%BA%8ENginx%E5%92%8CResin%E9%85%8D%E7%BD%AE%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%9A%84%E9%9B%86%E7%BE%A4%2F</url>
     <content type="text"><![CDATA[最近在做的一个个人项目是 offernews.cn，由于是纯个人爱好的项目，只在腾讯云上买了基本的1GHz+1G内存配置的服务器，加上之前在搬瓦工上买的境外VPS，做了一个简单的负载均衡集群。 1. 安装NginxMacOS下可参考：Mac安装Nginx 或者 点击这里； CentOS下可参考：CentOS安装Nginx 安装成功后可在浏览器输入默认的访问地址：http://你的IP:8080 , 即可测试是否安装成功。 2. 配置Resin确保你安装好了Resin并配置了可访问的Web项目，Linux下配置Resin的Web项目可查看之前的博文。 3. 配置Nginx负载均衡以我目前的offernews为例，我使用的第一个服务器是腾讯云的，访问地址是：1http://123.206.7.154 搬瓦工的VPS上配置的访问链接是： 1http://xx.xx.xx:8091 为了安全我隐藏了该VPS的IP地址，不过这不影响你的配置哈！ 进入到你Nginx的安装目录，例如我的是： 12cd /usr/local/etc/nginxvi nginx.conf 在http模块中加入upstream配置： 1234upstream offernews &#123; server xx.xx.xx:8091 weight=1; server 123.206.7.154:80 weight=4; &#125; 此处我采用的是按照weight权重来控制访问比例，你可以根据你的服务器的配置来控制概率，我这里的访问比率是4:1。 在server模块的location中加入： 123456789location / &#123; access_log on; proxy_pass http://offernews; proxy_set_header X-Real-IP $remote_addr; proxy_set_header Host $host; proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; client_max_body_size 10m; client_body_buffer_size 128k; &#125; 其中proxy_pass 的配置是你刚才定义的upstream的名称，使用 http://offernews 来表述。 此时再输入你配置了Nginx的服务器IP地址加端口号即可以负载均衡的策略来访问你的Web项目了，本文只是展示了最简单的按照权重的负载均衡策略，后续你也可以根据实际需求来配置自己的负载均衡策略。 以上内容就是基于Nginx和Resin配置负载均衡的集群的全部内容了，谢谢你阅读到了这里！ Author: zhaoyh]]></content>
       <tags>
-        <tag>Resin</tag>
         <tag>Nginx</tag>
+        <tag>Resin</tag>
       </tags>
   </entry>
   <entry>
