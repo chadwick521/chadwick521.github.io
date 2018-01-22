@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="SpringBoot," />
+  <meta name="keywords" content="Eureka,Ribbon,负载均衡," />
 
 
 
@@ -93,17 +93,28 @@
 
 
 
-<meta name="description" content="在上一篇文章中介绍了如何使用Intellij Idea创建SpringBoot项目，本篇介绍了如何在你的服务器上使用Maven或者Ant+Ivy打包并运行项目。  本篇所使用的代码请戳： github 1. Maven打包1.1 mvnw.sh中配置环境变量">
-<meta name="keywords" content="SpringBoot">
+<meta name="description" content="Eureka是Spring Cloud Eureka的简称，是Netflix提供的组件之一。通过Eureka可以提供服务注册、发现、负载均衡、降级、熔断等功能。本篇主要介绍Eureka作为服务注册中心，以及实现一个基本的负载均衡服务。">
+<meta name="keywords" content="Eureka,Ribbon,负载均衡">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SpringBoot微框架二之打包运行">
-<meta property="og:url" content="http://www.zhaoyh.com.cn/2017/09/01/SpringBoot微框架二之打包运行/index.html">
+<meta property="og:title" content="Spring Cloud微服务框架之基于Eureka和Ribbon的负载均衡实现">
+<meta property="og:url" content="http://www.zhaoyh.com.cn/2018/01/15/Spring-Cloud微服务框架之基于Eureka和Ribbon的负载均衡实现/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
-<meta property="og:description" content="在上一篇文章中介绍了如何使用Intellij Idea创建SpringBoot项目，本篇介绍了如何在你的服务器上使用Maven或者Ant+Ivy打包并运行项目。  本篇所使用的代码请戳： github 1. Maven打包1.1 mvnw.sh中配置环境变量">
-<meta property="og:updated_time" content="2018-01-15T14:55:35.141Z">
+<meta property="og:description" content="Eureka是Spring Cloud Eureka的简称，是Netflix提供的组件之一。通过Eureka可以提供服务注册、发现、负载均衡、降级、熔断等功能。本篇主要介绍Eureka作为服务注册中心，以及实现一个基本的负载均衡服务。">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/A_Request_B.jpg">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/Multi_Request.jpg">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/A_eureka_B.jpg">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/Eureka_entity.jpg">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/eureka_server.jpg">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/eureka_server_list.jpg">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/eureka_client.jpg">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/eureka_result_9092.jpg">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/eureka_result_9093.jpg">
+<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/eureka_result_9094.jpg">
+<meta property="og:updated_time" content="2018-01-22T04:04:50.987Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SpringBoot微框架二之打包运行">
-<meta name="twitter:description" content="在上一篇文章中介绍了如何使用Intellij Idea创建SpringBoot项目，本篇介绍了如何在你的服务器上使用Maven或者Ant+Ivy打包并运行项目。  本篇所使用的代码请戳： github 1. Maven打包1.1 mvnw.sh中配置环境变量">
+<meta name="twitter:title" content="Spring Cloud微服务框架之基于Eureka和Ribbon的负载均衡实现">
+<meta name="twitter:description" content="Eureka是Spring Cloud Eureka的简称，是Netflix提供的组件之一。通过Eureka可以提供服务注册、发现、负载均衡、降级、熔断等功能。本篇主要介绍Eureka作为服务注册中心，以及实现一个基本的负载均衡服务。">
+<meta name="twitter:image" content="http://p2dfdqzbu.bkt.clouddn.com/A_Request_B.jpg">
 
 
 
@@ -131,13 +142,13 @@
 
 
 
-  <link rel="canonical" href="http://www.zhaoyh.com.cn/2017/09/01/SpringBoot微框架二之打包运行/"/>
+  <link rel="canonical" href="http://www.zhaoyh.com.cn/2018/01/15/Spring-Cloud微服务框架之基于Eureka和Ribbon的负载均衡实现/"/>
 
 
 
 
 
-  <title>SpringBoot微框架二之打包运行 | zhaoyh's blog</title>
+  <title>Spring Cloud微服务框架之基于Eureka和Ribbon的负载均衡实现 | zhaoyh's blog</title>
   
 
 
@@ -310,7 +321,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2017/09/01/SpringBoot微框架二之打包运行/">
+    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2018/01/15/Spring-Cloud微服务框架之基于Eureka和Ribbon的负载均衡实现/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zhaoyh">
@@ -327,7 +338,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">SpringBoot微框架二之打包运行</h2>
+          <h2 class="post-title" itemprop="name headline">Spring Cloud微服务框架之基于Eureka和Ribbon的负载均衡实现</h2>
         
 
         <div class="post-meta">
@@ -339,8 +350,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-01T15:06:11+08:00">
-                2017-09-01
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-15T22:51:43+08:00">
+                2018-01-15
               </time>
             
 
@@ -362,8 +373,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Boot/" itemprop="url" rel="index">
-                    <span itemprop="name">Spring Boot</span>
+                  <a href="/categories/Spring-Cloud/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring Cloud</span>
                   </a>
                 </span>
 
@@ -396,25 +407,72 @@
       
 
       
-        <blockquote>
-<p>在上一篇文章中介绍了如何使用Intellij Idea创建SpringBoot项目，本篇介绍了如何在你的服务器上使用Maven或者Ant+Ivy打包并运行项目。</p>
-</blockquote>
-<p><strong>本篇所使用的代码请戳： <a href="https://github.com/chadwick521/SpringBootInAction" target="_blank" rel="external">github</a></strong></p>
-<h3 id="1-Maven打包"><a href="#1-Maven打包" class="headerlink" title="1. Maven打包"></a>1. Maven打包</h3><h4 id="1-1-mvnw-sh中配置环境变量"><a href="#1-1-mvnw-sh中配置环境变量" class="headerlink" title="1.1 mvnw.sh中配置环境变量"></a>1.1 mvnw.sh中配置环境变量</h4><a id="more"></a>
-<p>SpringBoot的官方文档中推荐使用Java8来运行，所以在打包之前先配置一下你的jdk路径，如果你的环境变量中已有，可以忽略这个步骤：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">JAVA_HOME=/usr/java/jdk1.8.0_60/</div><div class="line">export JAVA_HOME</div><div class="line"></div><div class="line">M3_HOME=/global/sww/apache-maven-3.0.3/</div><div class="line">export M3_HOME</div></pre></td></tr></table></figure>
-<h4 id="1-2-打包运行"><a href="#1-2-打包运行" class="headerlink" title="1.2 打包运行"></a>1.2 打包运行</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">./mvnw.sh clean install</div><div class="line">./startTask.sh target/XXX.jar</div></pre></td></tr></table></figure>
-<p>此时会生成编译好的target目录，因为我们在新建项目是选择的输出是jar，因此在target目录下就会有一个生成好的jar文件，你也可以直接到目录下执行：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd target</div><div class="line">java -jar XXX.jar</div></pre></td></tr></table></figure>
-<p>通过这种方式能很方便地启动Spring Boot程序。</p>
-<h3 id="2-Ant-Ivy打包并运行"><a href="#2-Ant-Ivy打包并运行" class="headerlink" title="2. Ant+Ivy打包并运行"></a>2. Ant+Ivy打包并运行</h3><h4 id="2-1-打包"><a href="#2-1-打包" class="headerlink" title="2.1 打包"></a>2.1 打包</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">#!/bin/sh</div><div class="line">JAVA_HOME=/usr/java/jdk1.8.0_60/;</div><div class="line">export JAVA_HOME</div><div class="line">ant -lib lib/ivy-2.3.0.jar:clean manual</div></pre></td></tr></table></figure>
-<h4 id="2-2-运行"><a href="#2-2-运行" class="headerlink" title="2.2 运行"></a>2.2 运行</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./startTask.sh target/XXX.jar</div></pre></td></tr></table></figure>
-<h3 id="3-停止SpringBoot项目"><a href="#3-停止SpringBoot项目" class="headerlink" title="3. 停止SpringBoot项目"></a>3. 停止SpringBoot项目</h3><p>我使用的方式是在启动时纪录进程的PID，停止时直接杀掉进程就可以，所以在启动脚本里：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nohup /usr/java/jdk1.8.0_60/bin/java -Xms1024m -Xmx4096m -jar $1 &amp; echo $! &gt; ./pid.file &amp;</div></pre></td></tr></table></figure>
-<p>启动时在同级目录下会新建一个pid.file的文件，纪录了本次运行的PID，这样在stopTask.sh脚本里杀掉该进程：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">#!/bin/sh</div><div class="line">kill $(cat ./pid.file)</div><div class="line">rm pid.file</div></pre></td></tr></table></figure>
+        <p>Eureka是Spring Cloud Eureka的简称，是Netflix提供的组件之一。<br>通过Eureka可以提供服务注册、发现、负载均衡、降级、熔断等功能。本篇主要介绍Eureka作为服务注册中心，以及实现一个基本的负载均衡服务。</p>
+<a id="more"></a>
+<h3 id="1-为什么需要Eureka"><a href="#1-为什么需要Eureka" class="headerlink" title="1. 为什么需要Eureka"></a>1. 为什么需要Eureka</h3><p>对于一个大型系统来说，不可避免的会存在各种子系统之间的调用关系，比如一个子系统A请求子系统B的服务：</p>
+<p><img src="http://p2dfdqzbu.bkt.clouddn.com/A_Request_B.jpg" alt="image"></p>
+<p>与此同时随着用户量的增加，或者服务本身的迭代，会加入更多的调用关系：</p>
+<p><img src="http://p2dfdqzbu.bkt.clouddn.com/Multi_Request.jpg" alt="image"></p>
+<p>如上图所示，子系统间的调用关系会随着项目迭代变得异常复杂，任何一个项目的改动，都会牵连好几个项目跟着重启。如果服务提供方（B、D）的IP变动，调用方就要重启以应对这种变化。</p>
+<p>Eureka提供了一种服务注册及发现的服务，当引入服务注册后，你的项目架构可变为：</p>
+<p><img src="http://p2dfdqzbu.bkt.clouddn.com/A_eureka_B.jpg" alt="image"></p>
+<p>通过服务注册中心，任何子系统就不再需要关注服务提供方的IP地址等信息，直接向服务中心请求调用即可。另外，Eureka也提供了负载均衡、监控节点、熔断机制去除故障节点等功能。因此，对于分布式应用来说，Eureka可以发挥很大的作用。</p>
+<h3 id="2-关于Eureka"><a href="#2-关于Eureka" class="headerlink" title="2. 关于Eureka"></a>2. 关于Eureka</h3><p>根据第一小节的分析，我们可以把Eureka归纳为以下一张图：</p>
+<p><img src="http://p2dfdqzbu.bkt.clouddn.com/Eureka_entity.jpg" alt="image"></p>
+<p>可以看到包含Eureka框架中主要包括三个实体：Eureka Server、Client、Producer。</p>
+<h4 id="2-1-Eureka-Server"><a href="#2-1-Eureka-Server" class="headerlink" title="2.1 Eureka Server"></a>2.1 Eureka Server</h4><p>服务注册和发现，统一管理各种服务。</p>
+<h4 id="2-2-Client"><a href="#2-2-Client" class="headerlink" title="2.2 Client"></a>2.2 Client</h4><p>消费者，面向客户，服务的调用方。</p>
+<h4 id="2-3-Producer"><a href="#2-3-Producer" class="headerlink" title="2.3 Producer"></a>2.3 Producer</h4><p>服务生产者，服务的被调用方。</p>
+<h3 id="3-关于Ribbon"><a href="#3-关于Ribbon" class="headerlink" title="3. 关于Ribbon"></a>3. 关于Ribbon</h3><p>Spring Cloud Ribbon也是Netflix公司开源的组件之一，主要提供了客户端的负载均衡服务，可配合Eureka一起使用。Ribbon客户端提供了一系列完善的配置选项，包括服务链接超时、重试机制等。Ribbon内置可插拔、可定制的负载均衡策略，包括：</p>
+<ul>
+<li>简单轮询策略</li>
+<li>加权响应时间</li>
+<li>区域感知</li>
+<li>随机负载</li>
+</ul>
+<h3 id="4-负载均衡案例实现"><a href="#4-负载均衡案例实现" class="headerlink" title="4. 负载均衡案例实现"></a>4. 负载均衡案例实现</h3><p>本案例就基于Eureka和Ribbon，做一个简单的具备服务注册发现和负载均衡的应用。</p>
+<p>案例需要你的主机配置如下环境：</p>
+<table>
+<thead>
+<tr>
+<th>软件</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JDK</td>
+<td>1.8</td>
+</tr>
+<tr>
+<td>Maven</td>
+<td>2.0+</td>
+</tr>
+</tbody>
+</table>
+<p>对于在第二节中介绍的三个实体，我们基于Spring Boot建立了三个对应的项目，都已push到github上了，可以直接点击对应的项目clone下来。</p>
+<p><a href="https://github.com/chadwick521/springboot-eureka-server.git" target="_blank" rel="external">github-Eureka Server</a></p>
+<p><a href="https://github.com/chadwick521/springboot-loadbalance-client.git" target="_blank" rel="external">github-Client</a></p>
+<p><a href="https://github.com/chadwick521/springboot-loadbalance-server.git" target="_blank" rel="external">github-Producer</a></p>
+<h4 id="4-1-案例说明"><a href="#4-1-案例说明" class="headerlink" title="4.1 案例说明"></a>4.1 案例说明</h4><p>实现一个简单的远程调用，计算斐波那契数列的值并返回。</p>
+<p>Client端：面向用户，用户输入网址查询斐波那契的结果。</p>
+<p>Producer端：提供计算结果。</p>
+<p>Eureka Server：提供服务注册。</p>
+<h4 id="4-2-启动Eureka-Server"><a href="#4-2-启动Eureka-Server" class="headerlink" title="4.2 启动Eureka Server"></a>4.2 启动Eureka Server</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">cd springboot-eureka-server</div><div class="line">./mvnw.sh clean install</div><div class="line">cd target</div><div class="line">java -jar springboot-eureka-server-0.0.1.jar</div></pre></td></tr></table></figure>
+<p>然后打开浏览器，输入 <a href="http://localhost:1111" target="_blank" rel="external">http://localhost:1111</a> 查看结果，此时没有任何服务注册进来，会是一个初始界面如下：<br><img src="http://p2dfdqzbu.bkt.clouddn.com/eureka_server.jpg" alt="image"></p>
+<h4 id="4-3-启动Producer"><a href="#4-3-启动Producer" class="headerlink" title="4.3 启动Producer"></a>4.3 启动Producer</h4><p>为了达到负载均衡的效果，接下来我们就要启动多个Producer的实例，首先：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cd springboot-loadbalance-server</div></pre></td></tr></table></figure>
+<p>修改applications.properties中port的值，每设置一个端口号，则打包一次：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">./mvnw.sh clean install</div><div class="line">cd target</div><div class="line">保存springboot-loadbalance-server-0.0.1.jar 到某个位置。</div></pre></td></tr></table></figure>
+<p>我启动了三个实例，分别是9092、9093、9094端口。重启后，在 <a href="http://localhost:1111" target="_blank" rel="external">http://localhost:1111</a> 中查看Eureka Server已收到我注册的三个服务：</p>
+<p><img src="http://p2dfdqzbu.bkt.clouddn.com/eureka_server_list.jpg" alt="image"></p>
+<h4 id="4-4-启动Client"><a href="#4-4-启动Client" class="headerlink" title="4.4 启动Client"></a>4.4 启动Client</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">cd springboot-loadbalance-client</div><div class="line">./mvnw.sh clean install</div><div class="line">cd target</div><div class="line">java -jar springboot-loadbalance-client-0.0.1.jar</div></pre></td></tr></table></figure>
+<p>此时再打开注册中心就会发现该客户端也已经注册成功了：<br><img src="http://p2dfdqzbu.bkt.clouddn.com/eureka_client.jpg" alt="image"></p>
+<p>接下来就是要验证服务的时刻啦，因为Client的端口号我的设置是8090，打开 <a href="http://localhost:8090/calculate?num=10" target="_blank" rel="external">http://localhost:8090/calculate?num=10</a> ，由于我们默认采用轮询的负载均衡策略，多刷新几次，会看到不同的实例依次返回计算结果：</p>
+<p><img src="http://p2dfdqzbu.bkt.clouddn.com/eureka_result_9092.jpg" alt="image"><br><img src="http://p2dfdqzbu.bkt.clouddn.com/eureka_result_9093.jpg" alt="image"><br><img src="http://p2dfdqzbu.bkt.clouddn.com/eureka_result_9094.jpg" alt="image"></p>
+<p>至此我们的服务注册和简单轮询负载均衡就实现完了，有兴趣的小伙伴可以直接从上文所述的github上把代码clone下来体验。</p>
 <blockquote>
-<p>以上内容就是关于SpringBoot微框架二之打包运行的全部内容了，谢谢你阅读到了这里！</p>
+<p>以上内容就是关于基于Eureka和Ribbon的负载均衡实现的全部内容了，谢谢你阅读到了这里！</p>
 <p>Author:zhaoyh</p>
 </blockquote>
 
@@ -446,7 +504,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/SpringBoot/" rel="tag"># SpringBoot</a>
+            <a href="/tags/Eureka/" rel="tag"># Eureka</a>
+          
+            <a href="/tags/Ribbon/" rel="tag"># Ribbon</a>
+          
+            <a href="/tags/负载均衡/" rel="tag"># 负载均衡</a>
           
         </div>
       
@@ -459,8 +521,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/08/29/SpringBoot微框架一之IDE项目部署/" rel="next" title="SpringBoot微框架一之IDE项目部署">
-                <i class="fa fa-chevron-left"></i> SpringBoot微框架一之IDE项目部署
+              <a href="/2018/01/08/Spring-Cloud微服务框架介绍/" rel="next" title="Spring Cloud微服务框架介绍">
+                <i class="fa fa-chevron-left"></i> Spring Cloud微服务框架介绍
               </a>
             
           </div>
@@ -468,10 +530,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/09/04/SpringBoot微框架三之常用注解分析/" rel="prev" title="SpringBoot微框架三之常用注解分析">
-                SpringBoot微框架三之常用注解分析 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -603,7 +661,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Maven打包"><span class="nav-text">1. Maven打包</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-mvnw-sh中配置环境变量"><span class="nav-text">1.1 mvnw.sh中配置环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-打包运行"><span class="nav-text">1.2 打包运行</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Ant-Ivy打包并运行"><span class="nav-text">2. Ant+Ivy打包并运行</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-打包"><span class="nav-text">2.1 打包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-运行"><span class="nav-text">2.2 运行</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-停止SpringBoot项目"><span class="nav-text">3. 停止SpringBoot项目</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-为什么需要Eureka"><span class="nav-text">1. 为什么需要Eureka</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-关于Eureka"><span class="nav-text">2. 关于Eureka</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-Eureka-Server"><span class="nav-text">2.1 Eureka Server</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-Client"><span class="nav-text">2.2 Client</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-Producer"><span class="nav-text">2.3 Producer</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-关于Ribbon"><span class="nav-text">3. 关于Ribbon</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-负载均衡案例实现"><span class="nav-text">4. 负载均衡案例实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-案例说明"><span class="nav-text">4.1 案例说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-启动Eureka-Server"><span class="nav-text">4.2 启动Eureka Server</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-启动Producer"><span class="nav-text">4.3 启动Producer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-4-启动Client"><span class="nav-text">4.4 启动Client</span></a></li></ol></li></ol></div>
             
 
           </div>
