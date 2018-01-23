@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Eureka,Ribbon,负载均衡," />
+  <meta name="keywords" content="Eureka,Ribbon,Feign,负载均衡," />
 
 
 
@@ -94,10 +94,10 @@
 
 
 <meta name="description" content="Eureka是Spring Cloud Eureka的简称，是Netflix提供的组件之一。通过Eureka可以提供服务注册、发现、负载均衡、降级、熔断等功能。本篇主要介绍Eureka作为服务注册中心，以及实现一个基本的负载均衡服务。">
-<meta name="keywords" content="Eureka,Ribbon,负载均衡">
+<meta name="keywords" content="Eureka,Ribbon,Feign,负载均衡">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Spring Cloud微服务框架之基于Eureka和Ribbon的负载均衡实现">
-<meta property="og:url" content="http://www.zhaoyh.com.cn/2018/01/15/Spring-Cloud微服务框架之基于Eureka和Ribbon的负载均衡实现/index.html">
+<meta property="og:title" content="Spring Cloud微服务框架之基于Eureka、Ribbon、Feign的负载均衡案例">
+<meta property="og:url" content="http://www.zhaoyh.com.cn/2018/01/15/Spring Cloud微服务框架之基于Eureka、Ribbon、Feign的负载均衡案例/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
 <meta property="og:description" content="Eureka是Spring Cloud Eureka的简称，是Netflix提供的组件之一。通过Eureka可以提供服务注册、发现、负载均衡、降级、熔断等功能。本篇主要介绍Eureka作为服务注册中心，以及实现一个基本的负载均衡服务。">
 <meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/A_Request_B.jpg">
@@ -107,12 +107,12 @@
 <meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/eureka_server.jpg">
 <meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/eureka_server_list.jpg">
 <meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/eureka_client.jpg">
-<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/eureka_result_9092.jpg">
-<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/eureka_result_9093.jpg">
-<meta property="og:image" content="http://p2dfdqzbu.bkt.clouddn.com/eureka_result_9094.jpg">
-<meta property="og:updated_time" content="2018-01-22T04:04:50.987Z">
+<meta property="og:image" content="http://p2pe2d0id.bkt.clouddn.com/eureka_ribbon_feign_9094.jpg">
+<meta property="og:image" content="http://p2pe2d0id.bkt.clouddn.com/eureka_ribbon_feign_9092.jpg">
+<meta property="og:image" content="http://p2pe2d0id.bkt.clouddn.com/eureka_ribbon_feign_9093.jpg">
+<meta property="og:updated_time" content="2018-01-23T04:16:25.469Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Spring Cloud微服务框架之基于Eureka和Ribbon的负载均衡实现">
+<meta name="twitter:title" content="Spring Cloud微服务框架之基于Eureka、Ribbon、Feign的负载均衡案例">
 <meta name="twitter:description" content="Eureka是Spring Cloud Eureka的简称，是Netflix提供的组件之一。通过Eureka可以提供服务注册、发现、负载均衡、降级、熔断等功能。本篇主要介绍Eureka作为服务注册中心，以及实现一个基本的负载均衡服务。">
 <meta name="twitter:image" content="http://p2dfdqzbu.bkt.clouddn.com/A_Request_B.jpg">
 
@@ -142,13 +142,13 @@
 
 
 
-  <link rel="canonical" href="http://www.zhaoyh.com.cn/2018/01/15/Spring-Cloud微服务框架之基于Eureka和Ribbon的负载均衡实现/"/>
+  <link rel="canonical" href="http://www.zhaoyh.com.cn/2018/01/15/Spring Cloud微服务框架之基于Eureka、Ribbon、Feign的负载均衡案例/"/>
 
 
 
 
 
-  <title>Spring Cloud微服务框架之基于Eureka和Ribbon的负载均衡实现 | zhaoyh's blog</title>
+  <title>Spring Cloud微服务框架之基于Eureka、Ribbon、Feign的负载均衡案例 | zhaoyh's blog</title>
   
 
 
@@ -321,7 +321,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2018/01/15/Spring-Cloud微服务框架之基于Eureka和Ribbon的负载均衡实现/">
+    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2018/01/15/Spring Cloud微服务框架之基于Eureka、Ribbon、Feign的负载均衡案例/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zhaoyh">
@@ -338,7 +338,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">Spring Cloud微服务框架之基于Eureka和Ribbon的负载均衡实现</h2>
+          <h2 class="post-title" itemprop="name headline">Spring Cloud微服务框架之基于Eureka、Ribbon、Feign的负载均衡案例</h2>
         
 
         <div class="post-meta">
@@ -417,12 +417,14 @@
 <p>Eureka提供了一种服务注册及发现的服务，当引入服务注册后，你的项目架构可变为：</p>
 <p><img src="http://p2dfdqzbu.bkt.clouddn.com/A_eureka_B.jpg" alt="image"></p>
 <p>通过服务注册中心，任何子系统就不再需要关注服务提供方的IP地址等信息，直接向服务中心请求调用即可。另外，Eureka也提供了负载均衡、监控节点、熔断机制去除故障节点等功能。因此，对于分布式应用来说，Eureka可以发挥很大的作用。</p>
-<h3 id="2-关于Eureka"><a href="#2-关于Eureka" class="headerlink" title="2. 关于Eureka"></a>2. 关于Eureka</h3><p>根据第一小节的分析，我们可以把Eureka归纳为以下一张图：</p>
+<h3 id="2-关于Eureka"><a href="#2-关于Eureka" class="headerlink" title="2. 关于Eureka"></a>2. 关于Eureka</h3><p>根据第一小节的分析，我们可以把基于Eureka的架构归纳为如下图：</p>
 <p><img src="http://p2dfdqzbu.bkt.clouddn.com/Eureka_entity.jpg" alt="image"></p>
 <p>可以看到包含Eureka框架中主要包括三个实体：Eureka Server、Client、Producer。</p>
-<h4 id="2-1-Eureka-Server"><a href="#2-1-Eureka-Server" class="headerlink" title="2.1 Eureka Server"></a>2.1 Eureka Server</h4><p>服务注册和发现，统一管理各种服务。</p>
-<h4 id="2-2-Client"><a href="#2-2-Client" class="headerlink" title="2.2 Client"></a>2.2 Client</h4><p>消费者，面向客户，服务的调用方。</p>
-<h4 id="2-3-Producer"><a href="#2-3-Producer" class="headerlink" title="2.3 Producer"></a>2.3 Producer</h4><p>服务生产者，服务的被调用方。</p>
+<ul>
+<li>Eureka Server，服务注册和发现，统一管理各种服务。</li>
+<li>Client，消费者，面向客户，服务的调用方。</li>
+<li>Producer，服务生产者，服务的被调用方。</li>
+</ul>
 <h3 id="3-关于Ribbon"><a href="#3-关于Ribbon" class="headerlink" title="3. 关于Ribbon"></a>3. 关于Ribbon</h3><p>Spring Cloud Ribbon也是Netflix公司开源的组件之一，主要提供了客户端的负载均衡服务，可配合Eureka一起使用。Ribbon客户端提供了一系列完善的配置选项，包括服务链接超时、重试机制等。Ribbon内置可插拔、可定制的负载均衡策略，包括：</p>
 <ul>
 <li>简单轮询策略</li>
@@ -430,7 +432,12 @@
 <li>区域感知</li>
 <li>随机负载</li>
 </ul>
-<h3 id="4-负载均衡案例实现"><a href="#4-负载均衡案例实现" class="headerlink" title="4. 负载均衡案例实现"></a>4. 负载均衡案例实现</h3><p>本案例就基于Eureka和Ribbon，做一个简单的具备服务注册发现和负载均衡的应用。</p>
+<h3 id="4-关于Feign"><a href="#4-关于Feign" class="headerlink" title="4. 关于Feign"></a>4. 关于Feign</h3><p>Feign是Netflix公司出品的声明式Web服务调用端，我们只要创建接口并用它来调用已存在的接口即可。同时它还整合了Ribbon和Rureka来提供负载均衡的REST请求实现。以本文为例，客户端CLient编写一个Feign请求：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> org.springframework.cloud.netflix.feign.FeignClient;</div><div class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</div><div class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestParam;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by zhaoyh on 2018/1/03</div><div class="line"> * <span class="doctag">@author</span> zhaoyh</div><div class="line"> */</div><div class="line"><span class="meta">@FeignClient</span>(name = <span class="string">"PRODUCER"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">FeignService</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@RequestMapping</span>(value = <span class="string">"/api/calculate"</span>)</div><div class="line">    <span class="function">String <span class="title">calculate</span><span class="params">(@RequestParam(value = <span class="string">"num"</span>)</span> <span class="keyword">int</span> num)</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果想要使用该接口，可以以如下的方式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Autowired</span></div><div class="line"><span class="keyword">private</span> FeignService feignService;</div><div class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"/requestByFeign/&#123;num&#125;"</span>, method = RequestMethod.GET)</div><div class="line"><span class="function"><span class="keyword">public</span> String <span class="title">requestByFeign</span><span class="params">(@PathVariable(value = <span class="string">"num"</span>)</span> <span class="keyword">int</span> num) </span>&#123;</div><div class="line">    String result = feignService.calculate(num);</div><div class="line">    <span class="keyword">return</span> result;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>关于Ribbon和Feign，我个人是这样理解的：Ribbon是一个客户端的负载均衡器；Feign更像是一个Http客户端，用来请求Web接口服务。</p>
+<h3 id="5-负载均衡案例实现"><a href="#5-负载均衡案例实现" class="headerlink" title="5. 负载均衡案例实现"></a>5. 负载均衡案例实现</h3><p>本案例就基于Eureka注册中心，做一个简单的具备服务注册发现和负载均衡的应用。</p>
 <p>案例需要你的主机配置如下环境：</p>
 <table>
 <thead>
@@ -454,25 +461,31 @@
 <p><a href="https://github.com/chadwick521/springboot-eureka-server.git" target="_blank" rel="external">github-Eureka Server</a></p>
 <p><a href="https://github.com/chadwick521/springboot-loadbalance-client.git" target="_blank" rel="external">github-Client</a></p>
 <p><a href="https://github.com/chadwick521/springboot-loadbalance-server.git" target="_blank" rel="external">github-Producer</a></p>
-<h4 id="4-1-案例说明"><a href="#4-1-案例说明" class="headerlink" title="4.1 案例说明"></a>4.1 案例说明</h4><p>实现一个简单的远程调用，计算斐波那契数列的值并返回。</p>
-<p>Client端：面向用户，用户输入网址查询斐波那契的结果。</p>
-<p>Producer端：提供计算结果。</p>
-<p>Eureka Server：提供服务注册。</p>
-<h4 id="4-2-启动Eureka-Server"><a href="#4-2-启动Eureka-Server" class="headerlink" title="4.2 启动Eureka Server"></a>4.2 启动Eureka Server</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">cd springboot-eureka-server</div><div class="line">./mvnw.sh clean install</div><div class="line">cd target</div><div class="line">java -jar springboot-eureka-server-0.0.1.jar</div></pre></td></tr></table></figure>
-<p>然后打开浏览器，输入 <a href="http://localhost:1111" target="_blank" rel="external">http://localhost:1111</a> 查看结果，此时没有任何服务注册进来，会是一个初始界面如下：<br><img src="http://p2dfdqzbu.bkt.clouddn.com/eureka_server.jpg" alt="image"></p>
-<h4 id="4-3-启动Producer"><a href="#4-3-启动Producer" class="headerlink" title="4.3 启动Producer"></a>4.3 启动Producer</h4><p>为了达到负载均衡的效果，接下来我们就要启动多个Producer的实例，首先：</p>
+<h4 id="5-1-案例说明"><a href="#5-1-案例说明" class="headerlink" title="5.1 案例说明"></a>5.1 案例说明</h4><p>实现一个简单的远程调用，计算斐波那契数列的值并返回。</p>
+<ul>
+<li>Client端：面向用户，用户查询斐波那契的结果。</li>
+<li>Producer端：提供计算结果。</li>
+<li>Eureka Server：提供服务注册。</li>
+</ul>
+<h4 id="5-2-启动Eureka-Server"><a href="#5-2-启动Eureka-Server" class="headerlink" title="5.2 启动Eureka Server"></a>5.2 启动Eureka Server</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cd springboot-eureka-server</div><div class="line">./mvnw.sh clean install</div><div class="line">java -jar target/springboot-eureka-server-0.0.1.jar</div></pre></td></tr></table></figure>
+<p>然后打开浏览器，输入 <a href="http://localhost:1111" target="_blank" rel="external">http://localhost:1111</a> ，此时没有任何服务注册进来，初始界面如下：<br><img src="http://p2dfdqzbu.bkt.clouddn.com/eureka_server.jpg" alt="image"></p>
+<h4 id="5-3-启动Producer"><a href="#5-3-启动Producer" class="headerlink" title="5.3 启动Producer"></a>5.3 启动Producer</h4><p>为了达到负载均衡的效果，接下来我们就要启动多个Producer的实例，首先：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cd springboot-loadbalance-server</div></pre></td></tr></table></figure>
 <p>修改applications.properties中port的值，每设置一个端口号，则打包一次：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">./mvnw.sh clean install</div><div class="line">cd target</div><div class="line">保存springboot-loadbalance-server-0.0.1.jar 到某个位置。</div></pre></td></tr></table></figure>
-<p>我启动了三个实例，分别是9092、9093、9094端口。重启后，在 <a href="http://localhost:1111" target="_blank" rel="external">http://localhost:1111</a> 中查看Eureka Server已收到我注册的三个服务：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">./mvnw.sh clean install</div><div class="line">保存 target/springboot-loadbalance-server-0.0.1.jar 到任意位置并执行。</div></pre></td></tr></table></figure>
+<p>我启动了三个实例，分别是9092、9093、9094端口。重启后，在<a href="http://localhost:1111中查看Eureka" target="_blank" rel="external">http://localhost:1111中查看Eureka</a> Server已收到我注册的三个服务：</p>
 <p><img src="http://p2dfdqzbu.bkt.clouddn.com/eureka_server_list.jpg" alt="image"></p>
-<h4 id="4-4-启动Client"><a href="#4-4-启动Client" class="headerlink" title="4.4 启动Client"></a>4.4 启动Client</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">cd springboot-loadbalance-client</div><div class="line">./mvnw.sh clean install</div><div class="line">cd target</div><div class="line">java -jar springboot-loadbalance-client-0.0.1.jar</div></pre></td></tr></table></figure>
+<h4 id="5-4-启动Client"><a href="#5-4-启动Client" class="headerlink" title="5.4 启动Client"></a>5.4 启动Client</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cd springboot-loadbalance-client</div><div class="line">./mvnw.sh clean install</div><div class="line">java -jar target/springboot-loadbalance-client-0.0.1.jar</div></pre></td></tr></table></figure>
 <p>此时再打开注册中心就会发现该客户端也已经注册成功了：<br><img src="http://p2dfdqzbu.bkt.clouddn.com/eureka_client.jpg" alt="image"></p>
-<p>接下来就是要验证服务的时刻啦，因为Client的端口号我的设置是8090，打开 <a href="http://localhost:8090/calculate?num=10" target="_blank" rel="external">http://localhost:8090/calculate?num=10</a> ，由于我们默认采用轮询的负载均衡策略，多刷新几次，会看到不同的实例依次返回计算结果：</p>
-<p><img src="http://p2dfdqzbu.bkt.clouddn.com/eureka_result_9092.jpg" alt="image"><br><img src="http://p2dfdqzbu.bkt.clouddn.com/eureka_result_9093.jpg" alt="image"><br><img src="http://p2dfdqzbu.bkt.clouddn.com/eureka_result_9094.jpg" alt="image"></p>
-<p>至此我们的服务注册和简单轮询负载均衡就实现完了，有兴趣的小伙伴可以直接从上文所述的github上把代码clone下来体验。</p>
+<p>接下来就是要验证请求服务啦，Client的端口号是9090。在客户端的controller里，我实现了两种请求方式，第一种是RestTemplate，这是Spring提供的一种请求restful接口的便捷模版；第二种是Neitflix公司的Feign。</p>
+<p>使用RestTemplate模版的访问链接 <a href="http://localhost:9090/requestByRestTemplate/10" target="_blank" rel="external">http://localhost:9090/requestByRestTemplate/10</a> ；<br>使用Feign的访问链接 <a href="http://localhost:9090/requestByFeign/10" target="_blank" rel="external">http://localhost:9090/requestByFeign/10</a> 。</p>
+<p>由于我们默认采用轮询的负载均衡策略，多刷新几次，会看到不同的实例依次返回计算结果：</p>
+<p><img src="http://p2pe2d0id.bkt.clouddn.com/eureka_ribbon_feign_9094.jpg" alt="image"></p>
+<p><img src="http://p2pe2d0id.bkt.clouddn.com/eureka_ribbon_feign_9092.jpg" alt="image"></p>
+<p><img src="http://p2pe2d0id.bkt.clouddn.com/eureka_ribbon_feign_9093.jpg" alt="image"></p>
+<p>至此我们的服务注册和简单轮询负载均衡就实现完了，有兴趣的小伙伴可以直接从上文所述的github上把代码star并clone下来体验。</p>
 <blockquote>
-<p>以上内容就是关于基于Eureka和Ribbon的负载均衡实现的全部内容了，谢谢你阅读到了这里！</p>
+<p>以上内容就是关于Spring Cloud微服务框架之基于Eureka、Ribbon、Feign的负载均衡案例的全部内容了，谢谢你阅读到了这里！</p>
 <p>Author:zhaoyh</p>
 </blockquote>
 
@@ -508,6 +521,8 @@
           
             <a href="/tags/Ribbon/" rel="tag"># Ribbon</a>
           
+            <a href="/tags/Feign/" rel="tag"># Feign</a>
+          
             <a href="/tags/负载均衡/" rel="tag"># 负载均衡</a>
           
         </div>
@@ -521,7 +536,7 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/01/08/Spring-Cloud微服务框架介绍/" rel="next" title="Spring Cloud微服务框架介绍">
+              <a href="/2018/01/08/Spring Cloud微服务框架介绍/" rel="next" title="Spring Cloud微服务框架介绍">
                 <i class="fa fa-chevron-left"></i> Spring Cloud微服务框架介绍
               </a>
             
@@ -531,7 +546,7 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/01/22/Spring-Cloud微服务框架之配置中心/" rel="prev" title="Spring Cloud微服务框架之配置中心">
+              <a href="/2018/01/22/Spring Cloud微服务框架之配置中心/" rel="prev" title="Spring Cloud微服务框架之配置中心">
                 Spring Cloud微服务框架之配置中心 <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -630,7 +645,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-count">26</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -665,7 +680,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-为什么需要Eureka"><span class="nav-text">1. 为什么需要Eureka</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-关于Eureka"><span class="nav-text">2. 关于Eureka</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-Eureka-Server"><span class="nav-text">2.1 Eureka Server</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-Client"><span class="nav-text">2.2 Client</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-Producer"><span class="nav-text">2.3 Producer</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-关于Ribbon"><span class="nav-text">3. 关于Ribbon</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-负载均衡案例实现"><span class="nav-text">4. 负载均衡案例实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-案例说明"><span class="nav-text">4.1 案例说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-启动Eureka-Server"><span class="nav-text">4.2 启动Eureka Server</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-启动Producer"><span class="nav-text">4.3 启动Producer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-4-启动Client"><span class="nav-text">4.4 启动Client</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-为什么需要Eureka"><span class="nav-text">1. 为什么需要Eureka</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-关于Eureka"><span class="nav-text">2. 关于Eureka</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-关于Ribbon"><span class="nav-text">3. 关于Ribbon</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-关于Feign"><span class="nav-text">4. 关于Feign</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-负载均衡案例实现"><span class="nav-text">5. 负载均衡案例实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#5-1-案例说明"><span class="nav-text">5.1 案例说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-2-启动Eureka-Server"><span class="nav-text">5.2 启动Eureka Server</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-3-启动Producer"><span class="nav-text">5.3 启动Producer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-4-启动Client"><span class="nav-text">5.4 启动Client</span></a></li></ol></li></ol></div>
             
 
           </div>
