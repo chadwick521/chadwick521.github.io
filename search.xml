@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[Spring Boot(四)之程序性能监控]]></title>
+    <url>%2F2018%2F03%2F21%2FSpring%20Boot(%E5%9B%9B)%E4%B9%8B%E7%A8%8B%E5%BA%8F%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%2F</url>
+    <content type="text"><![CDATA[SpringBoot特别适合团队构建各种可快速迭代的微服务，同时为了减少程序本身监控系统的开发量，SpringBoot提供了actuator模块，可以很方便的对你的SpringBoot程序做监控。 1. 添加依赖并修改配置SpringBoot应用中加入监控很简单，只需要在pom.xml文件中加入以下依赖： 1234&lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;&lt;/dependency&gt; 然后在apllication.properties配置文件中，加入安全属性配置： 1management.security.enabled=false 这样就能允许你在浏览器上查看SpringBoot进程的性能信息了。 2. 查看监控页面启动你的SpringBoot主函数，可以在启动log里看到各种可访问的性能mapper页面： 通过这些，我们可以实时的获取应用的各项监控指标。 2.1 /health展示了进程的健康状态，我的例子的结果如下图： 2.2 /beans列出所有由SpringBoot创建的bean： 2.3 /configprops用来获取应用中配置的属性信息报告 还有一些其他的性能指标，本篇就不再赘述。 3. 使用JConsole监控JConsole是一个内置Java性能分析器，如果你本机已经配置了jdk的话，可直接命令行输入jconsole，打开后的页面如下图所示： 选择你要监控的进程，点击连接即可进入该Java进程的监控首页，如下图所示： 可以很清楚的展示进程的内存、CPU、类信息。 以上内容就是关于Spring Boot(四)之程序性能监控的全部内容了，谢谢你阅读到了这里！ Author:zhaoyh]]></content>
+      <categories>
+        <category>Spring Boot</category>
+      </categories>
+      <tags>
+        <tag>Spring Boot</tag>
+        <tag>actuator</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[Spring Cloud微服务框架之服务网关Zuul]]></title>
     <url>%2F2018%2F03%2F12%2FSpring%20Cloud%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6%E4%B9%8B%E6%9C%8D%E5%8A%A1%E7%BD%91%E5%85%B3Zuul%2F</url>
     <content type="text"><![CDATA[在关于Spring Cloud系列之前的文章中，我们对负载均衡、注册中心、配置中心等微服务都做了介绍，已经满足大部分业务场景下的需求。但是仍存在一些问题，比如外部应用应该如何调用后端的各种API服务。此时可以引入网关服务，即Spring Cloud Zuul。它可以帮助我们实现诸如权限控制、服务调用、负载均衡等功能。如下图所示，Zuul主要充当了Api Gateway中的角色。 1. 准备工作在使用网关服务，首先要构建上图中的Service和ServiceB，然后再启动一个Eureka的注册中心。为了方便起见，我是直接使用上一篇博文：配置中心 中的工程。依赖服务列表为： 服务 name 端口 注册中心 eureka 1111 Service A CONFIG-CLIENT 9092 2. 构建网关服务2.1 新建Zuul工程新建一个普通的Spring Cloud工程，加入如下依赖： 1234567891011121314151617181920&lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter&lt;/artifactId&gt;&lt;/dependency&gt;&lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt; &lt;scope&gt;test&lt;/scope&gt;&lt;/dependency&gt;&lt;dependency&gt; &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt; &lt;artifactId&gt;spring-cloud-starter-zuul&lt;/artifactId&gt;&lt;/dependency&gt;&lt;dependency&gt; &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt; &lt;artifactId&gt;spring-cloud-starter-eureka&lt;/artifactId&gt;&lt;/dependency&gt; 2.2 配置文件修改修改application.properties文件，加入相关配置： 1234567891011121314#serverserver.port=5050spring.application.name=API-GATEWAY#eurekaeureka.client.serviceUrl.defaultZone=http://localhost:1111/eureka/#zuul-urlzuul.routes.baidu.path=/baidu/**zuul.routes.baidu.url=https://www.baidu.com/#zuul-serviceIdzuul.routes.configTest.path=/config/**zuul.routes.configTest.serviceId=CONFIG-CLIENT 注意Zuul在api转发时有两种模式，第一种是写死了url的模式，匹配请求后，直接向url请求内容，本次我以baidu为例。第二种是服务化的模式，匹配了请求后，向某个在注册中心注册过的服务发出请求，本次以配置中心的客户端为例。 2.3 启动并测试在主类中加入注解： 1@EnableZuulProxy 开启Zuul服务的功能。 2.3.1 测试url模式打开 http://localhost:5050/baidu ，匹配到了zuul.routes.baidu.path，其对应的url是zuul.routes.baidu.url=https://www.baidu.com/ ，则本次访问返回的内容如下： 2.3.2 测试serviceID模式打开 http://localhost:5050/config ，匹配到zuul.routes.configTest.path，返回的内容如下： 3 服务过滤过滤器负责对请求进行干预处理，同时对请求进行校验。过滤器可以说是Zuul实现API网关服务的核心组件，每一个进入到Zuul中的请求都应该经过过滤器的处理并返回给客户端。 3.1 接口介绍Zuul的过滤器基本接口ZuulFilter，包括以下4个抽象方法： 1234public abstract String filterType();public abstract int filterOrder();boolean shouldFilter();Object run(); filterType：代表过滤器的类型。Zuul中默认定义了4种不同的过滤器，分别如下： pre：被路由之前调用。通常用于身份校验，访问记录等。 routing：在路由请求时被调用。构建分发给微服务的请求，可以使用ribbon请求服务。 post：routing和error过滤器之后调用。将内容返回给客户端。 error：请求发生错误时调用。 filterOrder：过滤的执行顺序，int越小则优先级越高。 shouldFilter：返回boolean，判断该过滤器是否执行。 run：过滤器的实现。 3.2 过滤器的生命周期Zuul中定义了4个不同生命周期的过滤器类型，这基本覆盖了从接到API请求到返回内容的所有过程，下图是Zuul官方给出的请求生命周期的图解。 如上图所示，当外部API请求到达服务网关时，首先进入pre的过滤器，pre过滤器一般会对请求进行校验，比如accessToken等。完成pre类型的过滤器之后，进入第二阶段的routing过滤器，此时会把请求转发到具体的实例上。当实例的内容返回后，进入到post过滤器，会对处理结果进行一定的加工或者转换。此外，如果过程出错，则会进入到error阶段，error处理完之后也会进入到post阶段，由post过滤器将最终结果返回给客户端。 3.3 pre过滤器实现本例子结合第二章的内容，实现一个pre类型的过滤器。首先新建ApiFilter.java类，内容如下： 12345678910111213141516171819202122232425262728293031private static final Logger LOG = LoggerFactory.getLogger(ApiFilter.class);@Overridepublic String filterType() &#123; return "pre";&#125;@Overridepublic int filterOrder() &#123; return 0;&#125;@Overridepublic boolean shouldFilter() &#123; return true;&#125;@Overridepublic Object run() &#123; RequestContext requestContext = RequestContext.getCurrentContext(); HttpServletRequest request = requestContext.getRequest(); String token = request.getParameter("accessToken"); if (null == token || "".equals(token)) &#123; LOG.warn("Token is empty..."); requestContext.setSendZuulResponse(false); requestContext.setResponseStatusCode(403); return null; &#125; LOG.info("Access: " + request.getRemoteAddr() + " Token: " + token); return null;&#125; run函数的内容，主要是获取accessToken并进行简单的校验。创建完过滤器之后，在主类中将其实例化： 1234@Beanpublic ApiFilter apiFilter() &#123; return new ApiFilter();&#125; 此时，再输入 http://localhost:5050/config 后，就会出现权限不足的提示： 加上简单的accessToken后，http://localhost:5050/config?accessToken=zhaoyh ，可以正常访问： 通过以上例子可以看出，我们可以使用pre类型的过滤器做一些校验的工作，实际的项目中可以结合Shiro、oauth2.0等技术做鉴权的实现。 4 服务网关高可用本篇内容，对于Spring Cloud Zuul网关服务做了基本的介绍和实现，但是在实际的项目中，还是远远不够的。比如当后端的服务出现异常时，可以结合Hystrix熔断机制，对返回内容进行拦截或者返回定制的内容。另外，当出现网络问题，或者负载过高导致后端服务出现延迟时，也需要对服务进行重试，此时可以结合Spring Retry技术，开启重试的功能。 以上内容就是关于Spring Cloud微服务框架之服务网关Zuul的全部内容了，谢谢你阅读到了这里！ Author:zhaoyh]]></content>
@@ -19,8 +31,8 @@
         <category>Spring Cloud</category>
       </categories>
       <tags>
-        <tag>Config</tag>
         <tag>Eureka</tag>
+        <tag>Config</tag>
       </tags>
   </entry>
   <entry>
@@ -139,8 +151,8 @@
         <category>Spring Boot</category>
       </categories>
       <tags>
-        <tag>Intellij IDEA</tag>
         <tag>Spring Boot</tag>
+        <tag>Intellij IDEA</tag>
       </tags>
   </entry>
   <entry>

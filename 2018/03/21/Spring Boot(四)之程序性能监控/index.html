@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Spring Boot,actuator," />
 
 
 
@@ -93,15 +93,24 @@
 
 
 
-<meta name="description" content="小时候的梦想是改变世界，长大了只想好好工作和生活！">
-<meta property="og:type" content="website">
-<meta property="og:title" content="zhaoyh&#39;s blog">
-<meta property="og:url" content="http://www.zhaoyh.com.cn/categories/Spring-Cloud/index.html">
+<meta name="description" content="SpringBoot特别适合团队构建各种可快速迭代的微服务，同时为了减少程序本身监控系统的开发量，SpringBoot提供了actuator模块，可以很方便的对你的SpringBoot程序做监控。 1. 添加依赖并修改配置SpringBoot应用中加入监控很简单，只需要在pom.xml文件中加入以下依赖：">
+<meta name="keywords" content="Spring Boot,actuator">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Boot(四)之程序性能监控">
+<meta property="og:url" content="http://www.zhaoyh.com.cn/2018/03/21/Spring Boot(四)之程序性能监控/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
-<meta property="og:description" content="小时候的梦想是改变世界，长大了只想好好工作和生活！">
+<meta property="og:description" content="SpringBoot特别适合团队构建各种可快速迭代的微服务，同时为了减少程序本身监控系统的开发量，SpringBoot提供了actuator模块，可以很方便的对你的SpringBoot程序做监控。 1. 添加依赖并修改配置SpringBoot应用中加入监控很简单，只需要在pom.xml文件中加入以下依赖：">
+<meta property="og:image" content="http://ovftx0zn0.bkt.clouddn.com/map_log.jpg">
+<meta property="og:image" content="http://ovftx0zn0.bkt.clouddn.com/health.jpg">
+<meta property="og:image" content="http://ovftx0zn0.bkt.clouddn.com/beans.jpg">
+<meta property="og:image" content="http://ovftx0zn0.bkt.clouddn.com/configprops.jpg">
+<meta property="og:image" content="http://ovftx0zn0.bkt.clouddn.com/jconsole_login.jpg">
+<meta property="og:image" content="http://ovftx0zn0.bkt.clouddn.com/jconsole_index.jpg">
+<meta property="og:updated_time" content="2018-03-21T02:44:12.941Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="zhaoyh&#39;s blog">
-<meta name="twitter:description" content="小时候的梦想是改变世界，长大了只想好好工作和生活！">
+<meta name="twitter:title" content="Spring Boot(四)之程序性能监控">
+<meta name="twitter:description" content="SpringBoot特别适合团队构建各种可快速迭代的微服务，同时为了减少程序本身监控系统的开发量，SpringBoot提供了actuator模块，可以很方便的对你的SpringBoot程序做监控。 1. 添加依赖并修改配置SpringBoot应用中加入监控很简单，只需要在pom.xml文件中加入以下依赖：">
+<meta name="twitter:image" content="http://ovftx0zn0.bkt.clouddn.com/map_log.jpg">
 
 
 
@@ -129,13 +138,13 @@
 
 
 
-  <link rel="canonical" href="http://www.zhaoyh.com.cn/categories/Spring-Cloud/"/>
+  <link rel="canonical" href="http://www.zhaoyh.com.cn/2018/03/21/Spring Boot(四)之程序性能监控/"/>
 
 
 
 
 
-  <title>分类: Spring Cloud | zhaoyh's blog</title>
+  <title>Spring Boot(四)之程序性能监控 | zhaoyh's blog</title>
   
 
 
@@ -170,7 +179,7 @@
     
   
 
-  <div class="container sidebar-position-left  ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -298,129 +307,194 @@
           <div id="content" class="content">
             
 
-  <section id="posts" class="posts-collapse">
-    <div class="collection-title">
-      <h2>Spring Cloud<small>分类</small>
-      </h2>
-    </div>
-
+  <div id="posts" class="posts-expand">
     
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h3 class="post-title">
-        
-            <a class="post-title-link" href="/2018/03/12/Spring Cloud微服务框架之服务网关Zuul/" itemprop="url">
-              
-                <span itemprop="name">Spring Cloud微服务框架之服务网关Zuul</span>
-              
-            </a>
-        
-      </h3>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-03-12T15:36:05+08:00"
-              content="2018-03-12" >
-          03-12
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h3 class="post-title">
-        
-            <a class="post-title-link" href="/2018/02/28/Spring Cloud微服务框架之配置中心/" itemprop="url">
-              
-                <span itemprop="name">Spring Cloud微服务框架之配置中心</span>
-              
-            </a>
-        
-      </h3>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-02-28T22:03:14+08:00"
-              content="2018-02-28" >
-          02-28
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h3 class="post-title">
-        
-            <a class="post-title-link" href="/2018/01/15/Spring Cloud微服务框架之基于Eureka、Ribbon、Feign的负载均衡案例/" itemprop="url">
-              
-                <span itemprop="name">Spring Cloud微服务框架之基于Eureka、Ribbon、Feign的负载均衡案例</span>
-              
-            </a>
-        
-      </h3>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-01-15T22:51:43+08:00"
-              content="2018-01-15" >
-          01-15
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h3 class="post-title">
-        
-            <a class="post-title-link" href="/2018/01/08/Spring Cloud微服务框架介绍/" itemprop="url">
-              
-                <span itemprop="name">Spring Cloud微服务框架介绍</span>
-              
-            </a>
-        
-      </h3>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-01-08T12:39:35+08:00"
-              content="2018-01-08" >
-          01-08
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-    
-  </section>
 
   
 
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2018/03/21/Spring Boot(四)之程序性能监控/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhaoyh">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/kobe.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zhaoyh's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Spring Boot(四)之程序性能监控</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-21T10:39:57+08:00">
+                2018-03-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring-Boot/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring Boot</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>SpringBoot特别适合团队构建各种可快速迭代的微服务，同时为了减少程序本身监控系统的开发量，SpringBoot提供了actuator模块，可以很方便的对你的SpringBoot程序做监控。</p>
+<h3 id="1-添加依赖并修改配置"><a href="#1-添加依赖并修改配置" class="headerlink" title="1. 添加依赖并修改配置"></a>1. 添加依赖并修改配置</h3><p>SpringBoot应用中加入监控很简单，只需要在pom.xml文件中加入以下依赖：</p>
+<a id="more"></a>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>然后在apllication.properties配置文件中，加入安全属性配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">management.security.enabled=false</div></pre></td></tr></table></figure>
+<p>这样就能允许你在浏览器上查看SpringBoot进程的性能信息了。</p>
+<h3 id="2-查看监控页面"><a href="#2-查看监控页面" class="headerlink" title="2. 查看监控页面"></a>2. 查看监控页面</h3><p>启动你的SpringBoot主函数，可以在启动log里看到各种可访问的性能mapper页面：</p>
+<p><img src="http://ovftx0zn0.bkt.clouddn.com/map_log.jpg" alt="image"><br>通过这些，我们可以实时的获取应用的各项监控指标。</p>
+<h4 id="2-1-health"><a href="#2-1-health" class="headerlink" title="2.1 /health"></a>2.1 /health</h4><p>展示了进程的健康状态，我的例子的结果如下图：<br><img src="http://ovftx0zn0.bkt.clouddn.com/health.jpg" alt="image"></p>
+<h4 id="2-2-beans"><a href="#2-2-beans" class="headerlink" title="2.2 /beans"></a>2.2 /beans</h4><p>列出所有由SpringBoot创建的bean：</p>
+<p><img src="http://ovftx0zn0.bkt.clouddn.com/beans.jpg" alt="image"></p>
+<h4 id="2-3-configprops"><a href="#2-3-configprops" class="headerlink" title="2.3 /configprops"></a>2.3 /configprops</h4><p>用来获取应用中配置的属性信息报告<br><img src="http://ovftx0zn0.bkt.clouddn.com/configprops.jpg" alt="image"></p>
+<p>还有一些其他的性能指标，本篇就不再赘述。</p>
+<h3 id="3-使用JConsole监控"><a href="#3-使用JConsole监控" class="headerlink" title="3. 使用JConsole监控"></a>3. 使用JConsole监控</h3><p>JConsole是一个内置Java性能分析器，如果你本机已经配置了jdk的话，可直接命令行输入jconsole，打开后的页面如下图所示：</p>
+<p><img src="http://ovftx0zn0.bkt.clouddn.com/jconsole_login.jpg" alt="image"></p>
+<p>选择你要监控的进程，点击连接即可进入该Java进程的监控首页，如下图所示：</p>
+<p><img src="http://ovftx0zn0.bkt.clouddn.com/jconsole_index.jpg" alt="image"></p>
+<p>可以很清楚的展示进程的内存、CPU、类信息。</p>
+<blockquote>
+<p>以上内容就是关于Spring Boot(四)之程序性能监控的全部内容了，谢谢你阅读到了这里！</p>
+<p>Author:zhaoyh</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
+          
+            <a href="/tags/actuator/" rel="tag"># actuator</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/12/Spring Cloud微服务框架之服务网关Zuul/" rel="next" title="Spring Cloud微服务框架之服务网关Zuul">
+                <i class="fa fa-chevron-left"></i> Spring Cloud微服务框架之服务网关Zuul
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -428,6 +502,12 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMDY5Mi83MjQ3"></div>
+    
+  </div>
+
 
         </div>
         
@@ -448,8 +528,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/kobe.jpg"
@@ -511,6 +600,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-添加依赖并修改配置"><span class="nav-text">1. 添加依赖并修改配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-查看监控页面"><span class="nav-text">2. 查看监控页面</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-health"><span class="nav-text">2.1 /health</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-beans"><span class="nav-text">2.2 /beans</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-configprops"><span class="nav-text">2.3 /configprops</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-使用JConsole监控"><span class="nav-text">3. 使用JConsole监控</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -622,10 +727,10 @@
 
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
 
-  
+
 
   
 
@@ -654,6 +759,17 @@
 
 
 
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
   
 
 
