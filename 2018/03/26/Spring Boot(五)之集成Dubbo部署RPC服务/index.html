@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="RabbitMQ,消息中间件,Kafka," />
+  <meta name="keywords" content="Spring Boot,dubbo,RPC," />
 
 
 
@@ -93,23 +93,21 @@
 
 
 
-<meta name="description" content="消息队列属于大型网站系统中间件的重要组件，主要解决了应用耦合、异步消息、流量削峰等问题，对于网站实现高性能、可伸缩的架构有很大的帮助。  1. 常用的消息队列ActiveMQApache ActiveMQ是Apache软件基金会所研发的开放源代码消息中间件；由于ActiveMQ是一个纯Java程序，因此只需要操作系统支持Java虚拟机，ActiveMQ便可运行。">
-<meta name="keywords" content="RabbitMQ,消息中间件,Kafka">
+<meta name="description" content="本篇博文的主要内容是基于Spring Boot，集成阿里开源的Dubbo，实现一个RPC服务。为了实现该RPC，主要依赖以下运行环境：    环境 版本     jdk 1.8+   Maven 2.0+或者3.0+   ZooKeeper 3.4+   Spring Boot 1.5+   Dubbo 2.5+">
+<meta name="keywords" content="Spring Boot,dubbo,RPC">
 <meta property="og:type" content="article">
-<meta property="og:title" content="消息中间件入门解析">
-<meta property="og:url" content="http://www.zhaoyh.com.cn/2017/11/22/消息中间件入门解析/index.html">
+<meta property="og:title" content="Spring Boot(五)之集成Dubbo部署RPC服务">
+<meta property="og:url" content="http://www.zhaoyh.com.cn/2018/03/26/Spring Boot(五)之集成Dubbo部署RPC服务/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
-<meta property="og:description" content="消息队列属于大型网站系统中间件的重要组件，主要解决了应用耦合、异步消息、流量削峰等问题，对于网站实现高性能、可伸缩的架构有很大的帮助。  1. 常用的消息队列ActiveMQApache ActiveMQ是Apache软件基金会所研发的开放源代码消息中间件；由于ActiveMQ是一个纯Java程序，因此只需要操作系统支持Java虚拟机，ActiveMQ便可运行。">
-<meta property="og:image" content="http://p04gt4ifc.bkt.clouddn.com/mq.png">
-<meta property="og:image" content="http://p04gt4ifc.bkt.clouddn.com/dingdan.jpeg">
-<meta property="og:image" content="http://p04gt4ifc.bkt.clouddn.com/dingdan_MQ.jpeg">
-<meta property="og:image" content="http://p04gt4ifc.bkt.clouddn.com/liuliang.jpeg">
-<meta property="og:image" content="http://p04gt4ifc.bkt.clouddn.com/rizhi.jpeg">
-<meta property="og:updated_time" content="2017-12-05T09:49:51.671Z">
+<meta property="og:description" content="本篇博文的主要内容是基于Spring Boot，集成阿里开源的Dubbo，实现一个RPC服务。为了实现该RPC，主要依赖以下运行环境：    环境 版本     jdk 1.8+   Maven 2.0+或者3.0+   ZooKeeper 3.4+   Spring Boot 1.5+   Dubbo 2.5+">
+<meta property="og:image" content="http://p2pe2d0id.bkt.clouddn.com/dubbo-architecture.png">
+<meta property="og:image" content="http://p2pe2d0id.bkt.clouddn.com/dubbo_server.jpg">
+<meta property="og:image" content="http://p2pe2d0id.bkt.clouddn.com/dubbo_client.jpg">
+<meta property="og:updated_time" content="2018-03-26T09:58:20.254Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="消息中间件入门解析">
-<meta name="twitter:description" content="消息队列属于大型网站系统中间件的重要组件，主要解决了应用耦合、异步消息、流量削峰等问题，对于网站实现高性能、可伸缩的架构有很大的帮助。  1. 常用的消息队列ActiveMQApache ActiveMQ是Apache软件基金会所研发的开放源代码消息中间件；由于ActiveMQ是一个纯Java程序，因此只需要操作系统支持Java虚拟机，ActiveMQ便可运行。">
-<meta name="twitter:image" content="http://p04gt4ifc.bkt.clouddn.com/mq.png">
+<meta name="twitter:title" content="Spring Boot(五)之集成Dubbo部署RPC服务">
+<meta name="twitter:description" content="本篇博文的主要内容是基于Spring Boot，集成阿里开源的Dubbo，实现一个RPC服务。为了实现该RPC，主要依赖以下运行环境：    环境 版本     jdk 1.8+   Maven 2.0+或者3.0+   ZooKeeper 3.4+   Spring Boot 1.5+   Dubbo 2.5+">
+<meta name="twitter:image" content="http://p2pe2d0id.bkt.clouddn.com/dubbo-architecture.png">
 
 
 
@@ -137,13 +135,13 @@
 
 
 
-  <link rel="canonical" href="http://www.zhaoyh.com.cn/2017/11/22/消息中间件入门解析/"/>
+  <link rel="canonical" href="http://www.zhaoyh.com.cn/2018/03/26/Spring Boot(五)之集成Dubbo部署RPC服务/"/>
 
 
 
 
 
-  <title>消息中间件入门解析 | zhaoyh's blog</title>
+  <title>Spring Boot(五)之集成Dubbo部署RPC服务 | zhaoyh's blog</title>
   
 
 
@@ -316,7 +314,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2017/11/22/消息中间件入门解析/">
+    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2018/03/26/Spring Boot(五)之集成Dubbo部署RPC服务/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zhaoyh">
@@ -333,7 +331,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">消息中间件入门解析</h2>
+          <h2 class="post-title" itemprop="name headline">Spring Boot(五)之集成Dubbo部署RPC服务</h2>
         
 
         <div class="post-meta">
@@ -345,8 +343,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-22T11:36:42+08:00">
-                2017-11-22
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-26T17:54:36+08:00">
+                2018-03-26
               </time>
             
 
@@ -368,8 +366,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/消息中间件/" itemprop="url" rel="index">
-                    <span itemprop="name">消息中间件</span>
+                  <a href="/categories/Spring-Boot/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring Boot</span>
                   </a>
                 </span>
 
@@ -402,32 +400,81 @@
       
 
       
-        <blockquote>
-<p>消息队列属于大型网站系统中间件的重要组件，主要解决了应用耦合、异步消息、流量削峰等问题，对于网站实现高性能、可伸缩的架构有很大的帮助。</p>
-</blockquote>
-<h3 id="1-常用的消息队列"><a href="#1-常用的消息队列" class="headerlink" title="1. 常用的消息队列"></a>1. 常用的消息队列</h3><h4 id="ActiveMQ"><a href="#ActiveMQ" class="headerlink" title="ActiveMQ"></a><a href="http://activemq.apache.org/" target="_blank" rel="external">ActiveMQ</a></h4><p>Apache ActiveMQ是Apache软件基金会所研发的开放源代码消息中间件；由于ActiveMQ是一个纯Java程序，因此只需要操作系统支持Java虚拟机，ActiveMQ便可运行。</p>
+        <p>本篇博文的主要内容是基于Spring Boot，集成阿里开源的Dubbo，实现一个RPC服务。为了实现该RPC，主要依赖以下运行环境：</p>
+<table>
+<thead>
+<tr>
+<th>环境</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>jdk</td>
+<td>1.8+</td>
+</tr>
+<tr>
+<td>Maven</td>
+<td>2.0+或者3.0+</td>
+</tr>
+<tr>
+<td>ZooKeeper</td>
+<td>3.4+</td>
+</tr>
+<tr>
+<td>Spring Boot</td>
+<td>1.5+</td>
+</tr>
+<tr>
+<td>Dubbo</td>
+<td>2.5+</td>
+</tr>
+</tbody>
+</table>
 <a id="more"></a>
-<h4 id="RabbitMQ"><a href="#RabbitMQ" class="headerlink" title="RabbitMQ"></a><a href="https://www.rabbitmq.com/getstarted.html" target="_blank" rel="external">RabbitMQ</a></h4><p>RabbitMQ是实现了高级消息队列协议（AMQP:Advanced Message Queuing Protocol）的开源消息代理（亦称面向消息的中间件）。RabbitMQ适用于对数据一致性和可靠性的场景，对吞吐量的场景要求其次。RabbitMQ服务器是用Erlang语言编写。</p>
-<h4 id="ZeroMQ"><a href="#ZeroMQ" class="headerlink" title="ZeroMQ"></a><a href="http://zeromq.org/" target="_blank" rel="external">ZeroMQ</a></h4><p>ØMQ （也拼写作ZeroMQ，0MQ或ZMQ)是一个为可伸缩的分布式或并发应用程序设计的高性能异步消息库。它提供一个消息队列, 但是与面向消息的中间件不同，ZeroMQ的运行不需要专门的消息代理（message broker）。该库设计成常见的套接字风格的API。</p>
-<p>与RabbitMQ相比，ZMQ并不像是一个传统意义上的消息队列服务器，事实上，它也根本不是一个服务器，更像一个底层的网络通讯库，在Socket API之上做了一层封装，将网络通讯、进程通讯和线程通讯抽象为统一的API接口。简而言之socket之上、MQ之下。</p>
-<h4 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a><a href="https://kafka.apache.org/" target="_blank" rel="external">Kafka</a></h4><p><a href="https://www.ibm.com/developerworks/cn/opensource/os-cn-kafka/index.html" target="_blank" rel="external">IBM介绍Kafka的博客</a></p>
-<p>Kafka是由LinkedIn开发的一个分布式的消息系统，使用Scala编写，它以可水平扩展和高吞吐率而被广泛使用。目前越来越多的开源分布式处理系统如Cloudera、ApacheStorm、Spark都支持与Kafka集成。适合产生大量数据的互联网服务的数据收集业务。</p>
-<h4 id="RocketMQ"><a href="#RocketMQ" class="headerlink" title="RocketMQ"></a><a href="https://rocketmq.apache.org/" target="_blank" rel="external">RocketMQ</a></h4><p>RocketMQ 是阿里的开源产品，用 Java 语言实现，在设计时参考了 Kafka，并做出了自己的一些改进，消息可靠性上比 Kafka 更好。</p>
-<p><img src="http://p04gt4ifc.bkt.clouddn.com/mq.png" alt="image"></p>
-<h3 id="2-MQ的应用场景"><a href="#2-MQ的应用场景" class="headerlink" title="2. MQ的应用场景"></a>2. MQ的应用场景</h3><h4 id="2-1-应用系统解耦"><a href="#2-1-应用系统解耦" class="headerlink" title="2.1 应用系统解耦"></a>2.1 应用系统解耦</h4><blockquote>
-<p>耦合性(Coupling)，也叫耦合度，是对模块间关联程度的度量。耦合的强弱取决于模块间接口的复杂性、调用模块的方式以及通过界面传送数据的多少。模块间的耦合度是指模块之间的依赖关系，包括控制关系、调用关系、数据传递关系。模块间联系越多，其耦合性越强，同时表明其独立性越差。软件设计中通常用耦合度和内聚度作为衡量模块独立程度的标准。划分模块的一个准则就是高内聚低耦合。</p>
-</blockquote>
-<p><img src="http://p04gt4ifc.bkt.clouddn.com/dingdan.jpeg" alt="image"></p>
-<p>以简单的订单库存管理为例，客户下单后，需要通知减库存。传统的做法是订单系统调用库存系统的接口，以串行的方式等待库存系统的结果，这样订单系统和库存系统就有一种耦合关系。加入了消息队列机制后：</p>
-<p><img src="http://p04gt4ifc.bkt.clouddn.com/dingdan_MQ.jpeg" alt="image"></p>
-<p>订单系统下单后，将消息写入队列并返回下单成功；库存系统订阅消息，获取了下单的消息，做相应的减库存操作；这样每个模块只需要做自己的工作，实现了订单系统和库存系统的解耦。</p>
-<h4 id="2-2-流量削峰"><a href="#2-2-流量削峰" class="headerlink" title="2.2 流量削峰"></a>2.2 流量削峰</h4><p>在高并发场景下，流量过大，导致服务负载过高甚至挂掉，为了解决这个问题，也可以引入消息队列：</p>
-<p><img src="http://p04gt4ifc.bkt.clouddn.com/liuliang.jpeg" alt="image"></p>
-<p>用户的请求，服务器接收后，首先写入消息队列。假如消息队列长度超过最大数量，则直接抛弃用户请求或跳转到错误页面。</p>
-<h4 id="2-3-日志处理"><a href="#2-3-日志处理" class="headerlink" title="2.3 日志处理"></a>2.3 日志处理</h4><p>将消息队列用在日志采集和处理中，解决大量日志传输的问题。</p>
-<p><img src="http://p04gt4ifc.bkt.clouddn.com/rizhi.jpeg" alt="image"></p>
+<p>RPC的内容：远程过程调用，简单实现对User根据ID进行查询服务。</p>
+<h3 id="1-关于ZooKeeper"><a href="#1-关于ZooKeeper" class="headerlink" title="1. 关于ZooKeeper"></a>1. 关于ZooKeeper</h3><p><a href="https://zookeeper.apache.org/" target="_blank" rel="external">ZooKeeper</a> 是Apache基金会的独立顶级项目，用来为大型的分布式计算提供分布式配置、分布式一致性、同步、注册等服务。ZooKeeper提供的服务介绍基本如下：</p>
+<ul>
+<li>命名注册：按照名称标记分布式集群中的节点。</li>
+<li>配置管理：分布式节点可加载最新的系统配置信息。</li>
+<li>集群管理：节点状态管理、节点的加入和删除等。</li>
+<li>选举：选举一个分布式应用中的leader节点。</li>
+<li>数据共享：用于分布式应用各个节点之间的数据共享。</li>
+<li>同步服务：提供数据同步，若有数据修改，可加锁，其他节点也可同步更新数据。</li>
+</ul>
+<p>使用Dubbo构建RPC要依赖于ZooKeeper的命名、数据同步、共享等服务，因此，在启动一个Dubbo服务之前，要确保你的ZooKeeper集群处于可用的状态。</p>
+<h3 id="2-关于Dubbo"><a href="#2-关于Dubbo" class="headerlink" title="2. 关于Dubbo"></a>2. 关于Dubbo</h3><p><a href="http://dubbo.apache.org/" target="_blank" rel="external">Dubbo</a> 是阿里开源的一款高性能服务框架，致力于提供高性能的RPC服务、SOA服务治理。使得你的应用可以通过集成RPC提高系统性能，还支持与Spring框架的无缝集成。Dubbo主要包括远程过程调用、集群容错、服务自动发现等核心内容。</p>
+<p>Dubbo提供了透明化的远程方法调用，可以像调用本地方法一样调用远程方法。它具备负载均衡及容错机制，也可以实现服务自动注册与发现，不再需要写死服务提供者的地址，并且能够平滑添加或删除服务提供者。</p>
+<p>官方提供的Dubbo服务治理流程可如下图所示：</p>
+<p><img src="http://p2pe2d0id.bkt.clouddn.com/dubbo-architecture.png" alt="image"></p>
+<ul>
+<li>Registry：服务注册中心，目前依赖于ZooKeeper提供的服务。</li>
+<li>Monitor：服务监控，比较好理解。</li>
+<li>Provider：服务端、生产者、服务提供者等，需要先向注册中心注册自己后，才能被消费者发现。</li>
+<li>Consumer：客户端、消费者等，需要先向注册中心订阅自己需要的服务，然后再向生产者调用该服务。</li>
+</ul>
+<h3 id="3-实现RPC服务端"><a href="#3-实现RPC服务端" class="headerlink" title="3. 实现RPC服务端"></a>3. 实现RPC服务端</h3><p>demo地址： <a href="https://code.aliyun.com/zhaoyh_code/springcloud-dubbo-server.git" target="_blank" rel="external">https://code.aliyun.com/zhaoyh_code/springcloud-dubbo-server.git</a><br> 代码是托管在阿里云上，用任意阿里账号即可访问。</p>
+<p>服务端demo的工程目录结构如下：<br><img src="http://p2pe2d0id.bkt.clouddn.com/dubbo_server.jpg" alt="image"></p>
+<h4 id="3-1-添加依赖并配置"><a href="#3-1-添加依赖并配置" class="headerlink" title="3.1 添加依赖并配置"></a>3.1 添加依赖并配置</h4><p>pom.xml文件中添加如下依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-logging<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.dubbo.springboot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-dubbo<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;dubbo-spring-boot&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>在application.properties文件中加入以下配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">#server</div><div class="line">server.port=8090</div><div class="line"></div><div class="line">#log</div><div class="line">logging.config=classpath:logConfig.xml</div><div class="line"></div><div class="line">#dubbo配置</div><div class="line">#应用名称</div><div class="line">spring.dubbo.application.name=provider</div><div class="line">#注册中心地址</div><div class="line">spring.dubbo.registry.address=zookeeper://127.0.0.1:2181</div><div class="line">spring.dubbo.protocol.port=20880</div><div class="line">spring.dubbo.protocol.name=dubbo</div><div class="line">#服务类包目录</div><div class="line">spring.dubbo.scan=com.zhaoyh.storage</div></pre></td></tr></table></figure>
+<h4 id="3-2-实现User接口"><a href="#3-2-实现User接口" class="headerlink" title="3.2 实现User接口"></a>3.2 实现User接口</h4><p>在UserServiceImpl.java类中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.zhaoyh.storage.impl;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.alibaba.dubbo.config.annotation.Service;</div><div class="line"><span class="keyword">import</span> com.zhaoyh.model.User;</div><div class="line"><span class="keyword">import</span> com.zhaoyh.storage.IUserService;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by zhaoyh on 2018/3/20</div><div class="line"> * <span class="doctag">@author</span> zhaoyh</div><div class="line"> */</div><div class="line"><span class="meta">@Service</span>(version = <span class="string">"1.0"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserServiceImpl</span> <span class="keyword">implements</span> <span class="title">IUserService</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">getUserById</span><span class="params">(<span class="keyword">long</span> id)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> User(<span class="number">1</span>, <span class="string">"zhaoyh"</span>, <span class="number">26</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>本例子只是实现了简单假查询的过程，在实际的项目中，getUserById方法中是你的DAO层需要实现的。<br>@Service注解标识为Dubbo的服务，version记录了版本信息。</p>
+<p>另外User.java实体类通过Dubbo的RPC服务调用，需要实现序列化的接口。</p>
+<h3 id="4-实现RPC客户端"><a href="#4-实现RPC客户端" class="headerlink" title="4. 实现RPC客户端"></a>4. 实现RPC客户端</h3><p>demo地址： <a href="https://code.aliyun.com/zhaoyh_code/springcloud-dubbo-client.git" target="_blank" rel="external">https://code.aliyun.com/zhaoyh_code/springcloud-dubbo-client.git</a></p>
+<p>客户端demo的工程目录结构如下：<br><img src="http://p2pe2d0id.bkt.clouddn.com/dubbo_client.jpg" alt="image"></p>
+<p>pom.xml文件与RPC服务端的相同，但是application.properties会略有不同：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">#server</div><div class="line">server.port=8091</div><div class="line"></div><div class="line">#log</div><div class="line">logging.config=classpath:logConfig.xml</div><div class="line"></div><div class="line">#dubbo server</div><div class="line">spring.dubbo.application.name=consumer</div><div class="line">spring.dubbo.registry.address=zookeeper://127.0.0.1:2181</div><div class="line">spring.dubbo.scan=com.zhaoyh.storage</div></pre></td></tr></table></figure>
+<p>只需要指定应用名称和注册中心地址即可。</p>
+<p>为了测试RPC服务，本文实现了简单的定时任务用户查询User，参考TestTask.java中的内容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.zhaoyh.storage;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.alibaba.dubbo.config.annotation.Reference;</div><div class="line"><span class="keyword">import</span> com.zhaoyh.model.User;</div><div class="line"><span class="keyword">import</span> org.slf4j.Logger;</div><div class="line"><span class="keyword">import</span> org.slf4j.LoggerFactory;</div><div class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.Scheduled;</div><div class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by zhaoyh on 2018/3/20</div><div class="line"> * <span class="doctag">@author</span> zhaoyh</div><div class="line"> */</div><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestTask</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger LOG = LoggerFactory.getLogger(TestTask.class);</div><div class="line"></div><div class="line">    <span class="meta">@Reference</span>(version = <span class="string">"1.0"</span>)</div><div class="line">    IUserService userService;</div><div class="line"></div><div class="line">    <span class="meta">@Scheduled</span>(fixedRate = <span class="number">30000L</span>)</div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> </span>&#123;</div><div class="line">        User user = userService.getUserById(<span class="number">1</span>);</div><div class="line">        LOG.info(<span class="string">"Name: "</span> + user.getName());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>通过@Reference注解，订阅Dubbo服务端中对应版本号的服务。</p>
+<h3 id="5-测试"><a href="#5-测试" class="headerlink" title="5. 测试"></a>5. 测试</h3><p>启动环境的顺序为：ZooKeeper-&gt;Dubbo Server-&gt;Dubbo Client</p>
+<p>所有的环境启动成功后，Dubbo Client端会每隔30秒，查询一次IUserService中的服务。</p>
 <blockquote>
-<p>以上内容就是关于消息中间件入门解析的全部内容了，谢谢你阅读到了这里！</p>
+<p>以上内容就是关于Spring Boot(五)之集成Dubbo部署RPC服务的全部内容了，谢谢你阅读到了这里！</p>
 <p>Author:zhaoyh</p>
 </blockquote>
 
@@ -459,11 +506,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/RabbitMQ/" rel="tag"># RabbitMQ</a>
+            <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
           
-            <a href="/tags/消息中间件/" rel="tag"># 消息中间件</a>
+            <a href="/tags/dubbo/" rel="tag"># dubbo</a>
           
-            <a href="/tags/Kafka/" rel="tag"># Kafka</a>
+            <a href="/tags/RPC/" rel="tag"># RPC</a>
           
         </div>
       
@@ -476,8 +523,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/10/22/开源日志框架slf4j、log4j、logback的关系及介绍/" rel="next" title="开源日志框架slf4j、log4j、logback的关系及介绍">
-                <i class="fa fa-chevron-left"></i> 开源日志框架slf4j、log4j、logback的关系及介绍
+              <a href="/2018/03/21/Spring Boot(四)之程序性能监控/" rel="next" title="Spring Boot(四)之程序性能监控">
+                <i class="fa fa-chevron-left"></i> Spring Boot(四)之程序性能监控
               </a>
             
           </div>
@@ -485,10 +532,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/11/29/RabbitMQ实体关系介绍/" rel="prev" title="RabbitMQ实体关系介绍">
-                RabbitMQ实体关系介绍 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -620,7 +663,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-常用的消息队列"><span class="nav-text">1. 常用的消息队列</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ActiveMQ"><span class="nav-text">ActiveMQ</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RabbitMQ"><span class="nav-text">RabbitMQ</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ZeroMQ"><span class="nav-text">ZeroMQ</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Kafka"><span class="nav-text">Kafka</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RocketMQ"><span class="nav-text">RocketMQ</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-MQ的应用场景"><span class="nav-text">2. MQ的应用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-应用系统解耦"><span class="nav-text">2.1 应用系统解耦</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-流量削峰"><span class="nav-text">2.2 流量削峰</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-日志处理"><span class="nav-text">2.3 日志处理</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-关于ZooKeeper"><span class="nav-text">1. 关于ZooKeeper</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-关于Dubbo"><span class="nav-text">2. 关于Dubbo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-实现RPC服务端"><span class="nav-text">3. 实现RPC服务端</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-添加依赖并配置"><span class="nav-text">3.1 添加依赖并配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-实现User接口"><span class="nav-text">3.2 实现User接口</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-实现RPC客户端"><span class="nav-text">4. 实现RPC客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-测试"><span class="nav-text">5. 测试</span></a></li></ol></div>
             
 
           </div>

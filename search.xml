@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[Spring Boot(五)之集成Dubbo部署RPC服务]]></title>
+    <url>%2F2018%2F03%2F26%2FSpring%20Boot(%E4%BA%94)%E4%B9%8B%E9%9B%86%E6%88%90Dubbo%E9%83%A8%E7%BD%B2RPC%E6%9C%8D%E5%8A%A1%2F</url>
+    <content type="text"><![CDATA[本篇博文的主要内容是基于Spring Boot，集成阿里开源的Dubbo，实现一个RPC服务。为了实现该RPC，主要依赖以下运行环境： 环境 版本 jdk 1.8+ Maven 2.0+或者3.0+ ZooKeeper 3.4+ Spring Boot 1.5+ Dubbo 2.5+ RPC的内容：远程过程调用，简单实现对User根据ID进行查询服务。 1. 关于ZooKeeperZooKeeper 是Apache基金会的独立顶级项目，用来为大型的分布式计算提供分布式配置、分布式一致性、同步、注册等服务。ZooKeeper提供的服务介绍基本如下： 命名注册：按照名称标记分布式集群中的节点。 配置管理：分布式节点可加载最新的系统配置信息。 集群管理：节点状态管理、节点的加入和删除等。 选举：选举一个分布式应用中的leader节点。 数据共享：用于分布式应用各个节点之间的数据共享。 同步服务：提供数据同步，若有数据修改，可加锁，其他节点也可同步更新数据。 使用Dubbo构建RPC要依赖于ZooKeeper的命名、数据同步、共享等服务，因此，在启动一个Dubbo服务之前，要确保你的ZooKeeper集群处于可用的状态。 2. 关于DubboDubbo 是阿里开源的一款高性能服务框架，致力于提供高性能的RPC服务、SOA服务治理。使得你的应用可以通过集成RPC提高系统性能，还支持与Spring框架的无缝集成。Dubbo主要包括远程过程调用、集群容错、服务自动发现等核心内容。 Dubbo提供了透明化的远程方法调用，可以像调用本地方法一样调用远程方法。它具备负载均衡及容错机制，也可以实现服务自动注册与发现，不再需要写死服务提供者的地址，并且能够平滑添加或删除服务提供者。 官方提供的Dubbo服务治理流程可如下图所示： Registry：服务注册中心，目前依赖于ZooKeeper提供的服务。 Monitor：服务监控，比较好理解。 Provider：服务端、生产者、服务提供者等，需要先向注册中心注册自己后，才能被消费者发现。 Consumer：客户端、消费者等，需要先向注册中心订阅自己需要的服务，然后再向生产者调用该服务。 3. 实现RPC服务端demo地址： https://code.aliyun.com/zhaoyh_code/springcloud-dubbo-server.git 代码是托管在阿里云上，用任意阿里账号即可访问。 服务端demo的工程目录结构如下： 3.1 添加依赖并配置pom.xml文件中添加如下依赖： 123456789101112131415161718192021&lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;&lt;/dependency&gt;&lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt; &lt;scope&gt;test&lt;/scope&gt;&lt;/dependency&gt;&lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-logging&lt;/artifactId&gt;&lt;/dependency&gt;&lt;dependency&gt; &lt;groupId&gt;io.dubbo.springboot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-dubbo&lt;/artifactId&gt; &lt;version&gt;$&#123;dubbo-spring-boot&#125;&lt;/version&gt;&lt;/dependency&gt; 在application.properties文件中加入以下配置： 123456789101112131415#serverserver.port=8090#loglogging.config=classpath:logConfig.xml#dubbo配置#应用名称spring.dubbo.application.name=provider#注册中心地址spring.dubbo.registry.address=zookeeper://127.0.0.1:2181spring.dubbo.protocol.port=20880spring.dubbo.protocol.name=dubbo#服务类包目录spring.dubbo.scan=com.zhaoyh.storage 3.2 实现User接口在UserServiceImpl.java类中： 123456789101112131415161718package com.zhaoyh.storage.impl;import com.alibaba.dubbo.config.annotation.Service;import com.zhaoyh.model.User;import com.zhaoyh.storage.IUserService;/** * Created by zhaoyh on 2018/3/20 * @author zhaoyh */@Service(version = "1.0")public class UserServiceImpl implements IUserService &#123; @Override public User getUserById(long id) &#123; return new User(1, "zhaoyh", 26); &#125;&#125; 本例子只是实现了简单假查询的过程，在实际的项目中，getUserById方法中是你的DAO层需要实现的。@Service注解标识为Dubbo的服务，version记录了版本信息。 另外User.java实体类通过Dubbo的RPC服务调用，需要实现序列化的接口。 4. 实现RPC客户端demo地址： https://code.aliyun.com/zhaoyh_code/springcloud-dubbo-client.git 客户端demo的工程目录结构如下： pom.xml文件与RPC服务端的相同，但是application.properties会略有不同： 12345678910#serverserver.port=8091#loglogging.config=classpath:logConfig.xml#dubbo serverspring.dubbo.application.name=consumerspring.dubbo.registry.address=zookeeper://127.0.0.1:2181spring.dubbo.scan=com.zhaoyh.storage 只需要指定应用名称和注册中心地址即可。 为了测试RPC服务，本文实现了简单的定时任务用户查询User，参考TestTask.java中的内容： 1234567891011121314151617181920212223242526package com.zhaoyh.storage;import com.alibaba.dubbo.config.annotation.Reference;import com.zhaoyh.model.User;import org.slf4j.Logger;import org.slf4j.LoggerFactory;import org.springframework.scheduling.annotation.Scheduled;import org.springframework.stereotype.Component;/** * Created by zhaoyh on 2018/3/20 * @author zhaoyh */@Componentpublic class TestTask &#123; private static final Logger LOG = LoggerFactory.getLogger(TestTask.class); @Reference(version = "1.0") IUserService userService; @Scheduled(fixedRate = 30000L) private void test() &#123; User user = userService.getUserById(1); LOG.info("Name: " + user.getName()); &#125;&#125; 通过@Reference注解，订阅Dubbo服务端中对应版本号的服务。 5. 测试启动环境的顺序为：ZooKeeper-&gt;Dubbo Server-&gt;Dubbo Client 所有的环境启动成功后，Dubbo Client端会每隔30秒，查询一次IUserService中的服务。 以上内容就是关于Spring Boot(五)之集成Dubbo部署RPC服务的全部内容了，谢谢你阅读到了这里！ Author:zhaoyh]]></content>
+      <categories>
+        <category>Spring Boot</category>
+      </categories>
+      <tags>
+        <tag>Spring Boot</tag>
+        <tag>dubbo</tag>
+        <tag>RPC</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[Spring Boot(四)之程序性能监控]]></title>
     <url>%2F2018%2F03%2F21%2FSpring%20Boot(%E5%9B%9B)%E4%B9%8B%E7%A8%8B%E5%BA%8F%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%2F</url>
     <content type="text"><![CDATA[SpringBoot特别适合团队构建各种可快速迭代的微服务，同时为了减少程序本身监控系统的开发量，SpringBoot提供了actuator模块，可以很方便的对你的SpringBoot程序做监控。 1. 添加依赖并修改配置SpringBoot应用中加入监控很简单，只需要在pom.xml文件中加入以下依赖： 1234&lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;&lt;/dependency&gt; 然后在apllication.properties配置文件中，加入安全属性配置： 1management.security.enabled=false 这样就能允许你在浏览器上查看SpringBoot进程的性能信息了。 2. 查看监控页面启动你的SpringBoot主函数，可以在启动log里看到各种可访问的性能mapper页面： 通过这些，我们可以实时的获取应用的各项监控指标。 2.1 /health展示了进程的健康状态，我的例子的结果如下图： 2.2 /beans列出所有由SpringBoot创建的bean： 2.3 /configprops用来获取应用中配置的属性信息报告 还有一些其他的性能指标，本篇就不再赘述。 3. 使用JConsole监控JConsole是一个内置Java性能分析器，如果你本机已经配置了jdk的话，可直接命令行输入jconsole，打开后的页面如下图所示： 选择你要监控的进程，点击连接即可进入该Java进程的监控首页，如下图所示： 可以很清楚的展示进程的内存、CPU、类信息。 以上内容就是关于Spring Boot(四)之程序性能监控的全部内容了，谢谢你阅读到了这里！ Author:zhaoyh]]></content>
@@ -66,8 +79,8 @@
       </categories>
       <tags>
         <tag>RabbitMQ</tag>
-        <tag>消息中间件</tag>
         <tag>RPC</tag>
+        <tag>消息中间件</tag>
       </tags>
   </entry>
   <entry>
@@ -151,8 +164,8 @@
         <category>Spring Boot</category>
       </categories>
       <tags>
-        <tag>Spring Boot</tag>
         <tag>Intellij IDEA</tag>
+        <tag>Spring Boot</tag>
       </tags>
   </entry>
   <entry>
