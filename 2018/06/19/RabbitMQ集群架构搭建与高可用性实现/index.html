@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="RabbitMQ,负载均衡,集群," />
 
 
 
@@ -93,15 +93,20 @@
 
 
 
-<meta name="description" content="小时候的梦想是改变世界，长大了只想好好工作和生活！">
-<meta property="og:type" content="website">
-<meta property="og:title" content="zhaoyh&#39;s blog">
-<meta property="og:url" content="http://www.zhaoyh.com.cn/archives/2018/05/index.html">
+<meta name="description" content="当你的RabbitMQ服务器遇到诸如内存崩溃或者断电等极端情况时，单节点是不能应对这些故障的。因此需要多节点集群部署来弹性应对故障。另外可以通过多节点部署，来扩展消息通信的吞吐量。  1. 集群搭建首先，我们不用关心RabbitMQ的集群策略、节点类型等问题，可以先手动把RabbitMQ的集群搭建好，再一步步地了解其原理。">
+<meta name="keywords" content="RabbitMQ,负载均衡,集群">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RabbitMQ集群架构搭建与高可用性实现">
+<meta property="og:url" content="http://www.zhaoyh.com.cn/2018/06/19/RabbitMQ集群架构搭建与高可用性实现/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
-<meta property="og:description" content="小时候的梦想是改变世界，长大了只想好好工作和生活！">
+<meta property="og:description" content="当你的RabbitMQ服务器遇到诸如内存崩溃或者断电等极端情况时，单节点是不能应对这些故障的。因此需要多节点集群部署来弹性应对故障。另外可以通过多节点部署，来扩展消息通信的吞吐量。  1. 集群搭建首先，我们不用关心RabbitMQ的集群策略、节点类型等问题，可以先手动把RabbitMQ的集群搭建好，再一步步地了解其原理。">
+<meta property="og:image" content="http://p2pe2d0id.bkt.clouddn.com/1531902620506.jpg">
+<meta property="og:image" content="http://p2pe2d0id.bkt.clouddn.com/haproxy_rabbit.jpg">
+<meta property="og:updated_time" content="2018-07-19T04:12:02.977Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="zhaoyh&#39;s blog">
-<meta name="twitter:description" content="小时候的梦想是改变世界，长大了只想好好工作和生活！">
+<meta name="twitter:title" content="RabbitMQ集群架构搭建与高可用性实现">
+<meta name="twitter:description" content="当你的RabbitMQ服务器遇到诸如内存崩溃或者断电等极端情况时，单节点是不能应对这些故障的。因此需要多节点集群部署来弹性应对故障。另外可以通过多节点部署，来扩展消息通信的吞吐量。  1. 集群搭建首先，我们不用关心RabbitMQ的集群策略、节点类型等问题，可以先手动把RabbitMQ的集群搭建好，再一步步地了解其原理。">
+<meta name="twitter:image" content="http://p2pe2d0id.bkt.clouddn.com/1531902620506.jpg">
 
 
 
@@ -129,13 +134,13 @@
 
 
 
-  <link rel="canonical" href="http://www.zhaoyh.com.cn/archives/2018/05/"/>
+  <link rel="canonical" href="http://www.zhaoyh.com.cn/2018/06/19/RabbitMQ集群架构搭建与高可用性实现/"/>
 
 
 
 
 
-  <title>归档 | zhaoyh's blog</title>
+  <title>RabbitMQ集群架构搭建与高可用性实现 | zhaoyh's blog</title>
   
 
 
@@ -170,7 +175,7 @@
     
   
 
-  <div class="container sidebar-position-left  page-archive  ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -298,66 +303,261 @@
           <div id="content" class="content">
             
 
-  <section id="posts" class="posts-collapse">
-    <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-    <span class="archive-page-counter">
-      
-      
-      
-        
-      
-      嗯..! 目前共计 23 篇日志。 继续努力。
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2018/06/19/RabbitMQ集群架构搭建与高可用性实现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhaoyh">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/kobe.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zhaoyh's blog">
     </span>
 
     
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">RabbitMQ集群架构搭建与高可用性实现</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-19T12:03:54+08:00">
+                2018-06-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/消息中间件/" itemprop="url" rel="index">
+                    <span itemprop="name">消息中间件</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
 
       
       
-      
 
+      
+        <blockquote>
+<p>当你的RabbitMQ服务器遇到诸如内存崩溃或者断电等极端情况时，单节点是不能应对这些故障的。因此需要多节点集群部署来弹性应对故障。另外可以通过多节点部署，来扩展消息通信的吞吐量。</p>
+</blockquote>
+<h3 id="1-集群搭建"><a href="#1-集群搭建" class="headerlink" title="1. 集群搭建"></a>1. 集群搭建</h3><p>首先，我们不用关心RabbitMQ的集群策略、节点类型等问题，可以先手动把RabbitMQ的集群搭建好，再一步步地了解其原理。</p>
+<a id="more"></a>
+<h4 id="1-1-准备两个节点"><a href="#1-1-准备两个节点" class="headerlink" title="1.1 准备两个节点"></a>1.1 准备两个节点</h4><p>搭建的详细过程就不再叙述，具体可参考<a href="http://note.youdao.com/noteshare?id=ccf5bf5eb8cea8ada9ba76d51d401be6" target="_blank" rel="external">RabbitMQ安装</a>。</p>
+<p>我在两台机器上分别安装了RabbitMQ，在/etc/hostname里也分别配置了机器名：nc060、nc078，要保证两台机器互相能ping通。</p>
+<h4 id="1-2-共享Erlang-Cookie"><a href="#1-2-共享Erlang-Cookie" class="headerlink" title="1.2 共享Erlang Cookie"></a>1.2 共享Erlang Cookie</h4><p>erlang.cookie是erlang实现分布式通信的必要文件，erlang之间的共享通信要求分布式的每个节点上要保持相同的erlang.cookie文件，同时保证文件的权限是400。因此，先把两台RabbitMQ服务关闭，其次，我们把nc060和nc078的erlang.cookie设置成相同，我是把nc060上的erlang.cookie内容复制到nc078机器下。</p>
+<p>如果我们使用解压缩方式安装部署的RabbitMQ，那么这个文件会在$home/.erlang.cookie下。<br>如果我们使用rpm或者yum等安装包方式进行安装的，那么这个文件会在/var/lib/rabbitmq/.erlang.cookie下。</p>
+<p>放心，到了这里很多人会懵，不要怕，我们已经完成了RabbitMQ集群部署的最难的部分了。</p>
+<h4 id="1-3-部署集群"><a href="#1-3-部署集群" class="headerlink" title="1.3 部署集群"></a>1.3 部署集群</h4><p>此时应保证两台装有RabbitMQ的机器具有相同的erlang.cookie内容。</p>
+<p>进入到nc060机器的RabbitMQ的sbin目录：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./rabbitmqctl join_cluster --ram rabbit@nc078</div></pre></td></tr></table></figure>
+<p>此时就加入到nc078机器下的集群了，并设置nc060为ram节点，至于什么是ram节点，可参考2.2节的内容。</p>
+<p>分别启动两台机器的RabbitMQ节点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./rabbitmqctl start_app</div></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./rabbitmq-server -detached</div></pre></td></tr></table></figure>
+<p>此时去RabbitMQ的web管理页面，会看到已经成功了：</p>
+<p><img src="http://p2pe2d0id.bkt.clouddn.com/1531902620506.jpg" alt="image"></p>
+<h3 id="2-相关说明"><a href="#2-相关说明" class="headerlink" title="2. 相关说明"></a>2. 相关说明</h3><p>接下来会对集群部署策略，和一些关键技术做一些介绍。</p>
+<h4 id="2-1-节点类型"><a href="#2-1-节点类型" class="headerlink" title="2.1 节点类型"></a>2.1 节点类型</h4><ul>
+<li>ram（内存）节点：将队列、交换机、绑定等数据存储在内存中，好处是存储和交换机生命之类的操作速度快，坏处是断电后数据会丢失。</li>
+<li>disk（磁盘）节点：将元数据存储在磁盘中，单节点的RabbitMQ只允许磁盘节点，防止重启RabbitMQ的时候，丢失配置信息。</li>
+</ul>
+<blockquote>
+<p>RabbitMQ要求在集群中至少有一个磁盘节点，所有其他节点可以是内存节点，当节点加入或者离开集群时，必须要将该变更通知到至少一个磁盘节点。如果集群中唯一的一个磁盘节点崩溃的话，集群可以继续路由消息，但是无法进行其他操作（增删改查队列、交换机、权限等），直到节点恢复。 </p>
+</blockquote>
+<h4 id="2-2-元数据"><a href="#2-2-元数据" class="headerlink" title="2.2 元数据"></a>2.2 元数据</h4><p>RabbitMQ会始终记录以下四种类型的内部元数据：</p>
+<ul>
+<li>队列元数据：队列名称及属性（是否持久化、自动删除等）。</li>
+<li>交换机元数据：交换机名称、属性、类型等。</li>
+<li>绑定元数据：将消息路由到队列。</li>
+<li>vhost元数据：命名空间属性。</li>
+</ul>
+<h4 id="2-3-集群模式"><a href="#2-3-集群模式" class="headerlink" title="2.3 集群模式"></a>2.3 集群模式</h4><ul>
+<li>普通模式：集群的默认模式，以本次搭建的集群（nc060，nc078）为例，nc060和nc078拥有相同的元数据，即交换机、队列、绑定等基础结构，但是消息实体只存在于一个节点。</li>
+<li>镜像模式：将需要消费的队列变为镜像队列，存在于集群的多个节点，这样就可以实现RabbitMQ的HA高可用性。作用就是消息实体会主动在镜像节点之间实现同步，而不是像普通模式那样，在consumer消费数据时临时读取。缺点就是，集群内部的同步通讯会占用网络带宽。</li>
+</ul>
+<h3 id="3-高可用性部署策略"><a href="#3-高可用性部署策略" class="headerlink" title="3. 高可用性部署策略"></a>3. 高可用性部署策略</h3><h4 id="3-1-镜像队列"><a href="#3-1-镜像队列" class="headerlink" title="3.1 镜像队列"></a>3.1 镜像队列</h4><p>此部分内容可参考官方文档：<a href="http://www.rabbitmq.com/ha.html" target="_blank" rel="external">http://www.rabbitmq.com/ha.html</a></p>
+<p>RabbitMQ镜像队列的模式如下列表：</p>
+<table>
+<thead>
+<tr>
+<th>ha-mode</th>
+<th>ha-params</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>exactly</td>
+<td>count</td>
+<td>镜像队列将会在集群上复制count份。如果节点数量少于count，队列会复制到所有节点上。如果节点数量大于count，有一个镜像节点crash后，其余节点也不会作为新的镜像节点。</td>
+</tr>
+<tr>
+<td>all</td>
+<td>无</td>
+<td>镜像队列将会在整个集群节点中复制。当一个新的节点加入集群后，也会在这个节点上复制一份镜像队列。</td>
+</tr>
+<tr>
+<td>nodes</td>
+<td>node names</td>
+<td>镜像队列会在node name中复制。如果这个node name不属于集群，不会触发错误。</td>
+</tr>
+</tbody>
+</table>
+<p>设置镜像队列有两种方式，第一种是在代码里声明队列时设置参数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">map.put(<span class="string">"x-ha-policy"</span>, <span class="string">"all"</span>);</div><div class="line">channel.queueDeclare(QUEUE_NAME, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, map);</div></pre></td></tr></table></figure>
+<p>第二种是直接修改系统配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./rabbitmqctl set_policy ha-all "^" '&#123;"ha-mode":"all"&#125;'</div></pre></td></tr></table></figure>
+<h4 id="3-2-RabbitMQ负载均衡部署"><a href="#3-2-RabbitMQ负载均衡部署" class="headerlink" title="3.2 RabbitMQ负载均衡部署"></a>3.2 RabbitMQ负载均衡部署</h4><p>在某台服务器上安装haproxy</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum install haproxy</div></pre></td></tr></table></figure>
+<p>打开haproxy的配置文件，/etc/haproxy/haproxy.cfg<br>加入以下配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">//RabbitMQ链接监听</div><div class="line">listen rabbitmq_local_cluster 部署haproxy的机器IP:5670</div><div class="line">     mode tcp</div><div class="line">     balance roundrobin</div><div class="line">     server rabbit_nc078 nc078:5672 check inter 5000 rise 2 fall 3</div><div class="line">     server rabbit_nc060 nc060:5672 check inter 5000 rise 2 fall 3</div><div class="line"></div><div class="line">//web管理界面</div><div class="line">listen private_monitoring :8100</div><div class="line">     mode http</div><div class="line">     option httplog</div><div class="line">     stats enable</div><div class="line">     stats uri       /stats</div><div class="line">     stats refresh 10s</div><div class="line">     stats auth    user:pwd</div></pre></td></tr></table></figure>
+<p>启动haproxy：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">service haproxy start</div></pre></td></tr></table></figure>
+<p>浏览器打开：haproxy的机器IP:8100/stats，查看当前的RabbitMQ节点的状态：</p>
+<p><img src="http://p2pe2d0id.bkt.clouddn.com/haproxy_rabbit.jpg" alt="image"></p>
+<p>现在已经部署好了负载均衡服务，接下来就可以把你的消息生产者和消费者代码中的配置修改下，之前的RabbitMQ链接示例为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nc060:5672 或者 nc078:5672</div></pre></td></tr></table></figure>
+<p>因为在haproxy中配置的端口为5670，现在可以统一修改为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">部署haproxy的机器IP:5670</div></pre></td></tr></table></figure>
+<p>至此已经完成了对RabbitMQ的集群搭建和高可用模式的初步探索，接下来就请你好好享受消息通信带来的便捷吧！</p>
+<blockquote>
+<p>以上内容就是关于RabbitMQ集群架构搭建与高可用性实现的全部内容了，谢谢你阅读到了这里！</p>
+<p>Author：zhaoyh</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
       
         
-        <div class="collection-title">
-          <h2 class="archive-year motion-element" id="archive-year-2018">2018</h2>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/RabbitMQ/" rel="tag"># RabbitMQ</a>
+          
+            <a href="/tags/负载均衡/" rel="tag"># 负载均衡</a>
+          
+            <a href="/tags/集群/" rel="tag"># 集群</a>
+          
         </div>
       
+
+      
+      
       
 
       
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/21/基于RabbitMQ实现延迟队列/" rel="next" title="基于RabbitMQ实现延迟队列">
+                <i class="fa fa-chevron-left"></i> 基于RabbitMQ实现延迟队列
+              </a>
+            
+          </div>
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+          <span class="post-nav-divider"></span>
 
-      <h3 class="post-title">
-        
-            <a class="post-title-link" href="/2018/05/21/基于RabbitMQ实现延迟队列/" itemprop="url">
-              
-                <span itemprop="name">基于RabbitMQ实现延迟队列</span>
-              
-            </a>
-        
-      </h3>
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-05-21T16:51:31+08:00"
-              content="2018-05-21" >
-          05-21
-        </time>
-      </div>
-
-    </header>
+      
+      
+    </footer>
   </article>
 
 
 
-    
-
-  </section>
-
-  
-
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -365,6 +565,12 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMDY5Mi83MjQ3"></div>
+    
+  </div>
+
 
         </div>
         
@@ -385,8 +591,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/kobe.jpg"
@@ -448,6 +663,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-集群搭建"><span class="nav-text">1. 集群搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-准备两个节点"><span class="nav-text">1.1 准备两个节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-共享Erlang-Cookie"><span class="nav-text">1.2 共享Erlang Cookie</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-部署集群"><span class="nav-text">1.3 部署集群</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-相关说明"><span class="nav-text">2. 相关说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-节点类型"><span class="nav-text">2.1 节点类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-元数据"><span class="nav-text">2.2 元数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-集群模式"><span class="nav-text">2.3 集群模式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-高可用性部署策略"><span class="nav-text">3. 高可用性部署策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-镜像队列"><span class="nav-text">3.1 镜像队列</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-RabbitMQ负载均衡部署"><span class="nav-text">3.2 RabbitMQ负载均衡部署</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -559,11 +790,9 @@
 
 
   
-  
-    <script type="text/javascript" id="motion.page.archive">
-      $('.archive-year').velocity('transition.slideLeftIn');
-    </script>
-  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
 
 
   
@@ -593,6 +822,17 @@
 
 
 
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
   
 
 
