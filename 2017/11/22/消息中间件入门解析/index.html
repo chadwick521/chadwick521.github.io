@@ -100,16 +100,16 @@
 <meta property="og:url" content="http://www.zhaoyh.com.cn/2017/11/22/消息中间件入门解析/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
 <meta property="og:description" content="消息队列属于大型网站系统中间件的重要组件，主要解决了应用耦合、异步消息、流量削峰等问题，对于网站实现高性能、可伸缩的架构有很大的帮助。  1. 常用的消息队列ActiveMQApache ActiveMQ是Apache软件基金会所研发的开放源代码消息中间件；由于ActiveMQ是一个纯Java程序，因此只需要操作系统支持Java虚拟机，ActiveMQ便可运行。">
-<meta property="og:image" content="http://p04gt4ifc.bkt.clouddn.com/mq.png">
-<meta property="og:image" content="http://p04gt4ifc.bkt.clouddn.com/dingdan.jpeg">
-<meta property="og:image" content="http://p04gt4ifc.bkt.clouddn.com/dingdan_MQ.jpeg">
-<meta property="og:image" content="http://p04gt4ifc.bkt.clouddn.com/liuliang.jpeg">
-<meta property="og:image" content="http://p04gt4ifc.bkt.clouddn.com/rizhi.jpeg">
-<meta property="og:updated_time" content="2017-12-05T09:49:51.671Z">
+<meta property="og:image" content="http://static.zhaoyh.com.cn/mq_intro.png">
+<meta property="og:image" content="http://static.zhaoyh.com.cn/dingdan.jpeg">
+<meta property="og:image" content="http://static.zhaoyh.com.cn/dingdan_MQ.jpeg">
+<meta property="og:image" content="http://static.zhaoyh.com.cn/1542877200503.jpg">
+<meta property="og:image" content="http://static.zhaoyh.com.cn/rizhi_mq.jpeg">
+<meta property="og:updated_time" content="2018-11-22T09:00:34.332Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="消息中间件入门解析">
 <meta name="twitter:description" content="消息队列属于大型网站系统中间件的重要组件，主要解决了应用耦合、异步消息、流量削峰等问题，对于网站实现高性能、可伸缩的架构有很大的帮助。  1. 常用的消息队列ActiveMQApache ActiveMQ是Apache软件基金会所研发的开放源代码消息中间件；由于ActiveMQ是一个纯Java程序，因此只需要操作系统支持Java虚拟机，ActiveMQ便可运行。">
-<meta name="twitter:image" content="http://p04gt4ifc.bkt.clouddn.com/mq.png">
+<meta name="twitter:image" content="http://static.zhaoyh.com.cn/mq_intro.png">
 
 
 
@@ -413,19 +413,19 @@
 <h4 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a><a href="https://kafka.apache.org/" target="_blank" rel="external">Kafka</a></h4><p><a href="https://www.ibm.com/developerworks/cn/opensource/os-cn-kafka/index.html" target="_blank" rel="external">IBM介绍Kafka的博客</a></p>
 <p>Kafka是由LinkedIn开发的一个分布式的消息系统，使用Scala编写，它以可水平扩展和高吞吐率而被广泛使用。目前越来越多的开源分布式处理系统如Cloudera、ApacheStorm、Spark都支持与Kafka集成。适合产生大量数据的互联网服务的数据收集业务。</p>
 <h4 id="RocketMQ"><a href="#RocketMQ" class="headerlink" title="RocketMQ"></a><a href="https://rocketmq.apache.org/" target="_blank" rel="external">RocketMQ</a></h4><p>RocketMQ 是阿里的开源产品，用 Java 语言实现，在设计时参考了 Kafka，并做出了自己的一些改进，消息可靠性上比 Kafka 更好。</p>
-<p><img src="http://p04gt4ifc.bkt.clouddn.com/mq.png" alt="image"></p>
+<p><img src="http://static.zhaoyh.com.cn/mq_intro.png" alt="image"></p>
 <h3 id="2-MQ的应用场景"><a href="#2-MQ的应用场景" class="headerlink" title="2. MQ的应用场景"></a>2. MQ的应用场景</h3><h4 id="2-1-应用系统解耦"><a href="#2-1-应用系统解耦" class="headerlink" title="2.1 应用系统解耦"></a>2.1 应用系统解耦</h4><blockquote>
 <p>耦合性(Coupling)，也叫耦合度，是对模块间关联程度的度量。耦合的强弱取决于模块间接口的复杂性、调用模块的方式以及通过界面传送数据的多少。模块间的耦合度是指模块之间的依赖关系，包括控制关系、调用关系、数据传递关系。模块间联系越多，其耦合性越强，同时表明其独立性越差。软件设计中通常用耦合度和内聚度作为衡量模块独立程度的标准。划分模块的一个准则就是高内聚低耦合。</p>
 </blockquote>
-<p><img src="http://p04gt4ifc.bkt.clouddn.com/dingdan.jpeg" alt="image"></p>
+<p><img src="http://static.zhaoyh.com.cn/dingdan.jpeg" alt="image"></p>
 <p>以简单的订单库存管理为例，客户下单后，需要通知减库存。传统的做法是订单系统调用库存系统的接口，以串行的方式等待库存系统的结果，这样订单系统和库存系统就有一种耦合关系。加入了消息队列机制后：</p>
-<p><img src="http://p04gt4ifc.bkt.clouddn.com/dingdan_MQ.jpeg" alt="image"></p>
+<p><img src="http://static.zhaoyh.com.cn/dingdan_MQ.jpeg" alt="image"></p>
 <p>订单系统下单后，将消息写入队列并返回下单成功；库存系统订阅消息，获取了下单的消息，做相应的减库存操作；这样每个模块只需要做自己的工作，实现了订单系统和库存系统的解耦。</p>
 <h4 id="2-2-流量削峰"><a href="#2-2-流量削峰" class="headerlink" title="2.2 流量削峰"></a>2.2 流量削峰</h4><p>在高并发场景下，流量过大，导致服务负载过高甚至挂掉，为了解决这个问题，也可以引入消息队列：</p>
-<p><img src="http://p04gt4ifc.bkt.clouddn.com/liuliang.jpeg" alt="image"></p>
+<p><img src="http://static.zhaoyh.com.cn/1542877200503.jpg" alt="image"></p>
 <p>用户的请求，服务器接收后，首先写入消息队列。假如消息队列长度超过最大数量，则直接抛弃用户请求或跳转到错误页面。</p>
 <h4 id="2-3-日志处理"><a href="#2-3-日志处理" class="headerlink" title="2.3 日志处理"></a>2.3 日志处理</h4><p>将消息队列用在日志采集和处理中，解决大量日志传输的问题。</p>
-<p><img src="http://p04gt4ifc.bkt.clouddn.com/rizhi.jpeg" alt="image"></p>
+<p><img src="http://static.zhaoyh.com.cn/rizhi_mq.jpeg" alt="image"></p>
 <blockquote>
 <p>以上内容就是关于消息中间件入门解析的全部内容了，谢谢你阅读到了这里！</p>
 <p>Author:zhaoyh</p>
