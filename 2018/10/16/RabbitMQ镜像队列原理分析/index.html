@@ -100,15 +100,15 @@
 <meta property="og:url" content="http://www.zhaoyh.com.cn/2018/10/16/RabbitMQ镜像队列原理分析/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
 <meta property="og:description" content="对于RabbitMQ的节点来说，有单节点模式和集群模式两种，其中集群模式又分为普通集群模式和镜像队列集群模式，在《RabbitMQ集群架构搭建与高可用性实现》文中，介绍了RabbitMQ的集群创建步骤方法。而镜像队列集群模式的搭建步骤和普通集群模式是基本相同的，唯一不同的是，镜像队列集群模式，多了一步配置policy的步骤。本文主要介绍镜像队列的原理及实现。">
-<meta property="og:image" content="http://p2pe2d0id.bkt.clouddn.com/c8da13d3fbaa47b5844a4ac56af47781_c5de9157ed768845456377a66e6fbc45.jpg">
-<meta property="og:image" content="http://p2pe2d0id.bkt.clouddn.com/8a7a7e951fea4019983a57856b4752f1_944a5ca5fac00d7fae903c92067edb80.jpg">
-<meta property="og:image" content="http://p2pe2d0id.bkt.clouddn.com/1512df3b3bb543f792054123675fdc25_e9cd11bbf4b48504efae222dbff4c0c4.jpg">
-<meta property="og:image" content="http://p2pe2d0id.bkt.clouddn.com/1539701465336.jpg">
-<meta property="og:updated_time" content="2018-10-23T09:46:14.944Z">
+<meta property="og:image" content="http://static.zhaoyh.com.cn/c8da13d3fbaa47b5844a4ac56af47781_c5de9157ed768845456377a66e6fbc45.jpg">
+<meta property="og:image" content="http://static.zhaoyh.com.cn/8a7a7e951fea4019983a57856b4752f1_944a5ca5fac00d7fae903c92067edb80.jpg">
+<meta property="og:image" content="http://static.zhaoyh.com.cn/1512df3b3bb543f792054123675fdc25_e9cd11bbf4b48504efae222dbff4c0c4.jpg">
+<meta property="og:image" content="http://static.zhaoyh.com.cn/1539701465336.jpg">
+<meta property="og:updated_time" content="2018-11-23T01:58:13.746Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RabbitMQ镜像队列原理分析">
 <meta name="twitter:description" content="对于RabbitMQ的节点来说，有单节点模式和集群模式两种，其中集群模式又分为普通集群模式和镜像队列集群模式，在《RabbitMQ集群架构搭建与高可用性实现》文中，介绍了RabbitMQ的集群创建步骤方法。而镜像队列集群模式的搭建步骤和普通集群模式是基本相同的，唯一不同的是，镜像队列集群模式，多了一步配置policy的步骤。本文主要介绍镜像队列的原理及实现。">
-<meta name="twitter:image" content="http://p2pe2d0id.bkt.clouddn.com/c8da13d3fbaa47b5844a4ac56af47781_c5de9157ed768845456377a66e6fbc45.jpg">
+<meta name="twitter:image" content="http://static.zhaoyh.com.cn/c8da13d3fbaa47b5844a4ac56af47781_c5de9157ed768845456377a66e6fbc45.jpg">
 
 
 
@@ -406,18 +406,18 @@
 </blockquote>
 <a id="more"></a>
 <h3 id="1-创建镜像队列模式"><a href="#1-创建镜像队列模式" class="headerlink" title="1. 创建镜像队列模式"></a>1. 创建镜像队列模式</h3><p>注意，到此步骤，我们假设是你已经创建好了RabbitMQ集群。</p>
-<h4 id="1-1-增加镜像队列的Policy"><a href="#1-1-增加镜像队列的Policy" class="headerlink" title="1.1 增加镜像队列的Policy"></a>1.1 增加镜像队列的Policy</h4><p>打开你的RabbitMQ管理首页，在Admin-&gt;Policy链接下开始创建Policy：<br><img src="http://p2pe2d0id.bkt.clouddn.com/c8da13d3fbaa47b5844a4ac56af47781_c5de9157ed768845456377a66e6fbc45.jpg" alt="image"></p>
+<h4 id="1-1-增加镜像队列的Policy"><a href="#1-1-增加镜像队列的Policy" class="headerlink" title="1.1 增加镜像队列的Policy"></a>1.1 增加镜像队列的Policy</h4><p>打开你的RabbitMQ管理首页，在Admin-&gt;Policy链接下开始创建Policy：<br><img src="http://static.zhaoyh.com.cn/c8da13d3fbaa47b5844a4ac56af47781_c5de9157ed768845456377a66e6fbc45.jpg" alt="image"></p>
 <ul>
 <li>Name: 你配置的Policy名称；</li>
 <li>Pattern: 匹配模式，图片的是匹配testMirror开头的交换机和队列；</li>
 <li>Priority: 优先级；</li>
 <li>Definition: 一些模式的定义，RabbitMQ已经列出了以下常见的模式定义。ha-mode是指定镜像队列的模式，有效值为all/exactly/nodes。其中all表示在集群中所有的节点上进行镜像；exactly表示在指定个数的节点上进行镜像，节点的个数由ha-params指定；nodes表示在指定的节点上进行镜像，节点名称通过ha-params指定。ha-sync-mode为指定镜像队列中消息的同步方式，有效值为automatic(自动同步)，manually(手动同步)；默认是manually，请注意一定要记得设置为automatic(自动同步），否则消息在镜像队列中是不会自动同步的（即普通集群模式），即新节点加入时不会自动同步消息和元数据，只能通过命令手动去同步。</li>
 </ul>
-<h4 id="1-2-代码声明交换机、队列、绑定等"><a href="#1-2-代码声明交换机、队列、绑定等" class="headerlink" title="1.2 代码声明交换机、队列、绑定等"></a>1.2 代码声明交换机、队列、绑定等</h4><p><img src="http://p2pe2d0id.bkt.clouddn.com/8a7a7e951fea4019983a57856b4752f1_944a5ca5fac00d7fae903c92067edb80.jpg" alt="image"></p>
-<h4 id="1-3-查看镜像队列是否声明成功"><a href="#1-3-查看镜像队列是否声明成功" class="headerlink" title="1.3 查看镜像队列是否声明成功"></a>1.3 查看镜像队列是否声明成功</h4><p>查看你刚声明的队列的详情：<br><img src="http://p2pe2d0id.bkt.clouddn.com/1512df3b3bb543f792054123675fdc25_e9cd11bbf4b48504efae222dbff4c0c4.jpg" alt="image"></p>
+<h4 id="1-2-代码声明交换机、队列、绑定等"><a href="#1-2-代码声明交换机、队列、绑定等" class="headerlink" title="1.2 代码声明交换机、队列、绑定等"></a>1.2 代码声明交换机、队列、绑定等</h4><p><img src="http://static.zhaoyh.com.cn/8a7a7e951fea4019983a57856b4752f1_944a5ca5fac00d7fae903c92067edb80.jpg" alt="image"></p>
+<h4 id="1-3-查看镜像队列是否声明成功"><a href="#1-3-查看镜像队列是否声明成功" class="headerlink" title="1.3 查看镜像队列是否声明成功"></a>1.3 查看镜像队列是否声明成功</h4><p>查看你刚声明的队列的详情：<br><img src="http://static.zhaoyh.com.cn/1512df3b3bb543f792054123675fdc25_e9cd11bbf4b48504efae222dbff4c0c4.jpg" alt="image"></p>
 <p>可以看到，ha-mode、node、salve等属性都已经创建成功。</p>
 <h3 id="2-镜像队列说明"><a href="#2-镜像队列说明" class="headerlink" title="2. 镜像队列说明"></a>2. 镜像队列说明</h3><h4 id="2-1-关于node节点"><a href="#2-1-关于node节点" class="headerlink" title="2.1 关于node节点"></a>2.1 关于node节点</h4><p>queue有master节点和slave节点。 要强调的是，在RabbitMQ中master和slave是针对一个queue而言的，而不是一个node作为所有queue的master，其它node作为slave。一个queue第一次创建的node为它的master节点，其它node为slave节点。</p>
-<h4 id="2-2-镜像队列服务提供方式"><a href="#2-2-镜像队列服务提供方式" class="headerlink" title="2.2 镜像队列服务提供方式"></a>2.2 镜像队列服务提供方式</h4><p><img src="http://p2pe2d0id.bkt.clouddn.com/1539701465336.jpg" alt="image"><br>如上图所示，在镜像队列集群模式中，对某个queue来说，只有master对外提供服务，而其他slave只提供备份服务，在master所在节点不可用时，选出一个slave作为新的master继续对外提供服务。</p>
+<h4 id="2-2-镜像队列服务提供方式"><a href="#2-2-镜像队列服务提供方式" class="headerlink" title="2.2 镜像队列服务提供方式"></a>2.2 镜像队列服务提供方式</h4><p><img src="http://static.zhaoyh.com.cn/1539701465336.jpg" alt="image"><br>如上图所示，在镜像队列集群模式中，对某个queue来说，只有master对外提供服务，而其他slave只提供备份服务，在master所在节点不可用时，选出一个slave作为新的master继续对外提供服务。</p>
 <p>无论客户端的请求打到master还是slave最终数据都是从master节点获取。当请求打到master节点时，master节点直接将消息返回给client，同时master节点会通过<a href="https://en.wikipedia.org/wiki/Reliable_multicast" target="_blank" rel="external">GM（Guaranteed Multicast）协议</a>将queue的最新状态广播到slave节点。GM保证了广播消息的原子性，即要么都更新要么都不更新。</p>
 <p>当请求打到slave节点时，slave节点需要将请求先重定向到master节点，master节点将将消息返回给client，同时master节点会通过GM协议将queue的最新状态广播到slave节点。</p>
 <p>所以，多个客户端连接不同的镜像队列不会产生同一message被多次接受的情况。</p>
