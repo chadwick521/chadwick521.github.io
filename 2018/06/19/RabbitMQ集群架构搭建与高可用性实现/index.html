@@ -100,13 +100,13 @@
 <meta property="og:url" content="http://www.zhaoyh.com.cn/2018/06/19/RabbitMQ集群架构搭建与高可用性实现/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
 <meta property="og:description" content="当你的RabbitMQ服务器遇到诸如内存崩溃或者断电等极端情况时，单节点是不能应对这些故障的。因此需要多节点集群部署来弹性应对故障。另外可以通过多节点部署，来扩展消息通信的吞吐量。  1. 集群搭建首先，我们不用关心RabbitMQ的集群策略、节点类型等问题，可以先手动把RabbitMQ的集群搭建好，再一步步地了解其原理。">
-<meta property="og:image" content="http://static.zhaoyh.com.cn/1531902620506.jpg">
-<meta property="og:image" content="http://static.zhaoyh.com.cn/haproxy_rabbit.jpg">
-<meta property="og:updated_time" content="2018-11-23T02:01:35.688Z">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/1531902620506.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/haproxy_rabbit.jpg">
+<meta property="og:updated_time" content="2018-12-04T04:11:06.335Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RabbitMQ集群架构搭建与高可用性实现">
 <meta name="twitter:description" content="当你的RabbitMQ服务器遇到诸如内存崩溃或者断电等极端情况时，单节点是不能应对这些故障的。因此需要多节点集群部署来弹性应对故障。另外可以通过多节点部署，来扩展消息通信的吞吐量。  1. 集群搭建首先，我们不用关心RabbitMQ的集群策略、节点类型等问题，可以先手动把RabbitMQ的集群搭建好，再一步步地了解其原理。">
-<meta name="twitter:image" content="http://static.zhaoyh.com.cn/1531902620506.jpg">
+<meta name="twitter:image" content="https://static.zhaoyh.com.cn/1531902620506.jpg">
 
 
 
@@ -418,7 +418,7 @@
 <p>或者</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./rabbitmq-server -detached</div></pre></td></tr></table></figure>
 <p>此时去RabbitMQ的web管理页面，会看到已经成功了：</p>
-<p><img src="http://static.zhaoyh.com.cn/1531902620506.jpg" alt="image"></p>
+<p><img src="https://static.zhaoyh.com.cn/1531902620506.jpg" alt="image"></p>
 <h3 id="2-相关说明"><a href="#2-相关说明" class="headerlink" title="2. 相关说明"></a>2. 相关说明</h3><p>接下来会对集群部署策略，和一些关键技术做一些介绍。</p>
 <h4 id="2-1-节点类型"><a href="#2-1-节点类型" class="headerlink" title="2.1 节点类型"></a>2.1 节点类型</h4><ul>
 <li>ram（内存）节点：将队列、交换机、绑定等数据存储在内存中，好处是存储和交换机生命之类的操作速度快，坏处是断电后数据会丢失。</li>
@@ -477,7 +477,7 @@
 <p>启动haproxy：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">service haproxy start</div></pre></td></tr></table></figure>
 <p>浏览器打开：haproxy的机器IP:8100/stats，查看当前的RabbitMQ节点的状态：</p>
-<p><img src="http://static.zhaoyh.com.cn/haproxy_rabbit.jpg" alt="image"></p>
+<p><img src="https://static.zhaoyh.com.cn/haproxy_rabbit.jpg" alt="image"></p>
 <p>现在已经部署好了负载均衡服务，接下来就可以把你的消息生产者和消费者代码中的配置修改下，之前的RabbitMQ链接示例为：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nc060:5672 或者 nc078:5672</div></pre></td></tr></table></figure>
 <p>因为在haproxy中配置的端口为5670，现在可以统一修改为：</p>

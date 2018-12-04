@@ -100,17 +100,17 @@
 <meta property="og:url" content="http://www.zhaoyh.com.cn/2018/03/21/Spring Boot(四)之程序性能监控/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
 <meta property="og:description" content="SpringBoot特别适合团队构建各种可快速迭代的微服务，同时为了减少程序本身监控系统的开发量，SpringBoot提供了actuator模块，可以很方便的对你的SpringBoot程序做监控。 1. 添加依赖并修改配置SpringBoot应用中加入监控很简单，只需要在pom.xml文件中加入以下依赖：">
-<meta property="og:image" content="http://static.zhaoyh.com.cn/map_log.jpg">
-<meta property="og:image" content="http://static.zhaoyh.com.cn/health.jpg">
-<meta property="og:image" content="http://static.zhaoyh.com.cn/beans.jpg">
-<meta property="og:image" content="http://static.zhaoyh.com.cn/configprops.jpg">
-<meta property="og:image" content="http://static.zhaoyh.com.cn/jconsole_login.jpg">
-<meta property="og:image" content="http://static.zhaoyh.com.cn/jconsole_index.jpg">
-<meta property="og:updated_time" content="2018-11-23T02:10:01.328Z">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/map_log.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/health.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/beans.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/configprops.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/jconsole_login.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/jconsole_index.jpg">
+<meta property="og:updated_time" content="2018-12-04T04:10:03.964Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spring Boot(四)之程序性能监控">
 <meta name="twitter:description" content="SpringBoot特别适合团队构建各种可快速迭代的微服务，同时为了减少程序本身监控系统的开发量，SpringBoot提供了actuator模块，可以很方便的对你的SpringBoot程序做监控。 1. 添加依赖并修改配置SpringBoot应用中加入监控很简单，只需要在pom.xml文件中加入以下依赖：">
-<meta name="twitter:image" content="http://static.zhaoyh.com.cn/map_log.jpg">
+<meta name="twitter:image" content="https://static.zhaoyh.com.cn/map_log.jpg">
 
 
 
@@ -411,16 +411,16 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">management.security.enabled=false</div></pre></td></tr></table></figure>
 <p>这样就能允许你在浏览器上查看SpringBoot进程的性能信息了。</p>
 <h3 id="2-查看监控页面"><a href="#2-查看监控页面" class="headerlink" title="2. 查看监控页面"></a>2. 查看监控页面</h3><p>启动你的SpringBoot主函数，可以在启动log里看到各种可访问的性能mapper页面：</p>
-<p><img src="http://static.zhaoyh.com.cn/map_log.jpg" alt="image"><br>通过这些，我们可以实时的获取应用的各项监控指标。</p>
-<h4 id="2-1-health"><a href="#2-1-health" class="headerlink" title="2.1 /health"></a>2.1 /health</h4><p>展示了进程的健康状态，我的例子的结果如下图：<br><img src="http://static.zhaoyh.com.cn/health.jpg" alt="image"></p>
+<p><img src="https://static.zhaoyh.com.cn/map_log.jpg" alt="image"><br>通过这些，我们可以实时的获取应用的各项监控指标。</p>
+<h4 id="2-1-health"><a href="#2-1-health" class="headerlink" title="2.1 /health"></a>2.1 /health</h4><p>展示了进程的健康状态，我的例子的结果如下图：<br><img src="https://static.zhaoyh.com.cn/health.jpg" alt="image"></p>
 <h4 id="2-2-beans"><a href="#2-2-beans" class="headerlink" title="2.2 /beans"></a>2.2 /beans</h4><p>列出所有由SpringBoot创建的bean：</p>
-<p><img src="http://static.zhaoyh.com.cn/beans.jpg" alt="image"></p>
-<h4 id="2-3-configprops"><a href="#2-3-configprops" class="headerlink" title="2.3 /configprops"></a>2.3 /configprops</h4><p>用来获取应用中配置的属性信息报告<br><img src="http://static.zhaoyh.com.cn/configprops.jpg" alt="image"></p>
+<p><img src="https://static.zhaoyh.com.cn/beans.jpg" alt="image"></p>
+<h4 id="2-3-configprops"><a href="#2-3-configprops" class="headerlink" title="2.3 /configprops"></a>2.3 /configprops</h4><p>用来获取应用中配置的属性信息报告<br><img src="https://static.zhaoyh.com.cn/configprops.jpg" alt="image"></p>
 <p>还有一些其他的性能指标，本篇就不再赘述。</p>
 <h3 id="3-使用JConsole监控"><a href="#3-使用JConsole监控" class="headerlink" title="3. 使用JConsole监控"></a>3. 使用JConsole监控</h3><p>JConsole是一个内置Java性能分析器，如果你本机已经配置了jdk的话，可直接命令行输入jconsole，打开后的页面如下图所示：</p>
-<p><img src="http://static.zhaoyh.com.cn/jconsole_login.jpg" alt="image"></p>
+<p><img src="https://static.zhaoyh.com.cn/jconsole_login.jpg" alt="image"></p>
 <p>选择你要监控的进程，点击连接即可进入该Java进程的监控首页，如下图所示：</p>
-<p><img src="http://static.zhaoyh.com.cn/jconsole_index.jpg" alt="image"></p>
+<p><img src="https://static.zhaoyh.com.cn/jconsole_index.jpg" alt="image"></p>
 <p>可以很清楚的展示进程的内存、CPU、类信息。</p>
 <blockquote>
 <p>以上内容就是关于Spring Boot(四)之程序性能监控的全部内容了，谢谢你阅读到了这里！</p>

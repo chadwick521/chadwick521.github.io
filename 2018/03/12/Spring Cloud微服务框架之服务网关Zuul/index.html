@@ -100,17 +100,17 @@
 <meta property="og:url" content="http://www.zhaoyh.com.cn/2018/03/12/Spring Cloud微服务框架之服务网关Zuul/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
 <meta property="og:description" content="在关于Spring Cloud系列之前的文章中，我们对负载均衡、注册中心、配置中心等微服务都做了介绍，已经满足大部分业务场景下的需求。但是仍存在一些问题，比如外部应用应该如何调用后端的各种API服务。此时可以引入网关服务，即Spring Cloud Zuul。它可以帮助我们实现诸如权限控制、服务调用、负载均衡等功能。如下图所示，Zuul主要充当了Api Gateway中的角色。">
-<meta property="og:image" content="http://static.zhaoyh.com.cn/Api-gateway.png">
-<meta property="og:image" content="http://static.zhaoyh.com.cn/baidu_zuul.jpg">
-<meta property="og:image" content="http://static.zhaoyh.com.cn/config_content_zuul.jpg">
-<meta property="og:image" content="http://static.zhaoyh.com.cn/filterType.png">
-<meta property="og:image" content="http://static.zhaoyh.com.cn/access_denied.jpg">
-<meta property="og:image" content="http://static.zhaoyh.com.cn/access_passed.jpg">
-<meta property="og:updated_time" content="2018-11-23T02:09:59.507Z">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/Api-gateway.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/baidu_zuul.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/config_content_zuul.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/filterType.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/access_denied.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/access_passed.jpg">
+<meta property="og:updated_time" content="2018-12-04T04:08:51.883Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spring Cloud微服务框架之服务网关Zuul">
 <meta name="twitter:description" content="在关于Spring Cloud系列之前的文章中，我们对负载均衡、注册中心、配置中心等微服务都做了介绍，已经满足大部分业务场景下的需求。但是仍存在一些问题，比如外部应用应该如何调用后端的各种API服务。此时可以引入网关服务，即Spring Cloud Zuul。它可以帮助我们实现诸如权限控制、服务调用、负载均衡等功能。如下图所示，Zuul主要充当了Api Gateway中的角色。">
-<meta name="twitter:image" content="http://static.zhaoyh.com.cn/Api-gateway.png">
+<meta name="twitter:image" content="https://static.zhaoyh.com.cn/Api-gateway.png">
 
 
 
@@ -405,7 +405,7 @@
       
         <p>在关于Spring Cloud系列之前的文章中，我们对负载均衡、注册中心、配置中心等微服务都做了介绍，已经满足大部分业务场景下的需求。但是仍存在一些问题，比如外部应用应该如何调用后端的各种API服务。此时可以引入网关服务，即Spring Cloud Zuul。它可以帮助我们实现诸如权限控制、服务调用、负载均衡等功能。如下图所示，Zuul主要充当了Api Gateway中的角色。</p>
 <a id="more"></a>
-<p><img src="http://static.zhaoyh.com.cn/Api-gateway.png" alt="image"></p>
+<p><img src="https://static.zhaoyh.com.cn/Api-gateway.png" alt="image"></p>
 <h3 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1. 准备工作"></a>1. 准备工作</h3><p>在使用网关服务，首先要构建上图中的Service和ServiceB，然后再启动一个Eureka的注册中心。为了方便起见，我是直接使用上一篇博文：<a href="http://zhaoyh.com.cn/2018/02/28/Spring%20Cloud%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6%E4%B9%8B%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/" target="_blank" rel="external">配置中心</a> 中的工程。依赖服务列表为：</p>
 <table>
 <thead>
@@ -436,8 +436,8 @@
 <h4 id="2-3-启动并测试"><a href="#2-3-启动并测试" class="headerlink" title="2.3 启动并测试"></a>2.3 启动并测试</h4><p>在主类中加入注解：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">@EnableZuulProxy</div></pre></td></tr></table></figure>
 <p>开启Zuul服务的功能。</p>
-<h5 id="2-3-1-测试url模式"><a href="#2-3-1-测试url模式" class="headerlink" title="2.3.1 测试url模式"></a>2.3.1 测试url模式</h5><p>打开 <a href="http://localhost:5050/baidu" target="_blank" rel="external">http://localhost:5050/baidu</a> ，匹配到了zuul.routes.baidu.path，其对应的url是zuul.routes.baidu.url=<a href="https://www.baidu.com/" target="_blank" rel="external">https://www.baidu.com/</a> ，则本次访问返回的内容如下：<br><img src="http://static.zhaoyh.com.cn/baidu_zuul.jpg" alt="image"></p>
-<h5 id="2-3-2-测试serviceID模式"><a href="#2-3-2-测试serviceID模式" class="headerlink" title="2.3.2 测试serviceID模式"></a>2.3.2 测试serviceID模式</h5><p>打开 <a href="http://localhost:5050/config" target="_blank" rel="external">http://localhost:5050/config</a> ，匹配到zuul.routes.configTest.path，返回的内容如下：<br><img src="http://static.zhaoyh.com.cn/config_content_zuul.jpg" alt="image"></p>
+<h5 id="2-3-1-测试url模式"><a href="#2-3-1-测试url模式" class="headerlink" title="2.3.1 测试url模式"></a>2.3.1 测试url模式</h5><p>打开 <a href="http://localhost:5050/baidu" target="_blank" rel="external">http://localhost:5050/baidu</a> ，匹配到了zuul.routes.baidu.path，其对应的url是zuul.routes.baidu.url=<a href="https://www.baidu.com/" target="_blank" rel="external">https://www.baidu.com/</a> ，则本次访问返回的内容如下：<br><img src="https://static.zhaoyh.com.cn/baidu_zuul.jpg" alt="image"></p>
+<h5 id="2-3-2-测试serviceID模式"><a href="#2-3-2-测试serviceID模式" class="headerlink" title="2.3.2 测试serviceID模式"></a>2.3.2 测试serviceID模式</h5><p>打开 <a href="http://localhost:5050/config" target="_blank" rel="external">http://localhost:5050/config</a> ，匹配到zuul.routes.configTest.path，返回的内容如下：<br><img src="https://static.zhaoyh.com.cn/config_content_zuul.jpg" alt="image"></p>
 <h3 id="3-服务过滤"><a href="#3-服务过滤" class="headerlink" title="3 服务过滤"></a>3 服务过滤</h3><p>过滤器负责对请求进行干预处理，同时对请求进行校验。过滤器可以说是Zuul实现API网关服务的核心组件，每一个进入到Zuul中的请求都应该经过过滤器的处理并返回给客户端。</p>
 <h4 id="3-1-接口介绍"><a href="#3-1-接口介绍" class="headerlink" title="3.1 接口介绍"></a>3.1 接口介绍</h4><p>Zuul的过滤器基本接口ZuulFilter，包括以下4个抽象方法：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> String <span class="title">filterType</span><span class="params">()</span></span>;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">int</span> <span class="title">filterOrder</span><span class="params">()</span></span>;</div><div class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">shouldFilter</span><span class="params">()</span></span>;</div><div class="line"><span class="function">Object <span class="title">run</span><span class="params">()</span></span>;</div></pre></td></tr></table></figure>
@@ -452,16 +452,16 @@
 <p>shouldFilter：返回boolean，判断该过滤器是否执行。</p>
 <p>run：过滤器的实现。</p>
 <h4 id="3-2-过滤器的生命周期"><a href="#3-2-过滤器的生命周期" class="headerlink" title="3.2 过滤器的生命周期"></a>3.2 过滤器的生命周期</h4><p>Zuul中定义了4个不同生命周期的过滤器类型，这基本覆盖了从接到API请求到返回内容的所有过程，下图是Zuul官方给出的请求生命周期的图解。</p>
-<p><img src="http://static.zhaoyh.com.cn/filterType.png" alt="image"></p>
+<p><img src="https://static.zhaoyh.com.cn/filterType.png" alt="image"></p>
 <p>如上图所示，当外部API请求到达服务网关时，首先进入pre的过滤器，pre过滤器一般会对请求进行校验，比如accessToken等。完成pre类型的过滤器之后，进入第二阶段的routing过滤器，此时会把请求转发到具体的实例上。当实例的内容返回后，进入到post过滤器，会对处理结果进行一定的加工或者转换。此外，如果过程出错，则会进入到error阶段，error处理完之后也会进入到post阶段，由post过滤器将最终结果返回给客户端。</p>
 <h4 id="3-3-pre过滤器实现"><a href="#3-3-pre过滤器实现" class="headerlink" title="3.3 pre过滤器实现"></a>3.3 pre过滤器实现</h4><p>本例子结合第二章的内容，实现一个pre类型的过滤器。<br>首先新建ApiFilter.java类，内容如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger LOG = LoggerFactory.getLogger(ApiFilter.class);</div><div class="line"></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> String <span class="title">filterType</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="string">"pre"</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">filterOrder</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">shouldFilter</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">    RequestContext requestContext = RequestContext.getCurrentContext();</div><div class="line">    HttpServletRequest request = requestContext.getRequest();</div><div class="line">    String token = request.getParameter(<span class="string">"accessToken"</span>);</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">null</span> == token || <span class="string">""</span>.equals(token)) &#123;</div><div class="line">        LOG.warn(<span class="string">"Token is empty..."</span>);</div><div class="line">        requestContext.setSendZuulResponse(<span class="keyword">false</span>);</div><div class="line">        requestContext.setResponseStatusCode(<span class="number">403</span>);</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line">    LOG.info(<span class="string">"Access: "</span> + request.getRemoteAddr() + <span class="string">" Token: "</span> + token);</div><div class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>run函数的内容，主要是获取accessToken并进行简单的校验。创建完过滤器之后，在主类中将其实例化：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@Bean</div><div class="line">public ApiFilter apiFilter() &#123;</div><div class="line">    return new ApiFilter();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>此时，再输入 <a href="http://localhost:5050/config" target="_blank" rel="external">http://localhost:5050/config</a> 后，就会出现权限不足的提示：</p>
-<p><img src="http://static.zhaoyh.com.cn/access_denied.jpg" alt="image"></p>
+<p><img src="https://static.zhaoyh.com.cn/access_denied.jpg" alt="image"></p>
 <p>加上简单的accessToken后，<a href="http://localhost:5050/config?accessToken=zhaoyh" target="_blank" rel="external">http://localhost:5050/config?accessToken=zhaoyh</a> ，可以正常访问：</p>
-<p><img src="http://static.zhaoyh.com.cn/access_passed.jpg" alt="image"></p>
+<p><img src="https://static.zhaoyh.com.cn/access_passed.jpg" alt="image"></p>
 <p>通过以上例子可以看出，我们可以使用pre类型的过滤器做一些校验的工作，实际的项目中可以结合Shiro、oauth2.0等技术做鉴权的实现。</p>
 <h3 id="4-服务网关高可用"><a href="#4-服务网关高可用" class="headerlink" title="4 服务网关高可用"></a>4 服务网关高可用</h3><p>本篇内容，对于Spring Cloud Zuul网关服务做了基本的介绍和实现，但是在实际的项目中，还是远远不够的。比如当后端的服务出现异常时，可以结合Hystrix熔断机制，对返回内容进行拦截或者返回定制的内容。另外，当出现网络问题，或者负载过高导致后端服务出现延迟时，也需要对服务进行重试，此时可以结合Spring Retry技术，开启重试的功能。</p>
 <blockquote>
