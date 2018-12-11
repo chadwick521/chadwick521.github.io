@@ -93,18 +93,18 @@
 
 
 
-<meta name="description" content="在SpringCloud配置中心一文中，我们介绍了如何利用配置中心和Git仓库来对应用程序中的属性进行刷新和配置。即通过Github或Gitlab提供的WebHook服务通知各应用程序来刷新。但是随着微服务产品增多，如果对每个微服务都发送一个post请求会越来越难以维护。因此需要一个消息代理，我们只需要通知一个微服务，再由其发送消息到每个微服务实现配置的热更新。Spring Cloud Bus即实">
+<meta name="description" content="在Spring Cloud 配置中心一文中，我们介绍了如何利用配置中心和Git仓库来对应用程序中的属性进行刷新和配置。即通过Github或Gitlab提供的WebHook服务通知各应用程序来刷新。但是随着微服务产品增多，如果对每个微服务都发送一个post请求会越来越难以维护。因此需要一个消息代理，我们只需要通知一个微服务，再由其发送消息到每个微服务实现配置的热更新。Spring Cloud Bus">
 <meta name="keywords" content="RabbitMQ,Bus">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Spring Cloud微服务框架之消息总线">
 <meta property="og:url" content="http://www.zhaoyh.com.cn/2018/07/19/Spring Cloud微服务框架之消息总线/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
-<meta property="og:description" content="在SpringCloud配置中心一文中，我们介绍了如何利用配置中心和Git仓库来对应用程序中的属性进行刷新和配置。即通过Github或Gitlab提供的WebHook服务通知各应用程序来刷新。但是随着微服务产品增多，如果对每个微服务都发送一个post请求会越来越难以维护。因此需要一个消息代理，我们只需要通知一个微服务，再由其发送消息到每个微服务实现配置的热更新。Spring Cloud Bus即实">
+<meta property="og:description" content="在Spring Cloud 配置中心一文中，我们介绍了如何利用配置中心和Git仓库来对应用程序中的属性进行刷新和配置。即通过Github或Gitlab提供的WebHook服务通知各应用程序来刷新。但是随着微服务产品增多，如果对每个微服务都发送一个post请求会越来越难以维护。因此需要一个消息代理，我们只需要通知一个微服务，再由其发送消息到每个微服务实现配置的热更新。Spring Cloud Bus">
 <meta property="og:image" content="https://static.zhaoyh.com.cn/springcloudbus_rabbit.png">
-<meta property="og:updated_time" content="2018-12-04T04:06:58.823Z">
+<meta property="og:updated_time" content="2018-12-11T04:13:32.022Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spring Cloud微服务框架之消息总线">
-<meta name="twitter:description" content="在SpringCloud配置中心一文中，我们介绍了如何利用配置中心和Git仓库来对应用程序中的属性进行刷新和配置。即通过Github或Gitlab提供的WebHook服务通知各应用程序来刷新。但是随着微服务产品增多，如果对每个微服务都发送一个post请求会越来越难以维护。因此需要一个消息代理，我们只需要通知一个微服务，再由其发送消息到每个微服务实现配置的热更新。Spring Cloud Bus即实">
+<meta name="twitter:description" content="在Spring Cloud 配置中心一文中，我们介绍了如何利用配置中心和Git仓库来对应用程序中的属性进行刷新和配置。即通过Github或Gitlab提供的WebHook服务通知各应用程序来刷新。但是随着微服务产品增多，如果对每个微服务都发送一个post请求会越来越难以维护。因此需要一个消息代理，我们只需要通知一个微服务，再由其发送消息到每个微服务实现配置的热更新。Spring Cloud Bus">
 <meta name="twitter:image" content="https://static.zhaoyh.com.cn/springcloudbus_rabbit.png">
 
 
@@ -398,9 +398,9 @@
       
 
       
-        <p>在<a href="http://zhaoyh.com.cn/2018/02/28/Spring%20Cloud%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6%E4%B9%8B%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/" target="_blank" rel="external">SpringCloud配置中心</a>一文中，我们介绍了如何利用配置中心和Git仓库来对应用程序中的属性进行刷新和配置。即通过Github或Gitlab提供的WebHook服务通知各应用程序来刷新。但是随着微服务产品增多，如果对每个微服务都发送一个post请求会越来越难以维护。因此需要一个消息代理，我们只需要通知一个微服务，再由其发送消息到每个微服务实现配置的热更新。Spring Cloud Bus即实现了类似的服务。</p>
+        <p>在<a href="http://zhaoyh.com.cn/2018/02/28/Spring%20Cloud%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6%E4%B9%8B%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/" target="_blank" rel="external">Spring Cloud 配置中心</a>一文中，我们介绍了如何利用配置中心和Git仓库来对应用程序中的属性进行刷新和配置。即通过Github或Gitlab提供的WebHook服务通知各应用程序来刷新。但是随着微服务产品增多，如果对每个微服务都发送一个post请求会越来越难以维护。因此需要一个消息代理，我们只需要通知一个微服务，再由其发送消息到每个微服务实现配置的热更新。Spring Cloud Bus即实现了类似的服务。</p>
 <a id="more"></a>
-<h3 id="1-准备测试服务"><a href="#1-准备测试服务" class="headerlink" title="1. 准备测试服务"></a>1. 准备测试服务</h3><p>为了实现消息总线更新线上配置的功能，根据<a href="http://zhaoyh.com.cn/2018/02/28/Spring%20Cloud%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6%E4%B9%8B%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/" target="_blank" rel="external">SpringCloud配置中心</a>中的服务来继续开发：</p>
+<h3 id="1-准备测试服务"><a href="#1-准备测试服务" class="headerlink" title="1. 准备测试服务"></a>1. 准备测试服务</h3><p>为了实现消息总线更新线上配置的功能，根据<a href="http://zhaoyh.com.cn/2018/02/28/Spring%20Cloud%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6%E4%B9%8B%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/" target="_blank" rel="external">Spring Cloud配置中心</a>中的服务来继续开发：</p>
 <ul>
 <li>Git Repo，存放配置文件。</li>
 <li>Config Server，读取Git Repo下的配置文件，并以REST接口的形式供Client调用。</li>
@@ -558,7 +558,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">26</span>
+                <span class="site-state-item-count">27</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -580,7 +580,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">33</span>
+                <span class="site-state-item-count">35</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
