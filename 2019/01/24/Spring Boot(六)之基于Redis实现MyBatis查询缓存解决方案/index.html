@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Spring Boot,MyBatis,Redis," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="1. 前言MyBatis是Java中常用的数据层ORM框架，笔者目前在实际的开发中，也在使用MyBatis。本文主要介绍了MyBatis的缓存策略、以及基于SpringBoot和Redis实现MyBatis的二级缓存的过程。实现本文的demo，主要依赖以下软件版本信息，但是由于数据层面的实现，并不依赖具体的版本，你可以以自己主机当前的环境创建。    软件环境 版本     SpringBoot">
+<meta name="keywords" content="Spring Boot,MyBatis,Redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Boot(六)之基于Redis实现MyBatis查询缓存解决方案">
+<meta property="og:url" content="http://www.zhaoyh.com.cn/2019/01/24/Spring Boot(六)之基于Redis实现MyBatis查询缓存解决方案/index.html">
+<meta property="og:site_name" content="zhaoyh&#39;s blog">
+<meta property="og:description" content="1. 前言MyBatis是Java中常用的数据层ORM框架，笔者目前在实际的开发中，也在使用MyBatis。本文主要介绍了MyBatis的缓存策略、以及基于SpringBoot和Redis实现MyBatis的二级缓存的过程。实现本文的demo，主要依赖以下软件版本信息，但是由于数据层面的实现，并不依赖具体的版本，你可以以自己主机当前的环境创建。    软件环境 版本     SpringBoot">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/1548298183815.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/1548298759229.jpg">
+<meta property="og:updated_time" content="2019-01-24T08:19:08.929Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring Boot(六)之基于Redis实现MyBatis查询缓存解决方案">
+<meta name="twitter:description" content="1. 前言MyBatis是Java中常用的数据层ORM框架，笔者目前在实际的开发中，也在使用MyBatis。本文主要介绍了MyBatis的缓存策略、以及基于SpringBoot和Redis实现MyBatis的二级缓存的过程。实现本文的demo，主要依赖以下软件版本信息，但是由于数据层面的实现，并不依赖具体的版本，你可以以自己主机当前的环境创建。    软件环境 版本     SpringBoot">
+<meta name="twitter:image" content="https://static.zhaoyh.com.cn/1548298183815.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.zhaoyh.com.cn/2019/01/24/Spring Boot(六)之基于Redis实现MyBatis查询缓存解决方案/"/>
+
+
+
+
+
+  <title>Spring Boot(六)之基于Redis实现MyBatis查询缓存解决方案 | zhaoyh's blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?a691f1427476a927cc964aa3136dffc5";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zhaoyh's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2019/01/24/Spring Boot(六)之基于Redis实现MyBatis查询缓存解决方案/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhaoyh">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/kobe.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zhaoyh's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Spring Boot(六)之基于Redis实现MyBatis查询缓存解决方案</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-24T16:11:55+08:00">
+                2019-01-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring-Boot/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring Boot</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h3><p>MyBatis是Java中常用的数据层ORM框架，笔者目前在实际的开发中，也在使用MyBatis。本文主要介绍了MyBatis的缓存策略、以及基于SpringBoot和Redis实现MyBatis的二级缓存的过程。实现本文的demo，主要依赖以下软件版本信息，但是由于数据层面的实现，并不依赖具体的版本，你可以以自己主机当前的环境创建。</p>
+<table>
+<thead>
+<tr>
+<th>软件环境</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SpringBoot</td>
+<td>1.5.18</td>
+</tr>
+<tr>
+<td>Redis</td>
+<td>通用</td>
+</tr>
+<tr>
+<td>MyBatis</td>
+<td>3.4.+</td>
+</tr>
+</tbody>
+</table>
+<a id="more"></a>
+<h3 id="2-MyBatis缓存策略"><a href="#2-MyBatis缓存策略" class="headerlink" title="2. MyBatis缓存策略"></a>2. MyBatis缓存策略</h3><h4 id="2-1-一级缓存"><a href="#2-1-一级缓存" class="headerlink" title="2.1 一级缓存"></a>2.1 一级缓存</h4><p>MyBatis默认实现了一级缓存，实现过程可参考下图：<br><img src="https://static.zhaoyh.com.cn/1548298183815.jpg" alt="image"></p>
+<p>默认基础接口有两个：</p>
+<ul>
+<li>org.apache.ibatis.session.SqlSession: 提供了用户和数据库交互需要的所有方法，默认实现类是DefaultSqlSession。</li>
+<li>org.apache.ibatis.executor.Executor: 和数据库的实际操作接口，基础抽象类BaseExecutor。</li>
+</ul>
+<p>我们从底层往上查看源代码，首先打开BaseExecutor的源代码，可以看到Executor实现一级缓存的成员变量是PerpetualCache对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * <span class="doctag">@author</span> Clinton Begin</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseExecutor</span> <span class="keyword">implements</span> <span class="title">Executor</span> </span>&#123;</div><div class="line"></div><div class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Log log = LogFactory.getLog(BaseExecutor.class);</div><div class="line"></div><div class="line">  <span class="keyword">protected</span> Transaction transaction;</div><div class="line">  <span class="keyword">protected</span> Executor wrapper;</div><div class="line"></div><div class="line">  <span class="keyword">protected</span> ConcurrentLinkedQueue&lt;DeferredLoad&gt; deferredLoads;</div><div class="line">  <span class="comment">// 实现一级缓存的成员变量</span></div><div class="line">  <span class="keyword">protected</span> PerpetualCache localCache;</div><div class="line">  <span class="keyword">protected</span> PerpetualCache localOutputParameterCache;</div><div class="line">  <span class="keyword">protected</span> Configuration configuration;</div><div class="line">  ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们再打开PerpetualCache类的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * <span class="doctag">@author</span> Clinton Begin</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PerpetualCache</span> <span class="keyword">implements</span> <span class="title">Cache</span> </span>&#123;</div><div class="line"></div><div class="line">  <span class="keyword">private</span> <span class="keyword">final</span> String id;</div><div class="line"></div><div class="line">  <span class="keyword">private</span> Map&lt;Object, Object&gt; cache = <span class="keyword">new</span> HashMap&lt;Object, Object&gt;();</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="title">PerpetualCache</span><span class="params">(String id)</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.id = id;</div><div class="line">  &#125;</div><div class="line">  ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到PerpetualCache是对Cache的基本实现，而且通过内部持有一个简单的HashMap实现缓存。</p>
+<p>了解了一级缓存的实现后，我们再回到入口处，为了你的sql语句和数据库交互，MyBatis首先需要实现SqlSession，通过DefaultSqlSessionFactory实现SqlSession的初始化的过程可查看：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> SqlSession <span class="title">openSessionFromDataSource</span><span class="params">(ExecutorType execType, TransactionIsolationLevel level, <span class="keyword">boolean</span> autoCommit)</span> </span>&#123;</div><div class="line">  Transaction tx = <span class="keyword">null</span>;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    <span class="keyword">final</span> Environment environment = configuration.getEnvironment();</div><div class="line">    <span class="keyword">final</span> TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);</div><div class="line">    tx = transactionFactory.newTransaction(environment.getDataSource(), level, autoCommit);</div><div class="line">    <span class="comment">// Executor初始化</span></div><div class="line">    <span class="keyword">final</span> Executor executor = configuration.newExecutor(tx, execType);</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> DefaultSqlSession(configuration, executor, autoCommit);</div><div class="line">  &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">    closeTransaction(tx); <span class="comment">// may have fetched a connection so lets call close()</span></div><div class="line">    <span class="keyword">throw</span> ExceptionFactory.wrapException(<span class="string">"Error opening session.  Cause: "</span> + e, e);</div><div class="line">  &#125; <span class="keyword">finally</span> &#123;</div><div class="line">    ErrorContext.instance().reset();</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从代码中可以看到，通过configuration创建一个Executor，实际创建Executor的过程如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> Executor <span class="title">newExecutor</span><span class="params">(Transaction transaction, ExecutorType executorType)</span> </span>&#123;</div><div class="line">  executorType = executorType == <span class="keyword">null</span> ? defaultExecutorType : executorType;</div><div class="line">  executorType = executorType == <span class="keyword">null</span> ? ExecutorType.SIMPLE : executorType;</div><div class="line">  Executor executor;</div><div class="line">  <span class="keyword">if</span> (ExecutorType.BATCH == executorType) &#123;</div><div class="line">    executor = <span class="keyword">new</span> BatchExecutor(<span class="keyword">this</span>, transaction);</div><div class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (ExecutorType.REUSE == executorType) &#123;</div><div class="line">    executor = <span class="keyword">new</span> ReuseExecutor(<span class="keyword">this</span>, transaction);</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    executor = <span class="keyword">new</span> SimpleExecutor(<span class="keyword">this</span>, transaction);</div><div class="line">  &#125;</div><div class="line">  <span class="comment">// 是否开启二级缓存</span></div><div class="line">  <span class="comment">// 如果开启，使用CahingExecutor装饰BaseExecutor的子类</span></div><div class="line">  <span class="keyword">if</span> (cacheEnabled) &#123;</div><div class="line">    executor = <span class="keyword">new</span> CachingExecutor(executor);</div><div class="line">  &#125;</div><div class="line">  executor = (Executor) interceptorChain.pluginAll(executor);</div><div class="line">  <span class="keyword">return</span> executor;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>注意，cacheEnabled字段是二级缓存是否开启的标志位，如果开启，会使用使用CahingExecutor装饰BaseExecutor的子类。</p>
+<p>创建完SqlSession，根据Statment的不同，会使用不同的SqlSession查询方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line">  <span class="keyword">public</span> &lt;E&gt; <span class="function">List&lt;E&gt; <span class="title">selectList</span><span class="params">(String statement, Object parameter, RowBounds rowBounds)</span> </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      MappedStatement ms = configuration.getMappedStatement(statement);</div><div class="line">      <span class="keyword">return</span> executor.query(ms, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);</div><div class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">      <span class="keyword">throw</span> ExceptionFactory.wrapException(<span class="string">"Error querying database.  Cause: "</span> + e, e);</div><div class="line">    &#125; <span class="keyword">finally</span> &#123;</div><div class="line">      ErrorContext.instance().reset();</div><div class="line">    &#125;</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>SqlSession把具体的查询职责委托给了Executor，如果只开启了一级缓存的话，首先会进入BaseExecutor的query方法。代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="keyword">public</span> &lt;E&gt; <span class="function">List&lt;E&gt; <span class="title">query</span><span class="params">(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql)</span> <span class="keyword">throws</span> SQLException </span>&#123;</div><div class="line">  ErrorContext.instance().resource(ms.getResource()).activity(<span class="string">"executing a query"</span>).object(ms.getId());</div><div class="line">  <span class="keyword">if</span> (closed) &#123;</div><div class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> ExecutorException(<span class="string">"Executor was closed."</span>);</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">if</span> (queryStack == <span class="number">0</span> &amp;&amp; ms.isFlushCacheRequired()) &#123;</div><div class="line">    clearLocalCache();</div><div class="line">  &#125;</div><div class="line">  List&lt;E&gt; list;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    queryStack++;</div><div class="line">    <span class="comment">// 使用缓存</span></div><div class="line">    list = resultHandler == <span class="keyword">null</span> ? (List&lt;E&gt;) localCache.getObject(key) : <span class="keyword">null</span>;</div><div class="line">    <span class="keyword">if</span> (list != <span class="keyword">null</span>) &#123;</div><div class="line">      handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);</div><div class="line">    &#125;</div><div class="line">  &#125; <span class="keyword">finally</span> &#123;</div><div class="line">    queryStack--;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">if</span> (queryStack == <span class="number">0</span>) &#123;</div><div class="line">    <span class="keyword">for</span> (DeferredLoad deferredLoad : deferredLoads) &#123;</div><div class="line">      deferredLoad.load();</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// issue #601</span></div><div class="line">    deferredLoads.clear();</div><div class="line">    <span class="keyword">if</span> (configuration.getLocalCacheScope() == LocalCacheScope.STATEMENT) &#123;</div><div class="line">      <span class="comment">// issue #482</span></div><div class="line">      <span class="comment">// 清空缓存</span></div><div class="line">      clearLocalCache();</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> list;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>query方法实现了缓存的查询过程，在query方法执行的最后，会判断一级缓存级别是否是STATEMENT级别，如果是的话，就清空缓存，这也就是STATEMENT级别的一级缓存无法共享localCache的原因。</p>
+<p>SqlSession的insert方法和delete方法，都会统一走update的流程，在BaseExecutor实现的update方法中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">update</span><span class="params">(MappedStatement ms, Object parameter)</span> <span class="keyword">throws</span> SQLException </span>&#123;</div><div class="line">  ErrorContext.instance().resource(ms.getResource()).activity(<span class="string">"executing an update"</span>).object(ms.getId());</div><div class="line">  <span class="keyword">if</span> (closed) &#123;</div><div class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> ExecutorException(<span class="string">"Executor was closed."</span>);</div><div class="line">  &#125;</div><div class="line">  <span class="comment">// 清空缓存</span></div><div class="line">  clearLocalCache();</div><div class="line">  <span class="keyword">return</span> doUpdate(ms, parameter);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到，每次执行update方法都会执行clearLocalCache清空缓存。至此，我们分析完了MyBatis的一级缓存从入口到实现的过程。</p>
+<p>关于MyBatis一级缓存的总结：</p>
+<ul>
+<li>一级缓存的生命周期和SqlSession保持一致；</li>
+<li>一级缓存的缓存通过HashMap实现；</li>
+<li>一级缓存的作用域是对应的SqlSession，假如存在多个SqlSession，写操作可能会引起脏数据。</li>
+</ul>
+<h4 id="2-2-二级缓存"><a href="#2-2-二级缓存" class="headerlink" title="2.2 二级缓存"></a>2.2 二级缓存</h4><p>在上一小节中，我们知道一级缓存的的作用域就是对应的SqlSession。若开启了二级缓存，会使用CachingExecutor装饰Executor，进入一级缓存的查询流程前，先在CachingExecutor进行二级缓存的查询，二级缓存的查询流程如图所示：<br><img src="https://static.zhaoyh.com.cn/1548298759229.jpg" alt="image"><br>二级缓存开启后，同一个namespace下的所有数据库操作语句，都使用同一个Cache，即二级缓存结果会被被多个SqlSession共享，是一个全局的变量。当开启二级缓存后，数据查询的执行流程就是二级缓存 -&gt; 一级缓存 -&gt; 数据库。</p>
+<p>二级缓的实现源码，可以查看CachingExecutor类的query方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="keyword">public</span> &lt;E&gt; <span class="function">List&lt;E&gt; <span class="title">query</span><span class="params">(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql)</span></span></div><div class="line">    <span class="keyword">throws</span> SQLException &#123;</div><div class="line">  <span class="comment">// 从MappedStatement中获得在配置初始化时赋予的Cache</span></div><div class="line">  Cache cache = ms.getCache();</div><div class="line">  <span class="keyword">if</span> (cache != <span class="keyword">null</span>) &#123;</div><div class="line">    <span class="comment">// 判断是否需要刷新缓存</span></div><div class="line">    flushCacheIfRequired(ms);</div><div class="line">    <span class="keyword">if</span> (ms.isUseCache() &amp;&amp; resultHandler == <span class="keyword">null</span>) &#123;</div><div class="line">      <span class="comment">// 主要是用来处理存储过程的</span></div><div class="line">      ensureNoOutParams(ms, boundSql);</div><div class="line">      <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</div><div class="line">      <span class="comment">// 尝试从tcm中获取缓存的列表，会把获取值的职责一路传递</span></div><div class="line">      List&lt;E&gt; list = (List&lt;E&gt;) tcm.getObject(cache, key);</div><div class="line">      <span class="keyword">if</span> (list == <span class="keyword">null</span>) &#123;</div><div class="line">        list = delegate.&lt;E&gt; query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);</div><div class="line">        tcm.putObject(cache, key, list); <span class="comment">// issue #578 and #116</span></div><div class="line">      &#125;</div><div class="line">      <span class="keyword">return</span> list;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> delegate.&lt;E&gt; query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在二级缓存查询结束后，就会进入一级缓存的执行流程，可参考上一小节内容。</p>
+<p>关于二级缓存的总结：</p>
+<ul>
+<li>二级缓存是SqlSession之间共享，能够做到mapper级别，并通过Cache实现缓存。</li>
+<li>由于MyBatis的缓存都是内存级的，在分布式环境下，有可能会产生脏数据，因此可以考虑使用第三方存储组件，如Redis实现二级缓存的存储，这样的安全性和性能也会更高。</li>
+</ul>
+<h3 id="3-SpringBoot和Redis实现MyBatis二级缓存"><a href="#3-SpringBoot和Redis实现MyBatis二级缓存" class="headerlink" title="3. SpringBoot和Redis实现MyBatis二级缓存"></a>3. SpringBoot和Redis实现MyBatis二级缓存</h3><p>MyBatis的默认实现一级缓存的，二级缓存也是默认保存在内存中，因此当分布式部署你的应用时，有可能会产生脏数据。通用的解决方案是找第三方存储缓存结果，比如Ehcache、Redis、Memcached等。接下来，我们介绍下，使用Redis作为缓存组件，实现MyBatis二级缓存。</p>
+<p>在实现二级缓存之前，我们假设你已经实现了SpringBoot+MyBatis的构建过程，如果还没有，建议你先创建一个demo实现简单的CRUD过程，然后再查看本文解决二级缓存的问题。</p>
+<h4 id="3-1-增加Redis配置"><a href="#3-1-增加Redis配置" class="headerlink" title="3.1 增加Redis配置"></a>3.1 增加Redis配置</h4><p>首先在你的工程加入Redis依赖：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">compile(&apos;org.springframework.boot:spring-boot-starter-data-redis&apos;)</div></pre></td></tr></table></figure>
+<p>我使用的gradle，使用maven的同学可对应查询即可！</p>
+<p>其次在配置文件中加入Redis的链接配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">spring.redis.cluster.nodes=XXX:port,YYY:port</div></pre></td></tr></table></figure></p>
+<p>这里我们使用的是Redis集群配置。</p>
+<p>打开mybatis.xml配置文件，开启二级缓存：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;setting name=&quot;cacheEnabled&quot; value=&quot;true&quot;/&gt;</div></pre></td></tr></table></figure>
+<p>增加Redis的配置类，开启json的序列化：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> com.fasterxml.jackson.annotation.JsonAutoDetect;</div><div class="line"><span class="keyword">import</span> com.fasterxml.jackson.annotation.PropertyAccessor;</div><div class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.ObjectMapper;</div><div class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</div><div class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</div><div class="line"><span class="keyword">import</span> org.springframework.data.redis.connection.RedisConnectionFactory;</div><div class="line"><span class="keyword">import</span> org.springframework.data.redis.core.RedisTemplate;</div><div class="line"><span class="keyword">import</span> org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;</div><div class="line"><span class="keyword">import</span> org.springframework.data.redis.serializer.StringRedisSerializer;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by zhaoyh on 2019-01-23</div><div class="line"> *</div><div class="line"> * <span class="doctag">@author</span> zhaoyh</div><div class="line"> */</div><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisConfig</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 重写Redis序列化方式，使用Json方式:</div><div class="line">     * 当我们的数据存储到Redis的时候，我们的键（key）和值（value）都是通过Spring提供的Serializer序列化到数据库的。RedisTemplate默认使用的是JdkSerializationRedisSerializer，StringRedisTemplate默认使用的是StringRedisSerializer。</div><div class="line">     * Spring Data JPA为我们提供了下面的Serializer：</div><div class="line">     * GenericToStringSerializer、Jackson2JsonRedisSerializer、JacksonJsonRedisSerializer、JdkSerializationRedisSerializer、OxmSerializer、StringRedisSerializer。</div><div class="line">     * 在此我们将自己配置RedisTemplate并定义Serializer。</div><div class="line">     * <span class="doctag">@param</span> redisConnectionFactory</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="meta">@Bean</span>(name = <span class="string">"redisTemplate"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> RedisTemplate&lt;String, Object&gt; <span class="title">redisTemplate</span><span class="params">(RedisConnectionFactory redisConnectionFactory)</span> </span>&#123;</div><div class="line">        RedisTemplate&lt;String, Object&gt; redisTemplate = <span class="keyword">new</span> RedisTemplate&lt;&gt;();</div><div class="line">        redisTemplate.setConnectionFactory(redisConnectionFactory);</div><div class="line"></div><div class="line">        Jackson2JsonRedisSerializer&lt;Object&gt; jackson2JsonRedisSerializer = <span class="keyword">new</span> Jackson2JsonRedisSerializer&lt;&gt;(Object.class);</div><div class="line">        ObjectMapper om = <span class="keyword">new</span> ObjectMapper();</div><div class="line">        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);</div><div class="line">        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);</div><div class="line">        jackson2JsonRedisSerializer.setObjectMapper(om);</div><div class="line"></div><div class="line">        <span class="comment">// 设置值（value）的序列化采用Jackson2JsonRedisSerializer。</span></div><div class="line">        redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);</div><div class="line">        <span class="comment">// 设置键（key）的序列化采用StringRedisSerializer。</span></div><div class="line">        redisTemplate.setKeySerializer(<span class="keyword">new</span> StringRedisSerializer());</div><div class="line"></div><div class="line">        redisTemplate.afterPropertiesSet();</div><div class="line">        <span class="keyword">return</span> redisTemplate;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="3-2-实现MyBatis的Cache接口"><a href="#3-2-实现MyBatis的Cache接口" class="headerlink" title="3.2 实现MyBatis的Cache接口"></a>3.2 实现MyBatis的Cache接口</h4><p>org.apache.ibatis.cache.Cache接口是MyBatis通用的缓存实现接口，包括一级缓存和二级缓存都是基于Cache接口实现缓存机制。</p>
+<p>创建MybatisRedisCache类，实现Cache接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> org.apache.ibatis.cache.Cache;</div><div class="line"><span class="keyword">import</span> org.slf4j.Logger;</div><div class="line"><span class="keyword">import</span> org.slf4j.LoggerFactory;</div><div class="line"><span class="keyword">import</span> org.springframework.dao.DataAccessException;</div><div class="line"><span class="keyword">import</span> org.springframework.data.redis.connection.RedisConnection;</div><div class="line"><span class="keyword">import</span> org.springframework.data.redis.core.RedisCallback;</div><div class="line"><span class="keyword">import</span> org.springframework.data.redis.core.RedisTemplate;</div><div class="line"><span class="keyword">import</span> org.springframework.util.CollectionUtils;</div><div class="line"><span class="keyword">import</span> java.util.Set;</div><div class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</div><div class="line"><span class="keyword">import</span> java.util.concurrent.locks.ReadWriteLock;</div><div class="line"><span class="keyword">import</span> java.util.concurrent.locks.ReentrantReadWriteLock;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by zhaoyh on 2019-01-22</div><div class="line"> * MyBatis二级缓存配置</div><div class="line"> * <span class="doctag">@author</span> zhaoyh</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MybatisRedisCache</span> <span class="keyword">implements</span> <span class="title">Cache</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger LOG = LoggerFactory.getLogger(MybatisRedisCache.class);</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 默认redis有效期</div><div class="line">     * 单位分钟</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_REDIS_EXPIRE = <span class="number">10</span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 注入redis</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> RedisTemplate&lt;String, Object&gt; redisTemplate = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 读写锁</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ReadWriteLock readWriteLock = <span class="keyword">new</span> ReentrantReadWriteLock(<span class="keyword">true</span>);</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * cache id</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> String id = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 构造函数</div><div class="line">     * <span class="doctag">@param</span> id</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MybatisRedisCache</span><span class="params">(<span class="keyword">final</span> String id)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == id) &#123;</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"MybatisRedisCache Instance Require An Id..."</span>);</div><div class="line">        &#125;</div><div class="line">        LOG.info(<span class="string">"MybatisRedisCache: "</span> + id);</div><div class="line">        <span class="keyword">this</span>.id = id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * <span class="doctag">@return</span> The identifier of this cache</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * <span class="doctag">@param</span> key   Can be any object but usually it is a &#123;<span class="doctag">@link</span>&#125;</div><div class="line">     * <span class="doctag">@param</span> value The result of a select.</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">putObject</span><span class="params">(Object key, Object value)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != value) &#123;</div><div class="line">            LOG.info(<span class="string">"putObject key: "</span> + key.toString());</div><div class="line">            <span class="comment">// 向Redis中添加数据，默认有效时间是2小时</span></div><div class="line">            redisTemplate.opsForValue().set(key.toString(), value, DEFAULT_REDIS_EXPIRE, TimeUnit.MINUTES);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * <span class="doctag">@param</span> key The key</div><div class="line">     * <span class="doctag">@return</span> The object stored in the cache.</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getObject</span><span class="params">(Object key)</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="keyword">if</span> (<span class="keyword">null</span> != key) &#123;</div><div class="line">                LOG.info(<span class="string">"getObject key: "</span> + key.toString());</div><div class="line">                <span class="keyword">return</span> redisTemplate.opsForValue().get(key.toString());</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            LOG.error(<span class="string">"getFromRedis: "</span> + key.toString() + <span class="string">" failed!"</span>);</div><div class="line">        &#125;</div><div class="line">        LOG.info(<span class="string">"getObject null..."</span>);</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * As of 3.3.0 this method is only called during a rollback</div><div class="line">     * for any previous value that was missing in the cache.</div><div class="line">     * This lets any blocking cache to release the lock that</div><div class="line">     * may have previously put on the key.</div><div class="line">     * A blocking cache puts a lock when a value is null</div><div class="line">     * and releases it when the value is back again.</div><div class="line">     * This way other threads will wait for the value to be</div><div class="line">     * available instead of hitting the database.</div><div class="line">     *</div><div class="line">     * 删除缓存中的对象</div><div class="line">     *</div><div class="line">     * <span class="doctag">@param</span> keyObject The key</div><div class="line">     * <span class="doctag">@return</span> Not used</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">removeObject</span><span class="params">(Object keyObject)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != keyObject) &#123;</div><div class="line">            redisTemplate.delete(keyObject.toString());</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * Clears this cache instance</div><div class="line">     * 有delete、update、insert操作时执行此函数</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span> </span>&#123;</div><div class="line">        LOG.info(<span class="string">"clear..."</span>);</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            Set&lt;String&gt; keys = redisTemplate.keys(<span class="string">"*:"</span> + <span class="keyword">this</span>.id + <span class="string">"*"</span>);</div><div class="line">            LOG.info(<span class="string">"keys size: "</span> + keys.size());</div><div class="line">            <span class="keyword">for</span> (String key : keys) &#123;</div><div class="line">                LOG.info(<span class="string">"key : "</span> + key);</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">if</span> (!CollectionUtils.isEmpty(keys)) &#123;</div><div class="line">                redisTemplate.delete(keys);</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            LOG.error(<span class="string">"clear failed!"</span>, e);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * Optional. This method is not called by the core.</div><div class="line">     *</div><div class="line">     * <span class="doctag">@return</span> The number of elements stored in the cache (not its capacity).</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSize</span><span class="params">()</span> </span>&#123;</div><div class="line">        Long size = (Long) redisTemplate.execute(<span class="keyword">new</span> RedisCallback&lt;Long&gt;() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> Long <span class="title">doInRedis</span><span class="params">(RedisConnection connection)</span> <span class="keyword">throws</span> DataAccessException </span>&#123;</div><div class="line">                <span class="keyword">return</span> connection.dbSize();</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">        LOG.info(<span class="string">"getSize: "</span> + size.intValue());</div><div class="line">        <span class="keyword">return</span> size.intValue();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * Optional. As of 3.2.6 this method is no longer called by the core.</div><div class="line">     * &lt;p&gt;</div><div class="line">     * Any locking needed by the cache must be provided internally by the cache provider.</div><div class="line">     *</div><div class="line">     * <span class="doctag">@return</span> A ReadWriteLock</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> ReadWriteLock <span class="title">getReadWriteLock</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.readWriteLock;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setRedisTemplate</span><span class="params">(RedisTemplate&lt;String, Object&gt; redisTemplate)</span> </span>&#123;</div><div class="line">        MybatisRedisCache.redisTemplate = redisTemplate;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>由于redisTemplate是类变量，需要手动注入，再创建一个配置类注入redisTemplate即可：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by zhaoyh on 2019-01-22</div><div class="line"> * <span class="doctag">@author</span> zhaoyh</div><div class="line"> */</div><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBatisHelper</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 注入redis</div><div class="line">     * <span class="doctag">@param</span> redisTemplate</div><div class="line">     */</div><div class="line">    <span class="meta">@Autowired</span></div><div class="line">    <span class="meta">@Qualifier</span>(<span class="string">"redisTemplate"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRedisTemplate</span><span class="params">(RedisTemplate&lt;String, Object&gt; redisTemplate)</span> </span>&#123;</div><div class="line">        MybatisRedisCache.setRedisTemplate(redisTemplate);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="3-3-mapper文件中加入二级缓存的声明"><a href="#3-3-mapper文件中加入二级缓存的声明" class="headerlink" title="3.3 mapper文件中加入二级缓存的声明"></a>3.3 mapper文件中加入二级缓存的声明</h4><p>在任意需要开启二级缓存的mapper配置文件中，加入：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- mapper开启二级缓存 --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">cache</span> <span class="attr">type</span>=<span class="string">"XX.XX.MybatisRedisCache"</span>&gt;</span></div><div class="line">    <span class="comment">&lt;!-- 定义回收的策略 --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"eviction"</span> <span class="attr">value</span>=<span class="string">"LRU"</span>/&gt;</span></div><div class="line">    <span class="comment">&lt;!-- 配置一定时间自动刷新缓存，单位是毫秒 --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"flushInterval"</span> <span class="attr">value</span>=<span class="string">"600000"</span>/&gt;</span></div><div class="line">    <span class="comment">&lt;!-- 最多缓存对象的个数 --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"size"</span> <span class="attr">value</span>=<span class="string">"1024"</span>/&gt;</span></div><div class="line">    <span class="comment">&lt;!-- 是否只读，若配置可读写，则需要对应的实体类能够序列化 --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"readOnly"</span> <span class="attr">value</span>=<span class="string">"false"</span>/&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">cache</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>至此，就完成了基于Redis的MyBatis二级缓存的配置。</p>
+<h3 id="4-FAQ"><a href="#4-FAQ" class="headerlink" title="4. FAQ"></a>4. FAQ</h3><ul>
+<li>二级缓存相比较于一级缓存来说，粒度更细，但是也会更不可控，安全使用二级缓存的条件很难。</li>
+<li>二级缓存非常适合查询热度高且更新频率低的数据，请谨慎使用。</li>
+<li>建议在生产环境下关闭二级缓存，使得MyBatis单纯作为ORM框架即可，缓存使用其他更安全的策略。</li>
+</ul>
+<blockquote>
+<p>以上内容就是关于SpringBoot基于Redis实现MyBatis查询缓存解决方案的全部内容了，谢谢你阅读到了这里！</p>
+<p>Author:zhaoyh</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
+          
+            <a href="/tags/MyBatis/" rel="tag"># MyBatis</a>
+          
+            <a href="/tags/Redis/" rel="tag"># Redis</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/26/Spring-Cloud之Zipkin链路数据持久化策略/" rel="next" title="Spring Cloud之Zipkin链路数据持久化策略">
+                <i class="fa fa-chevron-left"></i> Spring Cloud之Zipkin链路数据持久化策略
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMDY5Mi83MjQ3"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/kobe.jpg"
+               alt="zhaoyh" />
+          <p class="site-author-name" itemprop="name">zhaoyh</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">29</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">38</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-前言"><span class="nav-text">1. 前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-MyBatis缓存策略"><span class="nav-text">2. MyBatis缓存策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-一级缓存"><span class="nav-text">2.1 一级缓存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-二级缓存"><span class="nav-text">2.2 二级缓存</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-SpringBoot和Redis实现MyBatis二级缓存"><span class="nav-text">3. SpringBoot和Redis实现MyBatis二级缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-增加Redis配置"><span class="nav-text">3.1 增加Redis配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-实现MyBatis的Cache接口"><span class="nav-text">3.2 实现MyBatis的Cache接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-mapper文件中加入二级缓存的声明"><span class="nav-text">3.3 mapper文件中加入二级缓存的声明</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-FAQ"><span class="nav-text">4. FAQ</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhaoyh</span>
+</div>
+
+
+<a href="http://www.miitbeian.gov.cn/">京ICP备16047594号</a>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
