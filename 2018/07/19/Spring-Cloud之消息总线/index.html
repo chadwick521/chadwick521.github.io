@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="RabbitMQ,Sleuth,Zipkin,ElasticSearch," />
+  <meta name="keywords" content="RabbitMQ,Bus," />
 
 
 
@@ -93,21 +93,19 @@
 
 
 
-<meta name="description" content="在前文《Spring Cloud之分布式链路跟踪服务Sleuth》中我们介绍了如何对微服务做分布式链路数据的跟踪。但是目前仍存在一个问题：Zipkin-Server默认是把链路数据保存的内存中，当积累的数据过多后，会存在内存溢出的风险。因此本文着重解决这个问题，介绍了一种基于Spring Cloud Sleuth + RabbitMQ + ElasticSearch的数据持久化存储解决方案。">
-<meta name="keywords" content="RabbitMQ,Sleuth,Zipkin,ElasticSearch">
+<meta name="description" content="在Spring Cloud 配置中心一文中，我们介绍了如何利用配置中心和Git仓库来对应用程序中的属性进行刷新和配置。即通过Github或Gitlab提供的WebHook服务通知各应用程序来刷新。但是随着微服务产品增多，如果对每个微服务都发送一个post请求会越来越难以维护。因此需要一个消息代理，我们只需要通知一个微服务，再由其发送消息到每个微服务实现配置的热更新。Spring Cloud Bus">
+<meta name="keywords" content="RabbitMQ,Bus">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Spring Cloud之基于Zipkin的链路数据持久化">
-<meta property="og:url" content="http://www.zhaoyh.com.cn/2018/12/26/Spring Cloud之基于Zipkin的链路数据持久化/index.html">
+<meta property="og:title" content="Spring Cloud之消息总线">
+<meta property="og:url" content="http://www.zhaoyh.com.cn/2018/07/19/Spring-Cloud之消息总线/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
-<meta property="og:description" content="在前文《Spring Cloud之分布式链路跟踪服务Sleuth》中我们介绍了如何对微服务做分布式链路数据的跟踪。但是目前仍存在一个问题：Zipkin-Server默认是把链路数据保存的内存中，当积累的数据过多后，会存在内存溢出的风险。因此本文着重解决这个问题，介绍了一种基于Spring Cloud Sleuth + RabbitMQ + ElasticSearch的数据持久化存储解决方案。">
-<meta property="og:image" content="https://static.zhaoyh.com.cn/1545813668015.jpg">
-<meta property="og:image" content="https://static.zhaoyh.com.cn/1545814127954.jpg">
-<meta property="og:image" content="https://static.zhaoyh.com.cn/1545814262487.jpg">
-<meta property="og:updated_time" content="2019-03-11T09:55:06.579Z">
+<meta property="og:description" content="在Spring Cloud 配置中心一文中，我们介绍了如何利用配置中心和Git仓库来对应用程序中的属性进行刷新和配置。即通过Github或Gitlab提供的WebHook服务通知各应用程序来刷新。但是随着微服务产品增多，如果对每个微服务都发送一个post请求会越来越难以维护。因此需要一个消息代理，我们只需要通知一个微服务，再由其发送消息到每个微服务实现配置的热更新。Spring Cloud Bus">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/springcloudbus_rabbit.png">
+<meta property="og:updated_time" content="2019-03-11T09:58:27.275Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Spring Cloud之基于Zipkin的链路数据持久化">
-<meta name="twitter:description" content="在前文《Spring Cloud之分布式链路跟踪服务Sleuth》中我们介绍了如何对微服务做分布式链路数据的跟踪。但是目前仍存在一个问题：Zipkin-Server默认是把链路数据保存的内存中，当积累的数据过多后，会存在内存溢出的风险。因此本文着重解决这个问题，介绍了一种基于Spring Cloud Sleuth + RabbitMQ + ElasticSearch的数据持久化存储解决方案。">
-<meta name="twitter:image" content="https://static.zhaoyh.com.cn/1545813668015.jpg">
+<meta name="twitter:title" content="Spring Cloud之消息总线">
+<meta name="twitter:description" content="在Spring Cloud 配置中心一文中，我们介绍了如何利用配置中心和Git仓库来对应用程序中的属性进行刷新和配置。即通过Github或Gitlab提供的WebHook服务通知各应用程序来刷新。但是随着微服务产品增多，如果对每个微服务都发送一个post请求会越来越难以维护。因此需要一个消息代理，我们只需要通知一个微服务，再由其发送消息到每个微服务实现配置的热更新。Spring Cloud Bus">
+<meta name="twitter:image" content="https://static.zhaoyh.com.cn/springcloudbus_rabbit.png">
 
 
 
@@ -135,13 +133,13 @@
 
 
 
-  <link rel="canonical" href="http://www.zhaoyh.com.cn/2018/12/26/Spring Cloud之基于Zipkin的链路数据持久化/"/>
+  <link rel="canonical" href="http://www.zhaoyh.com.cn/2018/07/19/Spring-Cloud之消息总线/"/>
 
 
 
 
 
-  <title>Spring Cloud之基于Zipkin的链路数据持久化 | zhaoyh's blog</title>
+  <title>Spring Cloud之消息总线 | zhaoyh's blog</title>
   
 
 
@@ -314,7 +312,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2018/12/26/Spring Cloud之基于Zipkin的链路数据持久化/">
+    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2018/07/19/Spring-Cloud之消息总线/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zhaoyh">
@@ -331,7 +329,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">Spring Cloud之基于Zipkin的链路数据持久化</h2>
+          <h2 class="post-title" itemprop="name headline">Spring Cloud之消息总线</h2>
         
 
         <div class="post-meta">
@@ -343,8 +341,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-26T16:53:05+08:00">
-                2018-12-26
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-19T15:29:16+08:00">
+                2018-07-19
               </time>
             
 
@@ -400,22 +398,33 @@
       
 
       
-        <p>在前文<a href="https://zhaoyh.com.cn/2018/12/11/Spring-Cloud%E4%B9%8B%E5%88%86%E5%B8%83%E5%BC%8F%E9%93%BE%E8%B7%AF%E8%B7%9F%E8%B8%AA%E6%9C%8D%E5%8A%A1Sleuth/" target="_blank" rel="external">《Spring Cloud之分布式链路跟踪服务Sleuth》</a>中我们介绍了如何对微服务做分布式链路数据的跟踪。但是目前仍存在一个问题：Zipkin-Server默认是把链路数据保存的内存中，当积累的数据过多后，会存在内存溢出的风险。因此本文着重解决这个问题，介绍了一种基于Spring Cloud Sleuth + RabbitMQ + ElasticSearch的数据持久化存储解决方案。</p>
+        <p>在<a href="http://zhaoyh.com.cn/2018/02/28/Spring%20Cloud%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6%E4%B9%8B%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/" target="_blank" rel="external">Spring Cloud 配置中心</a>一文中，我们介绍了如何利用配置中心和Git仓库来对应用程序中的属性进行刷新和配置。即通过Github或Gitlab提供的WebHook服务通知各应用程序来刷新。但是随着微服务产品增多，如果对每个微服务都发送一个post请求会越来越难以维护。因此需要一个消息代理，我们只需要通知一个微服务，再由其发送消息到每个微服务实现配置的热更新。Spring Cloud Bus即实现了类似的服务。</p>
 <a id="more"></a>
-<h3 id="1-改造Zipkin-Server"><a href="#1-改造Zipkin-Server" class="headerlink" title="1. 改造Zipkin Server"></a>1. 改造Zipkin Server</h3><p>我们假设你已经按照前文<a href="https://zhaoyh.com.cn/2018/12/11/Spring-Cloud%E4%B9%8B%E5%88%86%E5%B8%83%E5%BC%8F%E9%93%BE%E8%B7%AF%E8%B7%9F%E8%B8%AA%E6%9C%8D%E5%8A%A1Sleuth/" target="_blank" rel="external">《Spring Cloud之分布式链路跟踪服务Sleuth》</a>的步骤，实现了Zipkin链路数据通过RabbitMQ传输。首先对于你的Zipkin Server服务，加入以下依赖：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.zipkin.java<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>zipkin-autoconfigure-ui<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-sleuth<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-sleuth-zipkin-stream<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-stream-rabbit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.zipkin.java<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>zipkin-autoconfigure-storage-elasticsearch-http<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.24.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">optional</span>&gt;</span>true<span class="tag">&lt;/<span class="name">optional</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
-<p>配置文件中加入以下ElasticSearch的配置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">#zipkin数据持久化</div><div class="line">zipkin.storage.type=elasticsearch</div><div class="line">zipkin.storage.elasticsearch.hosts=es的IP:端口</div><div class="line">zipkin.storage.elasticsearch.max-requests=64</div><div class="line">#注意索引就用zipkin即可</div><div class="line">zipkin.storage.elasticsearch.index=zipkin</div><div class="line">zipkin.storage.elasticsearch.index-shards=5</div><div class="line">zipkin.storage.elasticsearch.index-replicas=1</div></pre></td></tr></table></figure>
-<p>然后重启Zipkin Server即可，查看你的ElasticSearch，会发现多了zipkin-YYYY-MM-DD的索引数据，调用链路的数据也会正常的显示。</p>
-<h3 id="2-配置Zipkin-Dependencies"><a href="#2-配置Zipkin-Dependencies" class="headerlink" title="2. 配置Zipkin Dependencies"></a>2. 配置Zipkin Dependencies</h3><p>别高兴的太早，如果你查看Zipkin的依赖分析，会发现没有依赖关系的数据：<br><img src="https://static.zhaoyh.com.cn/1545813668015.jpg" alt="image"><br>这是因为es中只存储了链路的调用数据，还没有计算依赖关系，所以需要一个Zipkin提供的插件来计算依赖关系，根据<a href="https://github.com/openzipkin/zipkin-dependencies" target="_blank" rel="external">openzipkin</a>中的介绍，首先下载jar包：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget -O zipkin-dependencies.jar 'https://search.maven.org/remote_content?g=io.zipkin.dependencies&amp;a=zipkin-dependencies&amp;v=LATEST'</div></pre></td></tr></table></figure>
-<p>计算依赖关系：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">STORAGE_TYPE=elasticsearch ES_HOSTS=http://es的IP:端口 java -jar zipkin-dependencies-2.0.4.jar</div></pre></td></tr></table></figure>
-<p>稍等片刻，插件会把依赖关系的数据计算好：<br><img src="https://static.zhaoyh.com.cn/1545814127954.jpg" alt="image"></p>
-<p>此时，再打开Zipkin Server的管理页面，会发现依赖分析页面已经有数据了：<br><img src="https://static.zhaoyh.com.cn/1545814262487.jpg" alt="image"></p>
-<p>对于生产环境来说，可以写一个定时任务，执行依赖分析的计算插件。</p>
+<h3 id="1-准备测试服务"><a href="#1-准备测试服务" class="headerlink" title="1. 准备测试服务"></a>1. 准备测试服务</h3><p>为了实现消息总线更新线上配置的功能，根据<a href="http://zhaoyh.com.cn/2018/02/28/Spring%20Cloud%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6%E4%B9%8B%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/" target="_blank" rel="external">Spring Cloud配置中心</a>中的服务来继续开发：</p>
+<ul>
+<li>Git Repo，存放配置文件。</li>
+<li>Config Server，读取Git Repo下的配置文件，并以REST接口的形式供Client调用。</li>
+<li>Client，客户端，读取配置的应用，可以理解为是你的具体应用。</li>
+<li>RabbitMQ，消息中间件。</li>
+</ul>
+<h3 id="2-原理说明"><a href="#2-原理说明" class="headerlink" title="2. 原理说明"></a>2. 原理说明</h3><p>目前市面上比较热门的消息中间件产品是Kafka、RocketMQ、RabbitMQ，Spring Cloud Bus本质上是利用了消息中间件提供的广播功能，对各个微服务发消息。下图可以简单说明我们从push配置文件到各个微服务刷新配置的完整过程。</p>
+<p><img src="https://static.zhaoyh.com.cn/springcloudbus_rabbit.png" alt="image"></p>
+<p>根据上图我们可以大致了解配置的更新流程：</p>
+<ol>
+<li>开发人员push配置文件到Git仓库。</li>
+<li>Git仓库发送WebHook请求到Config Server。</li>
+<li>Config Server发送消息到RabbitMQ。</li>
+<li>各个Client收到消息，重新拉取配置并更新。</li>
+</ol>
+<h3 id="3-实现过程"><a href="#3-实现过程" class="headerlink" title="3. 实现过程"></a>3. 实现过程</h3><h4 id="3-1-增加依赖和配置"><a href="#3-1-增加依赖和配置" class="headerlink" title="3.1 增加依赖和配置"></a>3.1 增加依赖和配置</h4><p>在Config Server和Client的项目中加入依赖：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;dependency&gt;</div><div class="line">    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;</div><div class="line">    &lt;artifactId&gt;spring-cloud-starter-bus-amqp&lt;/artifactId&gt;</div><div class="line">&lt;/dependency&gt;</div></pre></td></tr></table></figure>
+<p>配置文件中加入RabbitMQ的连接信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">spring.rabbitmq.addresses=XXXXX</div><div class="line">spring.rabbitmq.port=5672</div><div class="line">spring.rabbitmq.username=user</div><div class="line">spring.rabbitmq.password=pwd</div></pre></td></tr></table></figure>
+<h4 id="3-2-启动服务"><a href="#3-2-启动服务" class="headerlink" title="3.2 启动服务"></a>3.2 启动服务</h4><p>依次启动Eureka、Config Server和各个Client。</p>
+<p>假设Config Server所在的机器IP为XX，修改Git Repo项目中的Webhook地址为：<a href="http://XX:port/bus/refresh" target="_blank" rel="external">http://XX:port/bus/refresh</a> 。并发送一个post请求。此时我们看到各个Client会重新拉取各自的配置。</p>
+<h3 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h3><p>通过使用Spring Cloud Bus，我们不再需要向每个客户端实例都发送更新请求，只需要在Webhook中通知Config Server，各个客户端收到消息后会主动拉取配置。这样能即大地方便开发人员更新线上的配置，对于系统运维来说，也能减少通知post的成本。</p>
 <blockquote>
-<p>以上内容就是关于Spring Cloud之Zipkin链路数据持久化策略的全部内容了，谢谢你阅读到了这里！</p>
+<p>以上内容就是关于Spring Cloud微服务框架之消息总线的全部内容了，谢谢你阅读到了这里！</p>
 <p>Author:zhaoyh</p>
 </blockquote>
 
@@ -449,11 +458,7 @@
           
             <a href="/tags/RabbitMQ/" rel="tag"># RabbitMQ</a>
           
-            <a href="/tags/Sleuth/" rel="tag"># Sleuth</a>
-          
-            <a href="/tags/Zipkin/" rel="tag"># Zipkin</a>
-          
-            <a href="/tags/ElasticSearch/" rel="tag"># ElasticSearch</a>
+            <a href="/tags/Bus/" rel="tag"># Bus</a>
           
         </div>
       
@@ -466,8 +471,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/12/26/Spring-Cloud之Zipkin链路数据持久化策略/" rel="next" title="Spring Cloud之基于Zipkin的链路数据持久化">
-                <i class="fa fa-chevron-left"></i> Spring Cloud之基于Zipkin的链路数据持久化
+              <a href="/2018/06/19/RabbitMQ集群架构搭建与高可用性实现/" rel="next" title="RabbitMQ集群架构搭建与高可用性实现">
+                <i class="fa fa-chevron-left"></i> RabbitMQ集群架构搭建与高可用性实现
               </a>
             
           </div>
@@ -476,8 +481,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/01/24/Spring Boot(六)之基于Redis实现MyBatis查询缓存解决方案/" rel="prev" title="Spring Boot(六)之基于Redis实现MyBatis查询缓存解决方案">
-                Spring Boot(六)之基于Redis实现MyBatis查询缓存解决方案 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/10/16/RabbitMQ镜像队列原理分析/" rel="prev" title="RabbitMQ镜像队列原理分析">
+                RabbitMQ镜像队列原理分析 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -553,7 +558,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-count">29</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -610,7 +615,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-改造Zipkin-Server"><span class="nav-text">1. 改造Zipkin Server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-配置Zipkin-Dependencies"><span class="nav-text">2. 配置Zipkin Dependencies</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-准备测试服务"><span class="nav-text">1. 准备测试服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-原理说明"><span class="nav-text">2. 原理说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-实现过程"><span class="nav-text">3. 实现过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-增加依赖和配置"><span class="nav-text">3.1 增加依赖和配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-启动服务"><span class="nav-text">3.2 启动服务</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-总结"><span class="nav-text">4. 总结</span></a></li></ol></div>
             
 
           </div>
