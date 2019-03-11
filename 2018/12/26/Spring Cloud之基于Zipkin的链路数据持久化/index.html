@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="RabbitMQ,Sleuth,Zipkin,ElasticSearch," />
 
 
 
@@ -93,15 +93,21 @@
 
 
 
-<meta name="description" content="小时候的梦想是改变世界，长大了只想好好工作和生活！">
-<meta property="og:type" content="website">
-<meta property="og:title" content="zhaoyh&#39;s blog">
-<meta property="og:url" content="http://www.zhaoyh.com.cn/archives/2018/06/index.html">
+<meta name="description" content="在前文《Spring Cloud之分布式链路跟踪服务Sleuth》中我们介绍了如何对微服务做分布式链路数据的跟踪。但是目前仍存在一个问题：Zipkin-Server默认是把链路数据保存的内存中，当积累的数据过多后，会存在内存溢出的风险。因此本文着重解决这个问题，介绍了一种基于Spring Cloud Sleuth + RabbitMQ + ElasticSearch的数据持久化存储解决方案。">
+<meta name="keywords" content="RabbitMQ,Sleuth,Zipkin,ElasticSearch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Cloud之基于Zipkin的链路数据持久化">
+<meta property="og:url" content="http://www.zhaoyh.com.cn/2018/12/26/Spring Cloud之基于Zipkin的链路数据持久化/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
-<meta property="og:description" content="小时候的梦想是改变世界，长大了只想好好工作和生活！">
+<meta property="og:description" content="在前文《Spring Cloud之分布式链路跟踪服务Sleuth》中我们介绍了如何对微服务做分布式链路数据的跟踪。但是目前仍存在一个问题：Zipkin-Server默认是把链路数据保存的内存中，当积累的数据过多后，会存在内存溢出的风险。因此本文着重解决这个问题，介绍了一种基于Spring Cloud Sleuth + RabbitMQ + ElasticSearch的数据持久化存储解决方案。">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/1545813668015.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/1545814127954.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/1545814262487.jpg">
+<meta property="og:updated_time" content="2019-03-11T09:55:06.579Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="zhaoyh&#39;s blog">
-<meta name="twitter:description" content="小时候的梦想是改变世界，长大了只想好好工作和生活！">
+<meta name="twitter:title" content="Spring Cloud之基于Zipkin的链路数据持久化">
+<meta name="twitter:description" content="在前文《Spring Cloud之分布式链路跟踪服务Sleuth》中我们介绍了如何对微服务做分布式链路数据的跟踪。但是目前仍存在一个问题：Zipkin-Server默认是把链路数据保存的内存中，当积累的数据过多后，会存在内存溢出的风险。因此本文着重解决这个问题，介绍了一种基于Spring Cloud Sleuth + RabbitMQ + ElasticSearch的数据持久化存储解决方案。">
+<meta name="twitter:image" content="https://static.zhaoyh.com.cn/1545813668015.jpg">
 
 
 
@@ -129,13 +135,13 @@
 
 
 
-  <link rel="canonical" href="http://www.zhaoyh.com.cn/archives/2018/06/"/>
+  <link rel="canonical" href="http://www.zhaoyh.com.cn/2018/12/26/Spring Cloud之基于Zipkin的链路数据持久化/"/>
 
 
 
 
 
-  <title>归档 | zhaoyh's blog</title>
+  <title>Spring Cloud之基于Zipkin的链路数据持久化 | zhaoyh's blog</title>
   
 
 
@@ -170,7 +176,7 @@
     
   
 
-  <div class="container sidebar-position-left  page-archive  ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -298,66 +304,197 @@
           <div id="content" class="content">
             
 
-  <section id="posts" class="posts-collapse">
-    <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-    <span class="archive-page-counter">
-      
-      
-      
-        
-      
-      嗯..! 目前共计 30 篇日志。 继续努力。
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2018/12/26/Spring Cloud之基于Zipkin的链路数据持久化/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhaoyh">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/kobe.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zhaoyh's blog">
     </span>
 
     
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Spring Cloud之基于Zipkin的链路数据持久化</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-26T16:53:05+08:00">
+                2018-12-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring-Cloud/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring Cloud</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
 
       
       
-      
 
+      
+        <p>在前文<a href="https://zhaoyh.com.cn/2018/12/11/Spring-Cloud%E4%B9%8B%E5%88%86%E5%B8%83%E5%BC%8F%E9%93%BE%E8%B7%AF%E8%B7%9F%E8%B8%AA%E6%9C%8D%E5%8A%A1Sleuth/" target="_blank" rel="external">《Spring Cloud之分布式链路跟踪服务Sleuth》</a>中我们介绍了如何对微服务做分布式链路数据的跟踪。但是目前仍存在一个问题：Zipkin-Server默认是把链路数据保存的内存中，当积累的数据过多后，会存在内存溢出的风险。因此本文着重解决这个问题，介绍了一种基于Spring Cloud Sleuth + RabbitMQ + ElasticSearch的数据持久化存储解决方案。</p>
+<a id="more"></a>
+<h3 id="1-改造Zipkin-Server"><a href="#1-改造Zipkin-Server" class="headerlink" title="1. 改造Zipkin Server"></a>1. 改造Zipkin Server</h3><p>我们假设你已经按照前文<a href="https://zhaoyh.com.cn/2018/12/11/Spring-Cloud%E4%B9%8B%E5%88%86%E5%B8%83%E5%BC%8F%E9%93%BE%E8%B7%AF%E8%B7%9F%E8%B8%AA%E6%9C%8D%E5%8A%A1Sleuth/" target="_blank" rel="external">《Spring Cloud之分布式链路跟踪服务Sleuth》</a>的步骤，实现了Zipkin链路数据通过RabbitMQ传输。首先对于你的Zipkin Server服务，加入以下依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.zipkin.java<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>zipkin-autoconfigure-ui<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-sleuth<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-sleuth-zipkin-stream<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-stream-rabbit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.zipkin.java<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>zipkin-autoconfigure-storage-elasticsearch-http<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.24.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">optional</span>&gt;</span>true<span class="tag">&lt;/<span class="name">optional</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>配置文件中加入以下ElasticSearch的配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">#zipkin数据持久化</div><div class="line">zipkin.storage.type=elasticsearch</div><div class="line">zipkin.storage.elasticsearch.hosts=es的IP:端口</div><div class="line">zipkin.storage.elasticsearch.max-requests=64</div><div class="line">#注意索引就用zipkin即可</div><div class="line">zipkin.storage.elasticsearch.index=zipkin</div><div class="line">zipkin.storage.elasticsearch.index-shards=5</div><div class="line">zipkin.storage.elasticsearch.index-replicas=1</div></pre></td></tr></table></figure>
+<p>然后重启Zipkin Server即可，查看你的ElasticSearch，会发现多了zipkin-YYYY-MM-DD的索引数据，调用链路的数据也会正常的显示。</p>
+<h3 id="2-配置Zipkin-Dependencies"><a href="#2-配置Zipkin-Dependencies" class="headerlink" title="2. 配置Zipkin Dependencies"></a>2. 配置Zipkin Dependencies</h3><p>别高兴的太早，如果你查看Zipkin的依赖分析，会发现没有依赖关系的数据：<br><img src="https://static.zhaoyh.com.cn/1545813668015.jpg" alt="image"><br>这是因为es中只存储了链路的调用数据，还没有计算依赖关系，所以需要一个Zipkin提供的插件来计算依赖关系，根据<a href="https://github.com/openzipkin/zipkin-dependencies" target="_blank" rel="external">openzipkin</a>中的介绍，首先下载jar包：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget -O zipkin-dependencies.jar 'https://search.maven.org/remote_content?g=io.zipkin.dependencies&amp;a=zipkin-dependencies&amp;v=LATEST'</div></pre></td></tr></table></figure>
+<p>计算依赖关系：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">STORAGE_TYPE=elasticsearch ES_HOSTS=http://es的IP:端口 java -jar zipkin-dependencies-2.0.4.jar</div></pre></td></tr></table></figure>
+<p>稍等片刻，插件会把依赖关系的数据计算好：<br><img src="https://static.zhaoyh.com.cn/1545814127954.jpg" alt="image"></p>
+<p>此时，再打开Zipkin Server的管理页面，会发现依赖分析页面已经有数据了：<br><img src="https://static.zhaoyh.com.cn/1545814262487.jpg" alt="image"></p>
+<p>对于生产环境来说，可以写一个定时任务，执行依赖分析的计算插件。</p>
+<blockquote>
+<p>以上内容就是关于Spring Cloud之Zipkin链路数据持久化策略的全部内容了，谢谢你阅读到了这里！</p>
+<p>Author:zhaoyh</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
       
         
-        <div class="collection-title">
-          <h2 class="archive-year motion-element" id="archive-year-2018">2018</h2>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/RabbitMQ/" rel="tag"># RabbitMQ</a>
+          
+            <a href="/tags/Sleuth/" rel="tag"># Sleuth</a>
+          
+            <a href="/tags/Zipkin/" rel="tag"># Zipkin</a>
+          
+            <a href="/tags/ElasticSearch/" rel="tag"># ElasticSearch</a>
+          
         </div>
       
+
+      
+      
       
 
       
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/26/Spring-Cloud之Zipkin链路数据持久化策略/" rel="next" title="Spring Cloud之基于Zipkin的链路数据持久化">
+                <i class="fa fa-chevron-left"></i> Spring Cloud之基于Zipkin的链路数据持久化
+              </a>
+            
+          </div>
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+          <span class="post-nav-divider"></span>
 
-      <h3 class="post-title">
-        
-            <a class="post-title-link" href="/2018/06/19/RabbitMQ集群架构搭建与高可用性实现/" itemprop="url">
-              
-                <span itemprop="name">RabbitMQ集群架构搭建与高可用性实现</span>
-              
-            </a>
-        
-      </h3>
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/24/Spring Boot(六)之基于Redis实现MyBatis查询缓存解决方案/" rel="prev" title="Spring Boot(六)之基于Redis实现MyBatis查询缓存解决方案">
+                Spring Boot(六)之基于Redis实现MyBatis查询缓存解决方案 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-06-19T12:03:54+08:00"
-              content="2018-06-19" >
-          06-19
-        </time>
-      </div>
-
-    </header>
+      
+      
+    </footer>
   </article>
 
 
 
-    
-
-  </section>
-
-  
-
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -365,6 +502,12 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMDY5Mi83MjQ3"></div>
+    
+  </div>
+
 
         </div>
         
@@ -385,8 +528,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/kobe.jpg"
@@ -448,6 +600,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-改造Zipkin-Server"><span class="nav-text">1. 改造Zipkin Server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-配置Zipkin-Dependencies"><span class="nav-text">2. 配置Zipkin Dependencies</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -559,11 +727,9 @@
 
 
   
-  
-    <script type="text/javascript" id="motion.page.archive">
-      $('.archive-year').velocity('transition.slideLeftIn');
-    </script>
-  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
 
 
   
@@ -593,6 +759,17 @@
 
 
 
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
   
 
 
