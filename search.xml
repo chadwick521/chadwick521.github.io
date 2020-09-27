@@ -58,6 +58,8 @@
         <tag>Spring Boot</tag>
         <tag>Dubbo</tag>
         <tag>Seata</tag>
+        <tag>事务</tag>
+        <tag>分布式事务</tag>
       </tags>
   </entry>
   <entry>
