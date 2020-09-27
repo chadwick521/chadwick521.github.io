@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Spring Boot,事务," />
 
 
 
@@ -93,15 +93,20 @@
 
 
 
-<meta name="description" content="小时候的梦想是改变世界，长大了只想好好工作和生活！">
-<meta property="og:type" content="website">
-<meta property="og:title" content="zhaoyh&#39;s blog">
-<meta property="og:url" content="http://www.zhaoyh.com.cn/tags/Ribbon/index.html">
+<meta name="description" content="1. Spring事务机制目前市面上所有的数据访问存储技术都支持事务处理机制，用于提供给API开启事务、提交事务、回滚操作等。Spring支持声明式事务，即使用注解来选择需要使用事务的方法，使用@Transactional注解在方法上表明该方法需要事务支持。在该方法被调用时，Spring会开启一个新事务。">
+<meta name="keywords" content="Spring Boot,事务">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Boot(九)之声明式事务使用总结">
+<meta property="og:url" content="http://www.zhaoyh.com.cn/2020/09/27/Spring Boot(九)之声明式事务使用总结/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
-<meta property="og:description" content="小时候的梦想是改变世界，长大了只想好好工作和生活！">
+<meta property="og:description" content="1. Spring事务机制目前市面上所有的数据访问存储技术都支持事务处理机制，用于提供给API开启事务、提交事务、回滚操作等。Spring支持声明式事务，即使用注解来选择需要使用事务的方法，使用@Transactional注解在方法上表明该方法需要事务支持。在该方法被调用时，Spring会开启一个新事务。">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/1601188806343.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/repeatable_read_transaction.png">
+<meta property="og:updated_time" content="2020-09-27T09:01:09.527Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="zhaoyh&#39;s blog">
-<meta name="twitter:description" content="小时候的梦想是改变世界，长大了只想好好工作和生活！">
+<meta name="twitter:title" content="Spring Boot(九)之声明式事务使用总结">
+<meta name="twitter:description" content="1. Spring事务机制目前市面上所有的数据访问存储技术都支持事务处理机制，用于提供给API开启事务、提交事务、回滚操作等。Spring支持声明式事务，即使用注解来选择需要使用事务的方法，使用@Transactional注解在方法上表明该方法需要事务支持。在该方法被调用时，Spring会开启一个新事务。">
+<meta name="twitter:image" content="https://static.zhaoyh.com.cn/1601188806343.jpg">
 
 
 
@@ -129,13 +134,13 @@
 
 
 
-  <link rel="canonical" href="http://www.zhaoyh.com.cn/tags/Ribbon/"/>
+  <link rel="canonical" href="http://www.zhaoyh.com.cn/2020/09/27/Spring Boot(九)之声明式事务使用总结/"/>
 
 
 
 
 
-  <title>标签: Ribbon | zhaoyh's blog</title>
+  <title>Spring Boot(九)之声明式事务使用总结 | zhaoyh's blog</title>
   
 
 
@@ -170,7 +175,7 @@
     
   
 
-  <div class="container sidebar-position-left  ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -298,44 +303,294 @@
           <div id="content" class="content">
             
 
-  <div id="posts" class="posts-collapse">
-    <div class="collection-title">
-      <h2>Ribbon<small>标签</small>
-      </h2>
-    </div>
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2020/09/27/Spring Boot(九)之声明式事务使用总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhaoyh">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/kobe.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zhaoyh's blog">
+    </span>
 
     
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Spring Boot(九)之声明式事务使用总结</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-09-27T16:58:42+08:00">
+                2020-09-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring-Boot/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring Boot</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
       
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+      
+        <h3 id="1-Spring事务机制"><a href="#1-Spring事务机制" class="headerlink" title="1. Spring事务机制"></a>1. Spring事务机制</h3><p>目前市面上所有的数据访问存储技术都支持事务处理机制，用于提供给API开启事务、提交事务、回滚操作等。Spring支持声明式事务，即使用注解来选择需要使用事务的方法，使用<code>@Transactional</code>注解在方法上表明该方法需要事务支持。在该方法被调用时，Spring会开启一个新事务。</p>
+<a id="more"></a>
+<p>Spring Boot使用事务支持非常方便，首先在配置类或者启动类中加上开启事务的注解：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">@EnableTransactionManagement</div></pre></td></tr></table></figure>
+<p>其次，在你需要加事务的方法上，加注解：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">@Transactional</div><div class="line">public boolean someMethod() &#123;</div><div class="line">    // 处理</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>完成以上两步骤，你的这个<code>someMethod</code>方法就支持事务管理了。</p>
+<h3 id="2-Transactional属性分析"><a href="#2-Transactional属性分析" class="headerlink" title="2. Transactional属性分析"></a>2. Transactional属性分析</h3><p><code>@Transactional</code>注解可以配置如下一些属性：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>propagation</td>
+<td>事务传播行为</td>
+</tr>
+<tr>
+<td>isolation</td>
+<td>事务隔离级别</td>
+</tr>
+<tr>
+<td>timeout</td>
+<td>超时时间，如果超过该时间限制但事务还没有完成，则自动回滚事务。</td>
+</tr>
+<tr>
+<td>readOnly</td>
+<td>读写属性配置，默认false，如果确定只对事务性资源进行只读操作，那么我们可以将事务标志为只读的，以提高事务处理的性能。</td>
+</tr>
+<tr>
+<td>rollbackFor</td>
+<td>回滚规则，定义异常回滚Class</td>
+</tr>
+<tr>
+<td>rollbackForClassName</td>
+<td>回滚规则，异常回滚名String</td>
+</tr>
+<tr>
+<td>noRollbackFor</td>
+<td>回滚规则，遇到不回滚Class</td>
+</tr>
+<tr>
+<td>noRollbackForClassName</td>
+<td>回滚规则，遇到不回滚String</td>
+</tr>
+</tbody>
+</table>
+<h4 id="2-1-事务传播行为"><a href="#2-1-事务传播行为" class="headerlink" title="2.1 事务传播行为"></a>2.1 事务传播行为</h4><p>事务传播行为是Spring独有的事务管理属性，不属于事务实际提供方数据库的行为。这是Spring为我们提供的强大的工具箱，使用事务传播行可以为我们的开发工作提供许多便利。事务传播行为用来描述由某一个事务传播行为修饰的方法被嵌套进另一个方法的时事务如何传播。以以下代码为例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">methodA</span><span class="params">()</span> </span>&#123;</div><div class="line">    methodB();</div><div class="line">    <span class="comment">//doSomething</span></div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="meta">@Transactional</span>(propagation = XXX, isolation = XXX)</div><div class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">methodB</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="comment">//doSomething</span></div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<p>代码中<code>methodA()</code>方法调用了<code>methodB()</code>方法，<code>methodB()</code>的事务传播行为由<code>@Transactional(propagation = XXX, isolation = XXX)</code>决定。这里需要注意的是<code>methodA()</code>并没有开启事务，某一个事务传播行为修饰的方法并不是必须要在开启事务的外围方法中调用。</p>
+<p>在<code>org.springframework.transaction.annotation.Propagation.java</code>中，定义了7种事务的传播行为：</p>
+<ul>
+<li>REQUIRED，如果当前存在事务，则加入该事务；如果当前没有事务，则创建一个新的事务。这是Spring默认的选择。</li>
+<li>SUPPORTS，如果当前存在事务，则加入该事务；如果当前没有事务，则以非事务的方式继续运行。</li>
+<li>MANDATORY，如果当前存在事务，则加入该事务；如果当前没有事务，则抛出异常。</li>
+<li>REQUIRES_NEW，创建一个新的事务，如果当前存在事务，则把当前事务挂起。</li>
+<li>NOT_SUPPORTED，以非事务方式运行，如果当前存在事务，则把当前事务挂起。</li>
+<li>NEVER，以非事务方式运行，如果当前存在事务，则抛出异常。</li>
+<li>NESTED，如果当前存在事务，则创建一个事务作为当前事务的嵌套事务来运行；如果当前没有事务，则执行与REQUIRED类似的操作。</li>
+</ul>
+<h4 id="2-2-事务隔离级别"><a href="#2-2-事务隔离级别" class="headerlink" title="2.2 事务隔离级别"></a>2.2 事务隔离级别</h4><p>隔离性是事务ACID特性里最复杂的一个。在SQL标准里定义了四种隔离级别，每一种级别都规定一个事务中的修改，哪些是事务之间可见的，哪些是不可见的。级别越低的隔离级别可以执行越高的并发，但同时实现复杂度以及开销也越大。</p>
+<p>在<code>org.springframework.transaction.annotation.Isolation.java</code>中定义了和MySQL保持一致的四个隔离级别：</p>
+<ul>
+<li>DEFAULT(使用数据库默认隔离级别)。</li>
+<li>READ_UNCOMMITTED(未提交读)，事务可以读其他事务未提交的数据，优点是读写并行，性能高，缺点是容易产生脏读问题。</li>
+<li>READ_COMMITTED(提交读)，一个事务只能读取另一个事务已经提交的数据，该级别会产生不可重读以及幻读问题，这跟READ COMMITTED 级别下的MVCC机制有关系，在该隔离级别下每次 select的时候新生成一个版本号，所以每次select的时候读的不是一个副本而是不同的副本。在每次select之间有其他事务更新了我们读取的数据并提交了，那就出现了不可重复读。</li>
+</ul>
+<p><img src="https://static.zhaoyh.com.cn/1601188806343.jpg" alt="image"></p>
+<ul>
+<li>REPEATABLE_READ(可重复读)，MySQL默认的隔离级别，一个事务在整个过程中可以多次重复执行某个查询，并且每次返回的记录都相同，这种级别下可以避免，脏读，不可重复读等查询问题。</li>
+</ul>
+<p><img src="https://static.zhaoyh.com.cn/repeatable_read_transaction.png" alt="image"></p>
+<ul>
+<li>SERIALIZABLE(事务依次执行)，不会产生数据读取不一致问题，但是性能最低；</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>隔离级别</th>
+<th>脏读</th>
+<th>不可重复读</th>
+<th>幻读</th>
+<th>加锁读</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>READ_UNCOMMITTED</td>
+<td>YES</td>
+<td>YES</td>
+<td>YES</td>
+<td>NO</td>
+</tr>
+<tr>
+<td>READ_COMMITTED</td>
+<td>NO</td>
+<td>YES</td>
+<td>YES</td>
+<td>NO</td>
+</tr>
+<tr>
+<td>REPEATABLE_READ</td>
+<td>NO</td>
+<td>NO</td>
+<td>YES</td>
+<td>NO</td>
+</tr>
+<tr>
+<td>SERIALIZABLE</td>
+<td>NO</td>
+<td>NO</td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>以上内容就是关于Spring Boot(九)之声明式事务使用总结的全部内容了，谢谢你阅读到了这里！</p>
+<p>Author:zhaoyh</p>
+</blockquote>
 
-      <h3 class="post-title">
+      
+    </div>
+
+    <div>
+      
         
-            <a class="post-title-link" href="/2018/01/15/Spring-Cloud之基于Eureka、Ribbon、Feign的负载均衡案例/" itemprop="url">
-              
-                <span itemprop="name">Spring Cloud之基于Eureka、Ribbon、Feign的负载均衡案例</span>
-              
-            </a>
+
+      
+    </div>
+
+    <div>
+      
         
-      </h3>
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-01-15T22:51:43+08:00"
-              content="2018-01-15" >
-          01-15
-        </time>
-      </div>
+      
+    </div>
 
-    </header>
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
+          
+            <a href="/tags/事务/" rel="tag"># 事务</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/09/22/Spring Boot(八)之定时任务锁Shedlock/" rel="next" title="Spring Boot(八)之定时任务锁Shedlock">
+                <i class="fa fa-chevron-left"></i> Spring Boot(八)之定时任务锁Shedlock
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </article>
 
 
-    
-  </div>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -343,6 +598,12 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMDY5Mi83MjQ3"></div>
+    
+  </div>
+
 
         </div>
         
@@ -363,8 +624,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/kobe.jpg"
@@ -426,6 +696,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Spring事务机制"><span class="nav-text">1. Spring事务机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Transactional属性分析"><span class="nav-text">2. Transactional属性分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-事务传播行为"><span class="nav-text">2.1 事务传播行为</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-事务隔离级别"><span class="nav-text">2.2 事务隔离级别</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -537,10 +823,10 @@
 
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
 
-  
+
 
   
 
@@ -569,6 +855,17 @@
 
 
 
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
   
 
 
