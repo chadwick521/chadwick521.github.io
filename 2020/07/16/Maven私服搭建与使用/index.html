@@ -425,7 +425,7 @@
 </table>
 <a id="more"></a>
 <h3 id="1-Nexus搭建"><a href="#1-Nexus搭建" class="headerlink" title="1. Nexus搭建"></a>1. Nexus搭建</h3><p>在<a href="https://www.sonatype.com/nexus-repository-oss" target="_blank" rel="external">Sonatype</a>下载免费的OSS版本。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span>#解压</div><div class="line">tar -zxvf nexus-3.25.0-03-unix.tar.gz</div><div class="line"><span class="meta"></span></div><div class="line">##启动</div><div class="line">cd nexus-3.25.0-03/bin</div><div class="line">./nexus start</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"><span class="comment">#解压</span></span></div><div class="line">tar -zxvf nexus-3.25.0-03-unix.tar.gz</div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"><span class="comment">#启动</span></span></div><div class="line">cd nexus-3.25.0-03/bin</div><div class="line">./nexus start</div></pre></td></tr></table></figure>
 <p>注意：Nexus运行，官方推荐你的机器至少需要4G以上内存。</p>
 <p>打开： <a href="http://你的IP:8081/" target="_blank" rel="external">http://你的IP:8081/</a> 按照提示输入admin账号密码即可，接下来创建你的自定义私有仓库：</p>
 <p><img src="https://static.zhaoyh.com.cn/1594889329900.jpg" alt="image"><br>分别创建两个maven2(hosted)类型的私有仓库：zhaoyh-test-repo-snap(快照版)和zhaoyh-test-repo-release(正式版)，如图所示：</p>
@@ -579,7 +579,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">37</span>
+                <span class="site-state-item-count">38</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -601,7 +601,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">48</span>
+                <span class="site-state-item-count">50</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
