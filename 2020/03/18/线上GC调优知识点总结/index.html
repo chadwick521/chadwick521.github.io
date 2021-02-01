@@ -107,7 +107,7 @@
 <meta property="og:image" content="https://static.zhaoyh.com.cn/1583920580315.jpg">
 <meta property="og:image" content="https://static.zhaoyh.com.cn/1583920627496.jpg">
 <meta property="og:image" content="https://static.zhaoyh.com.cn/1583920944220.jpg">
-<meta property="og:updated_time" content="2021-01-29T14:58:48.048Z">
+<meta property="og:updated_time" content="2021-02-01T03:22:07.190Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="线上GC调优知识点总结">
 <meta name="twitter:description" content="当线上Java程序性能逐渐下降，通过一系列优化手段也提升有限时，通常需要调整垃圾回收器来进一步提高性能，称为GC优化。影响GC性能的参数众多，且参数调整又依赖于应用各自的特点，这些因素很大程度上增加了GC优化的难度，本文介绍了线上GC调试你不得不需要学习的知识点。">
@@ -441,11 +441,14 @@
 <li><strong>-XX:+PrintClassHistogramBeforeFullGC</strong>和<strong>XX:+PrintClassHistogramAfterFullGC</strong>，GC前后的类加载情况；</li>
 <li><strong>-XX:+HeapDumpOnOutOfMemoryError</strong>，内存溢出时自动导出，内存很大的时候，可能会导不出来，使用<strong>XX:HeapDumpPath=dir</strong>导出内存映像文件；</li>
 </ul>
-<h4 id="1-5-设置垃圾回收器"><a href="#1-5-设置垃圾回收器" class="headerlink" title="1.5 设置垃圾回收器"></a>1.5 设置垃圾回收器</h4><p>JDK8可使用的垃圾收集器有7种，当然有的只适用于年轻代，有的只适用于老年代，JDK8中最新的垃圾收集器是G1，可以用于年轻代和老年代。到了JDK 11，还出了ZGC。在JDK8中，如果不指定垃圾收集器，默认使用参数 <strong>-XX:+UseParallelGC</strong>，新生代使用Parallel Scavenge，老年代使用Serial Old。</p>
+<h4 id="1-5-设置垃圾回收器"><a href="#1-5-设置垃圾回收器" class="headerlink" title="1.5 设置垃圾回收器"></a>1.5 设置垃圾回收器</h4><p>JDK8可使用的垃圾收集器有7种，当然有的只适用于年轻代，有的只适用于老年代，JDK8中最新的垃圾收集器是G1，可以用于年轻代和老年代，到了JDK11，还出了ZGC。</p>
 <ul>
-<li><strong>-XX:+UseParallelGC</strong>，Parallel Scavenge + Serial Old，JDK8 server 模式下的默认设置；</li>
-<li><strong>-XX:+UseParallelOldGC</strong>，Parallel Scavenge + Parallel Old；</li>
-<li><strong>-XX:+UseG1GC</strong>，使用G1垃圾收集器</li>
+<li><strong>-XX:+UseSerialGC</strong>，虚拟机Client模式下的默认值，使用Serial（新生代）+ Serial Old（老年代）收集器；</li>
+<li><strong>-XX:+UseParNewGC</strong>，使用ParNew + Serial Old，JDK9后不再支持；</li>
+<li><strong>-XX:+UseConcMarkSweepGC</strong>，使用ParNew + CMS + Serial Old组合收集器，Serial Old作为CMS出现“Concurrent Mode Failure”错误后的备选；</li>
+<li><strong>-XX:+UseParallelGC</strong>，使用Parallel Scavenge（新生代） + Serial Old（老年代）收集器，JDK9之前Server模式下的默认设置；</li>
+<li><strong>-XX:+UseParallelOldGC</strong>，使用Parallel Scavenge（新生代） + Parallel Old（老年代）收集器；</li>
+<li><strong>-XX:+UseG1GC</strong>，使用G1垃圾收集器，JDK9之后的Server模式默认值；</li>
 </ul>
 <h4 id="1-6-远程JMX设置"><a href="#1-6-远程JMX设置" class="headerlink" title="1.6 远程JMX设置"></a>1.6 远程JMX设置</h4><p>当我们需要查看JVM运行状态，第一种是登陆JVM服务器，使用jmap、jstack、jstat等工具查看；第二种是开启JMX远程功能，使用jConsole、VisualVM等工具进行监控。开启的参数如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">-Dcom.sun.management.jmxremote</div><div class="line">#指定jvm所在服务器ip或域名</div><div class="line">-Djava.rmi.server.hostname=192.168.1.1</div><div class="line">#指定端口</div><div class="line">-Dcom.sun.management.jmxremote.port=9999</div><div class="line">-Dcom.sun.management.jmxremote.rmi.port=9999</div><div class="line">-Dcom.sun.management.jmxremote.authenticate=false</div><div class="line">-Dcom.sun.management.jmxremote.ssl=false</div></pre></td></tr></table></figure>
