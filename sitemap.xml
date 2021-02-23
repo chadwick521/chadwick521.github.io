@@ -2,6 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://www.zhaoyh.com.cn/categories/index.html</loc>
+    
+    <lastmod>2021-02-23T04:05:45.752Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.zhaoyh.com.cn/about/index.html</loc>
+    
+    <lastmod>2021-02-23T04:05:29.081Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.zhaoyh.com.cn/tags/index.html</loc>
+    
+    <lastmod>2021-02-23T04:04:46.210Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://www.zhaoyh.com.cn/2020/11/02/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95/</loc>
     
     <lastmod>2021-02-02T10:26:27.127Z</lastmod>
@@ -285,20 +306,6 @@
     <loc>http://www.zhaoyh.com.cn/2017/09/25/Nginx%E9%85%8D%E7%BD%AE%E7%BD%91%E7%AB%99https%E6%9C%8D%E5%8A%A1/</loc>
     
     <lastmod>2017-12-05T09:56:52.512Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.zhaoyh.com.cn/categories/index.html</loc>
-    
-    <lastmod>2017-08-04T08:44:03.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.zhaoyh.com.cn/tags/index.html</loc>
-    
-    <lastmod>2017-07-17T10:09:39.000Z</lastmod>
     
   </url>
   
