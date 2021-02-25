@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="垃圾回收,GC," />
+  <meta name="keywords" content="垃圾回收,GC,JDK工具," />
 
 
 
@@ -93,13 +93,13 @@
 
 
 
-<meta name="description" content="当线上Java程序性能逐渐下降，通过一系列优化手段也提升有限时，通常需要调整垃圾回收器来进一步提高性能，称为GC优化。影响GC性能的参数众多，且参数调整又依赖于应用各自的特点，这些因素很大程度上增加了GC优化的难度，本文介绍了线上GC调试你不得不需要学习的知识点。">
-<meta name="keywords" content="垃圾回收,GC">
+<meta name="description" content="当线上Java程序性能逐渐下降，通过一系列优化手段也提升有限时，通常需要调整垃圾回收器来进一步提高性能，称为GC优化。从性能来说，GC调优主要关注以下三个评分指标：内存占用、延迟、吞吐量。影响GC性能的参数众多，且参数调整又依赖于应用各自的特点，这些因素很大程度上增加了GC优化的难度，本文介绍了线上GC调优需要学习的一些知识点。">
+<meta name="keywords" content="垃圾回收,GC,JDK工具">
 <meta property="og:type" content="article">
-<meta property="og:title" content="线上GC调优知识点总结">
-<meta property="og:url" content="http://www.zhaoyh.com.cn/2020/03/18/线上GC调优知识点总结/index.html">
+<meta property="og:title" content="JVM性能及GC调优">
+<meta property="og:url" content="http://www.zhaoyh.com.cn/2020/03/18/JVM性能及GC调优/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
-<meta property="og:description" content="当线上Java程序性能逐渐下降，通过一系列优化手段也提升有限时，通常需要调整垃圾回收器来进一步提高性能，称为GC优化。影响GC性能的参数众多，且参数调整又依赖于应用各自的特点，这些因素很大程度上增加了GC优化的难度，本文介绍了线上GC调试你不得不需要学习的知识点。">
+<meta property="og:description" content="当线上Java程序性能逐渐下降，通过一系列优化手段也提升有限时，通常需要调整垃圾回收器来进一步提高性能，称为GC优化。从性能来说，GC调优主要关注以下三个评分指标：内存占用、延迟、吞吐量。影响GC性能的参数众多，且参数调整又依赖于应用各自的特点，这些因素很大程度上增加了GC优化的难度，本文介绍了线上GC调优需要学习的一些知识点。">
 <meta property="og:image" content="https://static.zhaoyh.com.cn/JVM_5_zone_heap.png">
 <meta property="og:image" content="https://static.zhaoyh.com.cn/Young_GC_detail.png">
 <meta property="og:image" content="https://static.zhaoyh.com.cn/Full_GC_detail.png">
@@ -107,10 +107,10 @@
 <meta property="og:image" content="https://static.zhaoyh.com.cn/1583920580315.jpg">
 <meta property="og:image" content="https://static.zhaoyh.com.cn/1583920627496.jpg">
 <meta property="og:image" content="https://static.zhaoyh.com.cn/1583920944220.jpg">
-<meta property="og:updated_time" content="2021-02-01T03:22:07.190Z">
+<meta property="og:updated_time" content="2021-02-25T09:53:18.077Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="线上GC调优知识点总结">
-<meta name="twitter:description" content="当线上Java程序性能逐渐下降，通过一系列优化手段也提升有限时，通常需要调整垃圾回收器来进一步提高性能，称为GC优化。影响GC性能的参数众多，且参数调整又依赖于应用各自的特点，这些因素很大程度上增加了GC优化的难度，本文介绍了线上GC调试你不得不需要学习的知识点。">
+<meta name="twitter:title" content="JVM性能及GC调优">
+<meta name="twitter:description" content="当线上Java程序性能逐渐下降，通过一系列优化手段也提升有限时，通常需要调整垃圾回收器来进一步提高性能，称为GC优化。从性能来说，GC调优主要关注以下三个评分指标：内存占用、延迟、吞吐量。影响GC性能的参数众多，且参数调整又依赖于应用各自的特点，这些因素很大程度上增加了GC优化的难度，本文介绍了线上GC调优需要学习的一些知识点。">
 <meta name="twitter:image" content="https://static.zhaoyh.com.cn/JVM_5_zone_heap.png">
 
 
@@ -139,13 +139,13 @@
 
 
 
-  <link rel="canonical" href="http://www.zhaoyh.com.cn/2020/03/18/线上GC调优知识点总结/"/>
+  <link rel="canonical" href="http://www.zhaoyh.com.cn/2020/03/18/JVM性能及GC调优/"/>
 
 
 
 
 
-  <title>线上GC调优知识点总结 | zhaoyh's blog</title>
+  <title>JVM性能及GC调优 | zhaoyh's blog</title>
   
 
 
@@ -328,7 +328,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2020/03/18/线上GC调优知识点总结/">
+    <link itemprop="mainEntityOfPage" href="http://www.zhaoyh.com.cn/2020/03/18/JVM性能及GC调优/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="zhaoyh">
@@ -345,7 +345,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">线上GC调优知识点总结</h2>
+          <h2 class="post-title" itemprop="name headline">JVM性能及GC调优</h2>
         
 
         <div class="post-meta">
@@ -414,11 +414,11 @@
       
 
       
-        <p>当线上Java程序性能逐渐下降，通过一系列优化手段也提升有限时，通常需要调整垃圾回收器来进一步提高性能，称为GC优化。影响GC性能的参数众多，且参数调整又依赖于应用各自的特点，这些因素很大程度上增加了GC优化的难度，本文介绍了线上GC调试你不得不需要学习的知识点。</p>
+        <p>当线上Java程序性能逐渐下降，通过一系列优化手段也提升有限时，通常需要调整垃圾回收器来进一步提高性能，称为GC优化。从性能来说，GC调优主要关注以下三个评分指标：内存占用、延迟、吞吐量。影响GC性能的参数众多，且参数调整又依赖于应用各自的特点，这些因素很大程度上增加了GC优化的难度，本文介绍了线上GC调优需要学习的一些知识点。</p>
 <a id="more"></a>
 <h3 id="1-Java运行参数设置及优化"><a href="#1-Java运行参数设置及优化" class="headerlink" title="1. Java运行参数设置及优化"></a>1. Java运行参数设置及优化</h3><p>Java运行时数据区如图所示：</p>
 <p><img src="https://static.zhaoyh.com.cn/JVM_5_zone_heap.png" alt="image"></p>
-<p>我们常说的GC大部分指的是Java Heap的一系列操作。本文的所有操作，是基于jdk1.8版本的。</p>
+<p>我们常说的GC大部分指的是Java Heap的一系列操作。本文的所有操作，是基于JDK1.8版本的。</p>
 <h4 id="1-1-堆参数"><a href="#1-1-堆参数" class="headerlink" title="1.1 堆参数"></a>1.1 堆参数</h4><ul>
 <li><strong>-Xms</strong>，堆的初始值，等价于-XX:InitialHeapSize，比如-Xms512m表示初始堆大小为512Mb，-Xms4g表示初始堆大小4g；</li>
 <li><strong>-Xmx</strong>，堆的最大值，等价于 -XX:MaxHeapSize，-Xmx8g表示最大堆为8g；</li>
@@ -462,7 +462,7 @@
 </ul>
 <h4 id="1-6-远程JMX设置"><a href="#1-6-远程JMX设置" class="headerlink" title="1.6 远程JMX设置"></a>1.6 远程JMX设置</h4><p>当我们需要查看JVM运行状态，第一种是登陆JVM服务器，使用jmap、jstack、jstat等工具查看；第二种是开启JMX远程功能，使用jConsole、VisualVM等工具进行监控。开启的参数如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">-Dcom.sun.management.jmxremote</div><div class="line">#指定jvm所在服务器ip或域名</div><div class="line">-Djava.rmi.server.hostname=192.168.1.1</div><div class="line">#指定端口</div><div class="line">-Dcom.sun.management.jmxremote.port=9999</div><div class="line">-Dcom.sun.management.jmxremote.rmi.port=9999</div><div class="line">-Dcom.sun.management.jmxremote.authenticate=false</div><div class="line">-Dcom.sun.management.jmxremote.ssl=false</div></pre></td></tr></table></figure>
-<h3 id="2-GC日志分析及jstat使用"><a href="#2-GC日志分析及jstat使用" class="headerlink" title="2. GC日志分析及jstat使用"></a>2. GC日志分析及jstat使用</h3><h4 id="2-1-Young-GC日志"><a href="#2-1-Young-GC日志" class="headerlink" title="2.1 Young GC日志"></a>2.1 Young GC日志</h4><p>一段典型的Young GC(Minor GC)的日志如下：</p>
+<h3 id="2-GC日志分析"><a href="#2-GC日志分析" class="headerlink" title="2. GC日志分析"></a>2. GC日志分析</h3><h4 id="2-1-Young-GC日志"><a href="#2-1-Young-GC日志" class="headerlink" title="2.1 Young GC日志"></a>2.1 Young GC日志</h4><p>一段典型的Young GC(Minor GC)的日志如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">2020-03-11T17:43:28.034+0800: 20595.056: [GC (Allocation Failure) [PSYoungGen: 4185120K-&gt;4923K(4188160K)] 4547662K-&gt;368154K(8382464K), 0.0071567 secs] [Times: user=0.13 sys=0.00, real=0.01 secs]</div></pre></td></tr></table></figure>
 <p>Young GC说明图示：</p>
 <p><img src="https://static.zhaoyh.com.cn/Young_GC_detail.png" alt="image"></p>
@@ -474,7 +474,25 @@
 <p><img src="https://static.zhaoyh.com.cn/gchisto_show_detail.jpg" alt="image"></p>
 <p><a href="https://gceasy.io/" target="_blank" rel="external">GC Easy</a>是一款在线的GC日志分析工具，将gc的log上传后，直接查看结果：</p>
 <p><img src="https://static.zhaoyh.com.cn/1583920580315.jpg" alt="image"><br><img src="https://static.zhaoyh.com.cn/1583920627496.jpg" alt="image"></p>
-<h4 id="2-4-jstat使用"><a href="#2-4-jstat使用" class="headerlink" title="2.4 jstat使用"></a>2.4 jstat使用</h4><p><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html" target="_blank" rel="external">jstat</a>是Java提供的查看JVM统计信息的工具，jstat的命令格式为：</p>
+<h3 id="3-常用JDK工具"><a href="#3-常用JDK工具" class="headerlink" title="3. 常用JDK工具"></a>3. 常用JDK工具</h3><h4 id="3-1-可视化工具类"><a href="#3-1-可视化工具类" class="headerlink" title="3.1 可视化工具类"></a>3.1 可视化工具类</h4><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jconsole.html" target="_blank" rel="external">jconsole</a></td>
+<td>用于监控Java虚拟机的使用JMX规范的图形工具。它可以监控本地和远程JVM。它还可以监控和管理应用程序。</td>
+</tr>
+<tr>
+<td><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jconsole.html" target="_blank" rel="external">jvisualvm</a></td>
+<td>提供内存和CPU分析，堆转储分析，内存泄漏检测等监控。</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3-2-监控类"><a href="#3-2-监控类" class="headerlink" title="3.2 监控类"></a>3.2 监控类</h4><p><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstat.html" target="_blank" rel="external">jstat</a>是查看JVM统计信息的工具，jstat的命令格式为：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">jstat [options] pid [interval] [count]</div><div class="line"></div><div class="line">options，一般使用 -gcutil 或 -gc 查看gc情况</div><div class="line">pid，当前运行的Java进程号</div><div class="line">interval，间隔时间，单位为秒或者毫秒</div><div class="line">count，打印次数，如果缺省则打印无数次</div></pre></td></tr></table></figure>
 <p>options参数如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">-gc：统计 jdk gc时 heap信息，以使用空间字节数表示</div><div class="line">-gcutil：统计 gc时 heap情况，以使用空间的百分比表示</div><div class="line">-class：统计 class loader行为信息</div><div class="line">-compile：统计编译行为信息</div><div class="line">-gccapacity：统计不同 generations（新生代，老年代，持久代）的容量使用的最大最小值，例如使用到的最大值、最小值、当前使用值等等</div><div class="line">-gccause：统计引起 gc的事件</div><div class="line">-gcnew：统计 gc时，新生代的情况</div><div class="line">-gcnewcapacity：统计 gc时，新生代 heap容量</div><div class="line">-gcold：统计 gc时，老年代的情况</div><div class="line">-gcoldcapacity：统计 gc时，老年代 heap容量</div><div class="line">-gcpermcapacity：统计 gc时， permanent区 heap容量</div></pre></td></tr></table></figure>
@@ -482,8 +500,41 @@
 <p><img src="https://static.zhaoyh.com.cn/1583920944220.jpg" alt="image"></p>
 <p>每一列的含义为：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">S0C: 第1个Survivor空间的容量 Current survivor space 0 capacity (kB).</div><div class="line">S1C: 第2个Survivor空间的容量(kB).</div><div class="line">S0U: 第1个Survivor空间中已经使用的容量 Survivor space 0 utilization (kB).</div><div class="line">S1U: 第2个Survivor空间中已经使用的容量(kB).</div><div class="line">EC: Eden空间的容量(kB).</div><div class="line">EU: Eden空间中已经使用的容量(kB).</div><div class="line">OC: 老年代Old空间的容量(kB).</div><div class="line">OU: 老年代Old空间已经使用的容量(kB).</div><div class="line">MC: 元空间Metaspace的容量(kB).</div><div class="line">MU: 元空间Metaspace已经使用的容量(kB).</div><div class="line">CCSC: 压缩类空间的容量 Compressed class space capacity (kB).</div><div class="line">CCSU: 压缩类空间已经使用的容量(kB).</div><div class="line">YGC: Young GC发生的次数.</div><div class="line">YGCT: Young GC花费的时间.</div><div class="line">FGC: Full GC发生的次数.</div><div class="line">FGCT: Full GC花费的时间.</div><div class="line">GCT: 所有的GC花费的总时间.</div></pre></td></tr></table></figure>
+<p><a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jps.html" target="_blank" rel="external">jps</a>是进程状态工具(JVM Process Status Tool)，在目标系统上列出HotSpot Java虚拟机进程的描述信息。</p>
+<h4 id="3-3-故障分析类"><a href="#3-3-故障分析类" class="headerlink" title="3.3 故障分析类"></a>3.3 故障分析类</h4><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="http://docs.oracle.com/javase/8/docs/technotes/tools/unix/jinfo.html" target="_blank" rel="external">jinfo</a></td>
+<td>Java的配置信息工具(Java Configuration Information)，用于打印指定Java进程、核心文件或远程调试服务器的配置信息。</td>
+</tr>
+<tr>
+<td><a href="http://docs.oracle.com/javase/8/docs/technotes/tools/unix/jhat.html" target="_blank" rel="external">jhat</a></td>
+<td>Java堆分析工具(Java Heap Analysis Tool)，用于分析Java堆内存中的对象信息。</td>
+</tr>
+<tr>
+<td><a href="http://docs.oracle.com/javase/8/docs/technotes/tools/unix/jmap.html" target="_blank" rel="external">jmap</a></td>
+<td>Java内存映射工具(Java Memory Map)，主要用于打印指定Java进程、核心文件或远程调试服务器的共享对象内存映射或堆内存细节，打印内存dump文件等。</td>
+</tr>
+<tr>
+<td><a href="http://docs.oracle.com/javase/8/docs/technotes/tools/unix/jstack.html" target="_blank" rel="external">jstack</a></td>
+<td>Java的堆栈跟踪工具，主要用于打印指定Java进程、核心文件或远程调试服务器的Java线程的堆栈跟踪信息。</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3-4-其他"><a href="#3-4-其他" class="headerlink" title="3.4 其他"></a>3.4 其他</h4><p><a href="https://arthas.aliyun.com/doc/quick-start.html" target="_blank" rel="external">Arthas</a>是Alibaba开源的Java诊断工具，深受开发者喜爱。支持在线排查程序问题，无需重启，可动态跟踪Java代码，可实时监控JVM状态。支持Linux/Mac/Windows，采用命令行交互模式，同时提供丰富的Tab自动补全功能，进一步方便进行问题的定位和诊断。</p>
+<h3 id="4-参考文档"><a href="#4-参考文档" class="headerlink" title="4. 参考文档"></a>4. 参考文档</h3><ul>
+<li><a href="https://tech.meituan.com/2017/12/29/jvm-optimize.html" target="_blank" rel="external">从实际案例聊聊Java应用的GC优化</a></li>
+<li><a href="https://www.jianshu.com/p/676486f029e7" target="_blank" rel="external">Java生产环境下性能监控与调优详解</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/91757020" target="_blank" rel="external">JVM中你不可不知的参数</a></li>
+</ul>
 <blockquote>
-<p>以上内容就是关于线上GC调优知识点总结的全部内容了，谢谢你阅读到了这里！</p>
+<p>以上内容就是关于JVM性能及GC调优的全部内容了，谢谢你阅读到了这里！</p>
 <p>Author:zhaoyh</p>
 </blockquote>
 
@@ -518,6 +569,8 @@
             <a href="/tags/垃圾回收/" rel="tag"># 垃圾回收</a>
           
             <a href="/tags/GC/" rel="tag"># GC</a>
+          
+            <a href="/tags/JDK工具/" rel="tag"># JDK工具</a>
           
         </div>
       
@@ -639,7 +692,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">53</span>
+                <span class="site-state-item-count">54</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -674,7 +727,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Java运行参数设置及优化"><span class="nav-text">1. Java运行参数设置及优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-堆参数"><span class="nav-text">1.1 堆参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-栈参数"><span class="nav-text">1.2 栈参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-Metaspace参数"><span class="nav-text">1.3 Metaspace参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-JVM运行配置参数"><span class="nav-text">1.4 JVM运行配置参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-设置垃圾回收器"><span class="nav-text">1.5 设置垃圾回收器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-6-远程JMX设置"><span class="nav-text">1.6 远程JMX设置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-GC日志分析及jstat使用"><span class="nav-text">2. GC日志分析及jstat使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-Young-GC日志"><span class="nav-text">2.1 Young GC日志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-Full-GC日志"><span class="nav-text">2.2 Full GC日志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-GC日志分析工具"><span class="nav-text">2.3 GC日志分析工具</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-jstat使用"><span class="nav-text">2.4 jstat使用</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Java运行参数设置及优化"><span class="nav-text">1. Java运行参数设置及优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-堆参数"><span class="nav-text">1.1 堆参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-栈参数"><span class="nav-text">1.2 栈参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-Metaspace参数"><span class="nav-text">1.3 Metaspace参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-JVM运行配置参数"><span class="nav-text">1.4 JVM运行配置参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-设置垃圾回收器"><span class="nav-text">1.5 设置垃圾回收器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-6-远程JMX设置"><span class="nav-text">1.6 远程JMX设置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-GC日志分析"><span class="nav-text">2. GC日志分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-Young-GC日志"><span class="nav-text">2.1 Young GC日志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-Full-GC日志"><span class="nav-text">2.2 Full GC日志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-GC日志分析工具"><span class="nav-text">2.3 GC日志分析工具</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-常用JDK工具"><span class="nav-text">3. 常用JDK工具</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-可视化工具类"><span class="nav-text">3.1 可视化工具类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-监控类"><span class="nav-text">3.2 监控类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-故障分析类"><span class="nav-text">3.3 故障分析类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-其他"><span class="nav-text">3.4 其他</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-参考文档"><span class="nav-text">4. 参考文档</span></a></li></ol></div>
             
 
           </div>
