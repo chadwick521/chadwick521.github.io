@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="分布式事务," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="zhaoyh's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="1. 分布式事务产生的背景1.1 数据库水平拆分对于大部分的业务而言，在起步阶段，为了快速上线，一般都是单库单表的。但是随着业务的扩张，数据量也随着扩增，单库的性能逐渐变差，就会有数据库的单点压力。因此我们就需要考虑数据库的分库分表方案了。分库分表的目的在于减少单库的负担，提高读写性能。策略可以归纳为拆表和拆分库，拆表是把表的字段进行拆分，即一张表拆分为多张表，这样就使得单表的行数降低，提升查询效">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式事务总结">
+<meta property="og:url" content="http://blog.zhaoyh.com.cn/2022/11/16/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="zhaoyh&#39;s blog">
+<meta property="og:description" content="1. 分布式事务产生的背景1.1 数据库水平拆分对于大部分的业务而言，在起步阶段，为了快速上线，一般都是单库单表的。但是随着业务的扩张，数据量也随着扩增，单库的性能逐渐变差，就会有数据库的单点压力。因此我们就需要考虑数据库的分库分表方案了。分库分表的目的在于减少单库的负担，提高读写性能。策略可以归纳为拆表和拆分库，拆表是把表的字段进行拆分，即一张表拆分为多张表，这样就使得单表的行数降低，提升查询效">
+<meta property="og:locale">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/1677074547110.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/1677076101910.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/aHR0cHM6Ly91c2VyLWdvbGQtY2RuLnhpdHUuaW8vMjAxOC81LzI0LzE2MzkxMmU5NzNlY2I5M2M.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/1677587544238.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/1677587641931.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/tcc_show_1.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/TB1Y2kuw7T2gK0jSZFkXXcIQFXa-445-444.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/1561960663764-249954ff-46ed-4d30-8041-2301a677bfb9.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/dtsAndSeata.jpeg">
+<meta property="article:published_time" content="2022-11-16T12:23:02.000Z">
+<meta property="article:modified_time" content="2023-06-07T00:55:37.957Z">
+<meta property="article:author" content="zhaoyh">
+<meta property="article:tag" content="分布式事务">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://static.zhaoyh.com.cn/1677074547110.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.zhaoyh.com.cn/2022/11/16/分布式事务总结/"/>
+
+
+
+
+
+  <title>分布式事务总结 | zhaoyh's blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d0ffab0524d814292602098d0adb98c6";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zhaoyh's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://blog.zhaoyh.com.cn/2022/11/16/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E6%80%BB%E7%BB%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zhaoyh's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">分布式事务总结</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-11-16T20:23:02+08:00">
+                2022-11-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%9F%BA%E7%A1%80%E6%9C%8D%E5%8A%A1/" itemprop="url" rel="index">
+                    <span itemprop="name">基础服务</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-分布式事务产生的背景"><a href="#1-分布式事务产生的背景" class="headerlink" title="1. 分布式事务产生的背景"></a>1. 分布式事务产生的背景</h3><h4 id="1-1-数据库水平拆分"><a href="#1-1-数据库水平拆分" class="headerlink" title="1.1 数据库水平拆分"></a>1.1 数据库水平拆分</h4><p>对于大部分的业务而言，在起步阶段，为了快速上线，一般都是单库单表的。但是随着业务的扩张，数据量也随着扩增，单库的性能逐渐变差，就会有数据库的单点压力。因此我们就需要考虑数据库的分库分表方案了。分库分表的目的在于减少单库的负担，提高读写性能。策略可以归纳为拆表和拆分库，拆表是把表的字段进行拆分，即一张表拆分为多张表，这样就使得单表的行数降低，提升查询效率。但是单纯的库内分表只解决了单表的数据过大的问题，并不能解决在同一数据库服务器上的硬件瓶颈，因此需要同时考虑拆库，将原来的单库单表进行拆分数据片，如下图所示：</p>
+<span id="more"></span>
+
+<p><img src="https://static.zhaoyh.com.cn/1677074547110.jpg" alt="image"></p>
+<p>分库分表之后，原来在一个数据库上就能完成的写操作，可能就会跨多个数据库，这就产生了跨数据库事务问题。</p>
+<h4 id="1-2-SOA微服务化"><a href="#1-2-SOA微服务化" class="headerlink" title="1.2 SOA微服务化"></a>1.2 SOA微服务化</h4><p>随着业务以及技术的演进，单体架构的瓶颈也越来越明显。按照面向服务的架构（SOA）的原则，我们需要一个既能解决业务之间耦合性，又具备高可用、可伸缩的需求越来越强烈。在将单体架构，拆分为多个业务服务之后，每块业务只需要关注自己的服务即可，形成了一种高内聚、低耦合的架构设计方案，此时简易系统架构图如下：</p>
+<p><img src="https://static.zhaoyh.com.cn/1677076101910.jpg" alt="image"></p>
+<p>业务系统按照服务拆分之后，一个完整的业务往往需要调用多个服务，此时，不可避免地会产生数据不一致的问题。由于涉及到多个服务以及多个数据库，本地事务肯定无法满足需求，因此分布式事务就登上了舞台。简单一句话概括分布式事务：为了保证不同服务、不同数据库的数据一致性的事务解决方案。</p>
+<h3 id="2-CAP原则"><a href="#2-CAP原则" class="headerlink" title="2. CAP原则"></a>2. CAP原则</h3><p>在计算机科学理论中，CAP定理指出，在一个分布式系统中，不可能同时满足以下三点，最多满足两个：</p>
+<ul>
+<li><strong>一致性（Consistence）</strong>，所有节点每次读写都能保证获取最新数据，即分布式系统内所有节点的数据副本保持强一致性；</li>
+<li><strong>可用性（Availability）</strong>，每次请求数据都能得到响应，但不一定是最新的数据，无论任何故障产生后，需要保证服务仍然可用；</li>
+<li><strong>分区容错性（Partition Tolerance）</strong>，被分区的节点可以正常对外提供服务；</li>
+</ul>
+<p><img src="https://static.zhaoyh.com.cn/aHR0cHM6Ly91c2VyLWdvbGQtY2RuLnhpdHUuaW8vMjAxOC81LzI0LzE2MzkxMmU5NzNlY2I5M2M.png" alt="image"></p>
+<p>对于常规的分布式系统而言，分区容错性是一个最基本的要求，因此，在分布式事务解决方案时，只能选择PC或者AP的模式。</p>
+<h3 id="3-基础协议"><a href="#3-基础协议" class="headerlink" title="3. 基础协议"></a>3. 基础协议</h3><h4 id="3-1-XA协议"><a href="#3-1-XA协议" class="headerlink" title="3.1 XA协议"></a>3.1 XA协议</h4><p>在讲分布式事务之前，必然需要先了解XA协议。XA是一个协议，是X&#x2F;Open组织制定的关于分布式事务的一组标准接口，实现这些接口，便意味支持XA协议。XA协议制定的主要标准有：</p>
+<ul>
+<li>定义了分布式事务参与方的两个角色，事务协调者和事务参与者；</li>
+<li>定义了相关接口，只有定义无实现；</li>
+</ul>
+<p>其中二阶段提交（2PC）就是XA分布式事务标准的一种实现协议。</p>
+<h4 id="3-2-两阶段提交协议"><a href="#3-2-两阶段提交协议" class="headerlink" title="3.2 两阶段提交协议"></a>3.2 两阶段提交协议</h4><p>两阶段提交协议包含的术语：</p>
+<ul>
+<li>TM（Transaction Manager），事务管理器，生成全局的事务id，并把多个本地事务协调为全局的分布式事务；</li>
+<li>RM（Resource Manager），资源管理器，事务的参与者；</li>
+</ul>
+<p>二阶段提交的算法思路可以概括为如下图：</p>
+<p><img src="https://static.zhaoyh.com.cn/1677587544238.jpg" alt="image"></p>
+<p>两阶段提交协议将分布式事务的提交拆分为2个阶段：</p>
+<p>第一阶段：准备阶段</p>
+<p>TM给每个RM发送prepare消息，用于预留事务所需的资源，如果每个RM都资源预留成功，则进行第二阶段资源提交，否则协调RM回滚资源。</p>
+<p>第二阶段：提交阶段</p>
+<p>如果TM收到了RM的失败消息或者超时，直接给每个RM发送回滚(Rollback)消息；否则，发送提交(Commit)消息；RM根据TM的指令执行提交或者回滚操作，释放所有事务处理过程中使用的锁资源。(注意:必须在最后阶段释放锁资源)</p>
+<p>2PC可能存在的一些问题：</p>
+<ul>
+<li>执行过程中，所有参与节点都是事务阻塞型的，可能会存在数据库资源锁定时间过长以及TM等待时间过长的问题，这会导致系统整体的并发吞吐量变低；</li>
+<li>单点故障问题，TM在两段提交中具有举足轻重的作用，一旦TM故障，整个系统将无法工作，因此需要投入巨大的精力来保障TM的高可用性；</li>
+<li>必须假设网络在提交阶段的短时间内是可靠的，在阶段二中，如果TM向RM发送commit请求之后，发生了网络异常，会导致只有一部分RM接收到了commit请求，没有接收到commit请求的RM最终会执行回滚操作，从而造成数据不一致问题；</li>
+</ul>
+<h4 id="3-3-三阶段提交协议"><a href="#3-3-三阶段提交协议" class="headerlink" title="3.3 三阶段提交协议"></a>3.3 三阶段提交协议</h4><p>三阶段提交协议流程示意图如下：</p>
+<p><img src="https://static.zhaoyh.com.cn/1677587641931.jpg" alt="image"></p>
+<ul>
+<li><strong>阶段一CanCommit</strong>，TM协调者向参与者发送can_commit请求，参与者如果可以提交就返回Yes响应，否则返回No响应，这是比2PC多的一步骤，提前询问各个节点是否准备成功，防止超时；</li>
+<li><strong>阶段二PreCommit</strong>，根据阶段一的反馈结果分为两种情况，情况1假如协调者从所有的参与者获得的反馈都是Yes响应，那么就会执行事务的预执行；情况2假如有任何一个参与者向协调者发送了No响应，或者等待超时之后，协调者都没有接到参与者的响应，那么就执行事务的中断；</li>
+<li><strong>阶段三DoCommit</strong>，该阶段进行真正的事务提交；</li>
+</ul>
+<p>可以看出，3PC可以解决单点故障问题，并减少阻塞问题，。三阶段提交协议引入了超时机制，一旦参与者无法及时收到来自协调者的信息之后，他会默认执行commit，而不会一直持有事务资源并处于阻塞状态。</p>
+<p>但是3PC对于数据一致性问题并未有任何改进，比如在进入PreCommit阶段后，如果协调者发送的是abort指令，而此时由于网络问题，有部分参与者在等待超时后仍未收到Abort指令的话，那这些参与者就会执行commit，这样就产生了不同参与者之间数据不一致的问题。</p>
+<p>由于3PC非常难实现，目前市面上主流的分布式事务解决方案基本都是2PC协议。</p>
+<h3 id="4-最终一致性解决方案"><a href="#4-最终一致性解决方案" class="headerlink" title="4. 最终一致性解决方案"></a>4. 最终一致性解决方案</h3><h4 id="4-1-TCC模式"><a href="#4-1-TCC模式" class="headerlink" title="4.1 TCC模式"></a>4.1 TCC模式</h4><p>TCC是柔性事务的一种，即追求最终一致性，并不要求每一步的强一致性，TCC采用补偿机制达到最终一致性。针对每个操作，都要注册一个与其对应的确认和补偿（撤销）操作。TCC是Try、Confirm、Cancel三个单词的缩写，其本质是一个应用（业务）层面上的2PC协议实现：</p>
+<ul>
+<li><strong>准备阶段</strong>，TM协调者调用每个节点提供的try接口，将整个全局事务涉及到的资源锁住，若锁定成功，try接口向TM返回yes状态；</li>
+<li><strong>提交阶段</strong>，若所有RM节点的try接口在阶段一都返回yes，则进入提交阶段，TM调用所有服务的confirm接口，各个RM节点进行事务提交。如果有任何一个服务的try接口在阶段一返回no或者超时，则TM协调者调用所有服务的cancel接口。</li>
+</ul>
+<p>所以TCC的实际执行情况，要么是Try-&gt;Confirm，要么是Try-&gt;Cancel。</p>
+<p><img src="https://static.zhaoyh.com.cn/tcc_show_1.png" alt="image"></p>
+<p>TCC是如何解决二阶段单点故障问题的呢？答案是重试机制。由于try操作锁住了全局事务涉及的所有资源，保证了业务操作的所有前置条件得到满足，因此无论是confirm阶段失败还是cancel阶段失败都能通过不断重试直至confirm或cancel成功。</p>
+<p>由于有TM的重试机制，RM节点confirm和cancel的接口实现必须是幂等的。</p>
+<h4 id="4-2-Saga模式"><a href="#4-2-Saga模式" class="headerlink" title="4.2 Saga模式"></a>4.2 Saga模式</h4><p>Saga模式的思想，来源于这篇<a target="_blank" rel="noopener" href="http://www.amundsen.com/downloads/sagas.pdf">论文</a>，作者提出了将一个长事务，分拆成多个子事务，每个子事务有正向操作Ti，反向补偿操作Ci。</p>
+<p><img src="https://static.zhaoyh.com.cn/TB1Y2kuw7T2gK0jSZFkXXcIQFXa-445-444.png" alt="image"></p>
+<ul>
+<li>假如所有的子事务Ti依次成功完成，则全局事务完成；</li>
+<li>假如子事务Ti失败，那么会调用Ci, Ci-1, Ci-2 ….进行补偿；</li>
+</ul>
+<p>Saga模式的使用场景：</p>
+<ul>
+<li>业务流程长、业务流程多（订票、订餐）；</li>
+<li>其他具有长事务特点的业务；</li>
+</ul>
+<h4 id="4-4-基于消息队列的最终一致性解决方案"><a href="#4-4-基于消息队列的最终一致性解决方案" class="headerlink" title="4.4 基于消息队列的最终一致性解决方案"></a>4.4 基于消息队列的最终一致性解决方案</h4><p>无论是2PC、3PC还是TCC模式，基本都遵守XA协议的规范，即这些方案本质上都是事务协调者协调各个事务参与者的本地事务的进度，使所有本地事务共同提交或回滚，最终达成一种全局的ACID特性。在协调的过程中，协调者需要收集各个本地事务的当前状态，并根据这些状态发出下一阶段的操作指令。</p>
+<p>但是这些全局事务方案由于操作繁琐、时间跨度大，或者在全局事务期间会排他地锁住相关资源，使得整个分布式系统的全局事务的并发度不会太高。这很难满足高并发场景对事务吞吐量的要求。</p>
+<p>基于消息中间件的最终一致性全局事务方案是互联网公司在高并发场景中探索出的一种创新型应用模式，利用MQ实现微服务之间的异步调用、解耦合和流量削峰，支持全局事务的高并发，并保证分布式数据记录的最终一致性。</p>
+<p>目前RocketMQ、Pulsar均支持了事务性消息。</p>
+<h3 id="5-企业级分布式事务解决方案"><a href="#5-企业级分布式事务解决方案" class="headerlink" title="5. 企业级分布式事务解决方案"></a>5. 企业级分布式事务解决方案</h3><p>前面几节我们介绍了分布式事务的理论基础，本小节我们再来了解一下目前业界比较热门的分布式事务落地方案。</p>
+<h4 id="5-1-Seata"><a href="#5-1-Seata" class="headerlink" title="5.1 Seata"></a>5.1 Seata</h4><p>Seata是一款阿里开源的分布式事务解决方案，致力于提供高性能和简单易用的分布式事务服务。Seata将为用户提供了TCC、SAGA和XA事务模式，为用户打造一站式的分布式解决方案。关于Seata的详细介绍可参考文章：<a target="_blank" rel="noopener" href="http://c19.f.dzxt.sbs/v8KdWkN">Spring Boot(七)之基于Dubbo和Seata的分布式事务解决方案</a></p>
+<p>如下图所示，Seata中有三大模块，分别是TM、RM和TC。 其中TM和RM是作为Seata的客户端与业务系统集成在一起，TC作为Seata的服务端独立部署。</p>
+<p><img src="https://static.zhaoyh.com.cn/1561960663764-249954ff-46ed-4d30-8041-2301a677bfb9.png" alt="image"></p>
+<p>Seata支持4种分布式事务解决方案，分别是AT模式、TCC模式、Saga模式和XA模式。</p>
+<p>在Seata中，分布式事务的执行流程：</p>
+<ul>
+<li>TM开启分布式事务（TM向TC注册全局事务记录）；</li>
+<li>按业务场景，编排数据库、服务等事务内资源（RM 向TC汇报资源准备状态 ）；</li>
+<li>TM结束分布式事务，一阶段结束（TM通知TC提交&#x2F;回滚分布式事务）；</li>
+<li>TC汇总事务信息，决定分布式事务是提交还是回滚；</li>
+<li>TC通知所有RM提交&#x2F;回滚资源，二阶段结束；</li>
+</ul>
+<h4 id="5-2-DTM"><a href="#5-2-DTM" class="headerlink" title="5.2 DTM"></a>5.2 DTM</h4><p><a target="_blank" rel="noopener" href="https://github.com/dtm-labs/dtm">DTM</a>是一款golang开发的分布式事务管理器，目前star数4.6k，它解决了跨数据库、跨服务、跨语言栈更新数据的一致性问题。他优雅的解决了幂等、空补偿、悬挂等分布式事务难题，提供了简单易用、高性能、易水平扩展的解决方案。</p>
+<p>DTM的主要优点如下：</p>
+<ul>
+<li>易接入：零配置启动服务，提供非常简单的HTTP接口，极大降低上手分布式事务的难度，新手也能快速接入；</li>
+<li>跨语言：可适合多语言栈的公司使用。方便go、python、php、nodejs、ruby、c# 各类语言使用；</li>
+<li>使用简单：开发者不再担心悬挂、空补偿、幂等各类问题，首创子事务屏障技术代为处理；</li>
+<li>易部署、易扩展：依赖mysql|redis，部署简单，易集群化，易水平扩展；</li>
+<li>多种分布式事务协议支持：TCC、SAGA、XA、二阶段消息，一站式解决所有分布式事务问题；</li>
+</ul>
+<p><img src="https://static.zhaoyh.com.cn/dtsAndSeata.jpeg" alt="image"></p>
+<h3 id="6-参考文档"><a href="#6-参考文档" class="headerlink" title="6. 参考文档"></a>6. 参考文档</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://www.sofastack.tech/blog/sofa-meetup-3-seata-retrospect/">分布式事务Seata Saga模式首秀以及三种模式详解</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/68mPpjMjPbbaaxBKacEHAw">分布式事务中间件Seata的设计原理</a></li>
+</ul>
+<blockquote>
+<p>以上内容就是分布式事务总结的全部内容了，谢谢你阅读到了这里！</p>
+</blockquote>
+<blockquote>
+<p>Author：zhaoyh</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="tag"># 分布式事务</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/03/09/RedisLockRegistry%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%BA%94%E7%94%A8%E5%8F%8A%E5%88%86%E6%9E%90/" rel="next" title="RedisLockRegistry分布式锁应用及分析">
+                <i class="fa fa-chevron-left"></i> RedisLockRegistry分布式锁应用及分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2023/02/20/%E8%81%8A%E4%B8%80%E8%81%8A%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/" rel="prev" title="聊一聊单元测试">
+                聊一聊单元测试 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMDY5Mi83MjQ3"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">45</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">58</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E4%BA%A7%E7%94%9F%E7%9A%84%E8%83%8C%E6%99%AF"><span class="nav-text">1. 分布式事务产生的背景</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-%E6%95%B0%E6%8D%AE%E5%BA%93%E6%B0%B4%E5%B9%B3%E6%8B%86%E5%88%86"><span class="nav-text">1.1 数据库水平拆分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-SOA%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%8C%96"><span class="nav-text">1.2 SOA微服务化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-CAP%E5%8E%9F%E5%88%99"><span class="nav-text">2. CAP原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%9F%BA%E7%A1%80%E5%8D%8F%E8%AE%AE"><span class="nav-text">3. 基础协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-XA%E5%8D%8F%E8%AE%AE"><span class="nav-text">3.1 XA协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4%E5%8D%8F%E8%AE%AE"><span class="nav-text">3.2 两阶段提交协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-%E4%B8%89%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4%E5%8D%8F%E8%AE%AE"><span class="nav-text">3.3 三阶段提交协议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-text">4. 最终一致性解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-TCC%E6%A8%A1%E5%BC%8F"><span class="nav-text">4.1 TCC模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-Saga%E6%A8%A1%E5%BC%8F"><span class="nav-text">4.2 Saga模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-4-%E5%9F%BA%E4%BA%8E%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E7%9A%84%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-text">4.4 基于消息队列的最终一致性解决方案</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E4%BC%81%E4%B8%9A%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-text">5. 企业级分布式事务解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#5-1-Seata"><span class="nav-text">5.1 Seata</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-2-DTM"><span class="nav-text">5.2 DTM</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="nav-text">6. 参考文档</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhaoyh</span>
+</div>
+
+
+<a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">京ICP备2022006929号-1</a>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

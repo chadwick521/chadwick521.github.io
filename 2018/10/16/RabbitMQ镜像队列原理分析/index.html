@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="RabbitMQ," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="zhaoyh's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="对于RabbitMQ的节点来说，有单节点模式和集群模式两种，其中集群模式又分为普通集群模式和镜像队列集群模式，在《RabbitMQ集群架构搭建与高可用性实现》文中，介绍了RabbitMQ的集群创建步骤方法。而镜像队列集群模式的搭建步骤和普通集群模式是基本相同的，唯一不同的是，镜像队列集群模式，多了一步配置policy的步骤。本文主要介绍镜像队列的原理及实现。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RabbitMQ镜像队列原理分析">
+<meta property="og:url" content="http://blog.zhaoyh.com.cn/2018/10/16/RabbitMQ%E9%95%9C%E5%83%8F%E9%98%9F%E5%88%97%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="zhaoyh&#39;s blog">
+<meta property="og:description" content="对于RabbitMQ的节点来说，有单节点模式和集群模式两种，其中集群模式又分为普通集群模式和镜像队列集群模式，在《RabbitMQ集群架构搭建与高可用性实现》文中，介绍了RabbitMQ的集群创建步骤方法。而镜像队列集群模式的搭建步骤和普通集群模式是基本相同的，唯一不同的是，镜像队列集群模式，多了一步配置policy的步骤。本文主要介绍镜像队列的原理及实现。">
+<meta property="og:locale">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/c8da13d3fbaa47b5844a4ac56af47781_c5de9157ed768845456377a66e6fbc45.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/8a7a7e951fea4019983a57856b4752f1_944a5ca5fac00d7fae903c92067edb80.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/1512df3b3bb543f792054123675fdc25_e9cd11bbf4b48504efae222dbff4c0c4.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/1539701465336.jpg">
+<meta property="article:published_time" content="2018-10-16T15:14:05.000Z">
+<meta property="article:modified_time" content="2023-06-07T00:55:37.997Z">
+<meta property="article:author" content="zhaoyh">
+<meta property="article:tag" content="RabbitMQ">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://static.zhaoyh.com.cn/c8da13d3fbaa47b5844a4ac56af47781_c5de9157ed768845456377a66e6fbc45.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.zhaoyh.com.cn/2018/10/16/RabbitMQ镜像队列原理分析/"/>
+
+
+
+
+
+  <title>RabbitMQ镜像队列原理分析 | zhaoyh's blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d0ffab0524d814292602098d0adb98c6";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zhaoyh's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://blog.zhaoyh.com.cn/2018/10/16/RabbitMQ%E9%95%9C%E5%83%8F%E9%98%9F%E5%88%97%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zhaoyh's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">RabbitMQ镜像队列原理分析</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-16T23:14:05+08:00">
+                2018-10-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%B6%88%E6%81%AF%E4%B8%AD%E9%97%B4%E4%BB%B6/" itemprop="url" rel="index">
+                    <span itemprop="name">消息中间件</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>对于RabbitMQ的节点来说，有单节点模式和集群模式两种，其中集群模式又分为普通集群模式和镜像队列集群模式，在<a target="_blank" rel="noopener" href="http://zhaoyh.com.cn/2018/06/19/RabbitMQ%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%AB%98%E5%8F%AF%E7%94%A8%E6%80%A7%E5%AE%9E%E7%8E%B0/">《RabbitMQ集群架构搭建与高可用性实现》</a>文中，介绍了RabbitMQ的集群创建步骤方法。而镜像队列集群模式的搭建步骤和普通集群模式是基本相同的，唯一不同的是，镜像队列集群模式，多了一步配置policy的步骤。本文主要介绍镜像队列的原理及实现。</p>
+</blockquote>
+<span id="more"></span>
+
+<h3 id="1-创建镜像队列模式"><a href="#1-创建镜像队列模式" class="headerlink" title="1. 创建镜像队列模式"></a>1. 创建镜像队列模式</h3><p>注意，到此步骤，我们假设是你已经创建好了RabbitMQ集群。</p>
+<h4 id="1-1-增加镜像队列的Policy"><a href="#1-1-增加镜像队列的Policy" class="headerlink" title="1.1 增加镜像队列的Policy"></a>1.1 增加镜像队列的Policy</h4><p>打开你的RabbitMQ管理首页，在Admin-&gt;Policy链接下开始创建Policy：<br><img src="https://static.zhaoyh.com.cn/c8da13d3fbaa47b5844a4ac56af47781_c5de9157ed768845456377a66e6fbc45.jpg" alt="image"></p>
+<ul>
+<li>Name: 你配置的Policy名称；</li>
+<li>Pattern: 匹配模式，图片的是匹配testMirror开头的交换机和队列；</li>
+<li>Priority: 优先级；</li>
+<li>Definition: 一些模式的定义，RabbitMQ已经列出了以下常见的模式定义。ha-mode是指定镜像队列的模式，有效值为all&#x2F;exactly&#x2F;nodes。其中all表示在集群中所有的节点上进行镜像；exactly表示在指定个数的节点上进行镜像，节点的个数由ha-params指定；nodes表示在指定的节点上进行镜像，节点名称通过ha-params指定。ha-sync-mode为指定镜像队列中消息的同步方式，有效值为automatic(自动同步)，manually(手动同步)；默认是manually，请注意一定要记得设置为automatic(自动同步），否则消息在镜像队列中是不会自动同步的（即普通集群模式），即新节点加入时不会自动同步消息和元数据，只能通过命令手动去同步。</li>
+</ul>
+<h4 id="1-2-代码声明交换机、队列、绑定等"><a href="#1-2-代码声明交换机、队列、绑定等" class="headerlink" title="1.2 代码声明交换机、队列、绑定等"></a>1.2 代码声明交换机、队列、绑定等</h4><p><img src="https://static.zhaoyh.com.cn/8a7a7e951fea4019983a57856b4752f1_944a5ca5fac00d7fae903c92067edb80.jpg" alt="image"></p>
+<h4 id="1-3-查看镜像队列是否声明成功"><a href="#1-3-查看镜像队列是否声明成功" class="headerlink" title="1.3 查看镜像队列是否声明成功"></a>1.3 查看镜像队列是否声明成功</h4><p>查看你刚声明的队列的详情：<br><img src="https://static.zhaoyh.com.cn/1512df3b3bb543f792054123675fdc25_e9cd11bbf4b48504efae222dbff4c0c4.jpg" alt="image"></p>
+<p>可以看到，ha-mode、node、salve等属性都已经创建成功。</p>
+<h3 id="2-镜像队列说明"><a href="#2-镜像队列说明" class="headerlink" title="2. 镜像队列说明"></a>2. 镜像队列说明</h3><h4 id="2-1-关于node节点"><a href="#2-1-关于node节点" class="headerlink" title="2.1 关于node节点"></a>2.1 关于node节点</h4><p>queue有master节点和slave节点。 要强调的是，在RabbitMQ中master和slave是针对一个queue而言的，而不是一个node作为所有queue的master，其它node作为slave。一个queue第一次创建的node为它的master节点，其它node为slave节点。</p>
+<h4 id="2-2-镜像队列服务提供方式"><a href="#2-2-镜像队列服务提供方式" class="headerlink" title="2.2 镜像队列服务提供方式"></a>2.2 镜像队列服务提供方式</h4><p><img src="https://static.zhaoyh.com.cn/1539701465336.jpg" alt="image"><br>如上图所示，在镜像队列集群模式中，对某个queue来说，只有master对外提供服务，而其他slave只提供备份服务，在master所在节点不可用时，选出一个slave作为新的master继续对外提供服务。</p>
+<p>无论客户端的请求打到master还是slave最终数据都是从master节点获取。当请求打到master节点时，master节点直接将消息返回给client，同时master节点会通过<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Reliable_multicast">GM（Guaranteed Multicast）协议</a>将queue的最新状态广播到slave节点。GM保证了广播消息的原子性，即要么都更新要么都不更新。</p>
+<p>当请求打到slave节点时，slave节点需要将请求先重定向到master节点，master节点将将消息返回给client，同时master节点会通过GM协议将queue的最新状态广播到slave节点。</p>
+<p>所以，多个客户端连接不同的镜像队列不会产生同一message被多次接受的情况。</p>
+<h4 id="2-3-RabbitMQ集群处理新增节点"><a href="#2-3-RabbitMQ集群处理新增节点" class="headerlink" title="2.3 RabbitMQ集群处理新增节点"></a>2.3 RabbitMQ集群处理新增节点</h4><p>如果有新节点加入，RabbitMQ不会同步之前的历史数据，新节点只会复制该节点加入到集群之后新增的消息。<br>既然master节点退出集群会选一个slave作为master，那么如果不幸选中了一个刚刚加入集群的节点怎么办？那消息不就丢了吗？这里您可以把心放到肚子里，RabbitMQ集群内部会维护节点的状态是否已经同步，使用rabbitmqctl的synchronised_slave_pids参数，就可以查看状态。如果slave_pids和synchronised_slave_pids里面的节点是一致的，那说明全都同步了；如果不一致很容易比较出来哪些还没有同步，集群只会在“最老”的slave节点之间选一个出来作为新的master节点。另外对于node节点的重启也是按照新节点来处理的。</p>
+<h4 id="2-4-镜像队列注意点"><a href="#2-4-镜像队列注意点" class="headerlink" title="2.4 镜像队列注意点"></a>2.4 镜像队列注意点</h4><ul>
+<li>镜像队列不能作为负载均衡使用，因为每个声明和消息操作都要在所有节点复制一遍。</li>
+<li>ha-mode参数和durable declare对exclusive队列都不生效，因为exclusive队列是连接独占的，当连接断开，队列自动删除。所以实际上这两个参数对exclusive队列没有意义。</li>
+<li>每当一个节点加入或者重新加入(例如从网络分区中恢复回来)镜像队列，之前保存的队列内容会被清空。</li>
+<li>对于镜像队列，客户端basic.publish操作会同步到所有节点；而其他操作则是通过master中转，再由master将操作作用于salve。比如一个basic.get操作，假如客户端与slave建立了TCP连接，首先是slave将basic.get请求发送至master，由master备好数据，返回至slave，投递给消费者。</li>
+</ul>
+<h4 id="2-5-镜像队列的故障恢复"><a href="#2-5-镜像队列的故障恢复" class="headerlink" title="2.5 镜像队列的故障恢复"></a>2.5 镜像队列的故障恢复</h4><p>假设两个节点(A和B)组成一个镜像队列。</p>
+<ul>
+<li>场景1：A先停，B后停。 该场景下B是master（disk节点，A是ram），只要先启动B，再启动A即可。或者先启动A，再在30秒之内启动B即可恢复镜像队列。</li>
+<li>场景2: A, B同时停。 该场景可能是由掉电等原因造成，只需在30秒之内连续启动A和B即可恢复镜像队列。</li>
+<li>场景3：A先停，B后停，且A无法恢复。 该场景是场景1的加强版，因为B是master，所以等B起来后，在B节点上调用rabbitmqctl forget_cluster_node A，解除与A的cluster关系，再将新的slave节点加入B即可重新恢复镜像队列。</li>
+<li>场景4：A先停，B后停，且B无法恢复。 该场景是场景3的加强版，比较难处理，早在3.1.x时代之前貌似都没什么好的解决方法，但是现在已经有解决方法了，在3.4.2版本亲测有效（我们当前使用的是3.3.5）。因为B是master，所以直接启动A是不行的，当A无法启动时，也就没办法在A节点上调用rabbitmqctl forget_cluster_node B了。新版本中，forget_cluster_node支持–offline参数，offline参数允许rabbitmqctl在离线节点上执行forget_cluster_node命令，迫使RabbitMQ在未启动的slave节点中选择一个作为master。当在A节点执行rabbitmqctl forget_cluster_node –offline B时，RabbitMQ会mock一个节点代表A，执行forget_cluster_node命令将B剔出cluster，然后A就能正常启动了。最后将新的slave节点加入A即可重新恢复镜像队列。</li>
+<li>场景5: A先停，B后停，且A、B均无法恢复，但是能得到A或B的磁盘文件。 该场景是场景4的加强版，更加难处理。将A或B的数据库文件(默认在$RABBIT_HOME&#x2F;var&#x2F;lib目录中)拷贝至新节点C的目录下，再将C的hostname改成A或B的hostname。如果拷过来的是A节点磁盘文件，按场景4处理方式；如果拷过来的是B节点磁盘文件，按场景3处理方式。最后将新的slave节点加入C即可重新恢复镜像队列。</li>
+<li>场景6：A先停，B后停，且A、B均无法恢复，且无法得到A或B的磁盘文件。 洗洗睡吧，该场景下已无法恢复A、B队列中的内容了。</li>
+</ul>
+<blockquote>
+<p>以上内容就是RabbitMQ镜像队列原理分析的全部内容了，谢谢你阅读到了这里！</p>
+</blockquote>
+<blockquote>
+<p>Author：zhaoyh</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/RabbitMQ/" rel="tag"># RabbitMQ</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/19/Spring-Cloud%E4%B9%8B%E6%B6%88%E6%81%AF%E6%80%BB%E7%BA%BF/" rel="next" title="Spring Cloud之消息总线">
+                <i class="fa fa-chevron-left"></i> Spring Cloud之消息总线
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/10/23/Spring-Cloud%E4%B9%8B%E6%95%B0%E6%8D%AE%E6%B5%81Stream/" rel="prev" title="Spring Cloud之数据流Stream">
+                Spring Cloud之数据流Stream <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMDY5Mi83MjQ3"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">45</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">58</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E9%95%9C%E5%83%8F%E9%98%9F%E5%88%97%E6%A8%A1%E5%BC%8F"><span class="nav-text">1. 创建镜像队列模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-%E5%A2%9E%E5%8A%A0%E9%95%9C%E5%83%8F%E9%98%9F%E5%88%97%E7%9A%84Policy"><span class="nav-text">1.1 增加镜像队列的Policy</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-%E4%BB%A3%E7%A0%81%E5%A3%B0%E6%98%8E%E4%BA%A4%E6%8D%A2%E6%9C%BA%E3%80%81%E9%98%9F%E5%88%97%E3%80%81%E7%BB%91%E5%AE%9A%E7%AD%89"><span class="nav-text">1.2 代码声明交换机、队列、绑定等</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F%E9%98%9F%E5%88%97%E6%98%AF%E5%90%A6%E5%A3%B0%E6%98%8E%E6%88%90%E5%8A%9F"><span class="nav-text">1.3 查看镜像队列是否声明成功</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E9%95%9C%E5%83%8F%E9%98%9F%E5%88%97%E8%AF%B4%E6%98%8E"><span class="nav-text">2. 镜像队列说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-%E5%85%B3%E4%BA%8Enode%E8%8A%82%E7%82%B9"><span class="nav-text">2.1 关于node节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-%E9%95%9C%E5%83%8F%E9%98%9F%E5%88%97%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E6%96%B9%E5%BC%8F"><span class="nav-text">2.2 镜像队列服务提供方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-RabbitMQ%E9%9B%86%E7%BE%A4%E5%A4%84%E7%90%86%E6%96%B0%E5%A2%9E%E8%8A%82%E7%82%B9"><span class="nav-text">2.3 RabbitMQ集群处理新增节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4-%E9%95%9C%E5%83%8F%E9%98%9F%E5%88%97%E6%B3%A8%E6%84%8F%E7%82%B9"><span class="nav-text">2.4 镜像队列注意点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-%E9%95%9C%E5%83%8F%E9%98%9F%E5%88%97%E7%9A%84%E6%95%85%E9%9A%9C%E6%81%A2%E5%A4%8D"><span class="nav-text">2.5 镜像队列的故障恢复</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhaoyh</span>
+</div>
+
+
+<a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">京ICP备2022006929号-1</a>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

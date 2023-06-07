@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="MyBatis,数据库,大数据," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="zhaoyh's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="1. 概述1.1 数据库简要数据是数据库中存储的基本对象，包括数字、图像、音频等形式，在进行逐级抽象后存储在数据库中。数据库是由特定软件，即数据库管理系统（DBMS）搭建、处理、维护的数据及数据间逻辑关系的集合体。它面向多种应用，可以被多个用户、多个应用程序所共享。DBMS是负责数据库搭建、使用和维护的大型系统软件，它对数据进行统一控制管理，以保证数据的完整性和安全性。数据库和数据库管理系统共同组">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据库开发入门级教程">
+<meta property="og:url" content="http://blog.zhaoyh.com.cn/2023/05/12/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E7%BA%A7%E6%95%99%E7%A8%8B/index.html">
+<meta property="og:site_name" content="zhaoyh&#39;s blog">
+<meta property="og:description" content="1. 概述1.1 数据库简要数据是数据库中存储的基本对象，包括数字、图像、音频等形式，在进行逐级抽象后存储在数据库中。数据库是由特定软件，即数据库管理系统（DBMS）搭建、处理、维护的数据及数据间逻辑关系的集合体。它面向多种应用，可以被多个用户、多个应用程序所共享。DBMS是负责数据库搭建、使用和维护的大型系统软件，它对数据进行统一控制管理，以保证数据的完整性和安全性。数据库和数据库管理系统共同组">
+<meta property="og:locale">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/WEBRESOURCE5cf9dc32b1e3aaeeee15e2cf541e4e90.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/v2_3ca12a6cf02044ca980811e489e23225_img_000.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/WEBRESOURCEf7353be5d4dc2e345543891aa1e873a0.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/WEBRESOURCE203586ffd917e0ccc9ecb3faa9de7513.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/WEBRESOURCEe76288a7b40eb52792f677021edc28f5.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/WEBRESOURCE07d121c1aad8080831c21702c1e83661.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/WEBRESOURCEe1bf1678ad203d8f414ee067d4a18f02.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/WEBRESOURCEe4894fb65ec55c99630d1552b25017fc.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/WEBRESOURCE3d07cfcdb964f8aa3680f8a9e2e26329.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/WEBRESOURCE1d155fb3070155b3e964a578d353cfb2.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/WEBRESOURCE72abbd13962dc3535648bf9dbcaf8a97.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/202206131411437.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/202206131358853.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/WEBRESOURCEec5ca2510fd9f842e68fce15ce2c286d.png">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/v2_93bf1c4ad26540e18920c1e7f7dd0f4d_img_000.png">
+<meta property="article:published_time" content="2023-05-12T08:04:38.000Z">
+<meta property="article:modified_time" content="2023-06-07T00:55:37.950Z">
+<meta property="article:author" content="zhaoyh">
+<meta property="article:tag" content="MyBatis">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="大数据">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://static.zhaoyh.com.cn/WEBRESOURCE5cf9dc32b1e3aaeeee15e2cf541e4e90.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.zhaoyh.com.cn/2023/05/12/数据库开发入门级教程/"/>
+
+
+
+
+
+  <title>数据库开发入门级教程 | zhaoyh's blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d0ffab0524d814292602098d0adb98c6";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zhaoyh's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://blog.zhaoyh.com.cn/2023/05/12/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E7%BA%A7%E6%95%99%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zhaoyh's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">数据库开发入门级教程</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-05-12T16:04:38+08:00">
+                2023-05-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%9F%BA%E7%A1%80%E6%9C%8D%E5%8A%A1/" itemprop="url" rel="index">
+                    <span itemprop="name">基础服务</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h3><h4 id="1-1-数据库简要"><a href="#1-1-数据库简要" class="headerlink" title="1.1 数据库简要"></a>1.1 数据库简要</h4><p>数据是数据库中存储的基本对象，包括数字、图像、音频等形式，在进行逐级抽象后存储在数据库中。数据库是由特定软件，即数据库管理系统（DBMS）搭建、处理、维护的数据及数据间逻辑关系的集合体。它面向多种应用，可以被多个用户、多个应用程序所共享。DBMS是负责数据库搭建、使用和维护的大型系统软件，它对数据进行统一控制管理，以保证数据的完整性和安全性。数据库和数据库管理系统共同组成了数据库系统。</p>
+<span id="more"></span>
+
+<p><img src="https://static.zhaoyh.com.cn/WEBRESOURCE5cf9dc32b1e3aaeeee15e2cf541e4e90.png" alt="image"></p>
+<h4 id="1-2-发展历程"><a href="#1-2-发展历程" class="headerlink" title="1.2 发展历程"></a>1.2 发展历程</h4><p><img src="https://static.zhaoyh.com.cn/v2_3ca12a6cf02044ca980811e489e23225_img_000.png" alt="image"></p>
+<p><img src="https://static.zhaoyh.com.cn/WEBRESOURCEf7353be5d4dc2e345543891aa1e873a0.png" alt="image"></p>
+<h4 id="1-3-SQL介绍"><a href="#1-3-SQL介绍" class="headerlink" title="1.3 SQL介绍"></a>1.3 SQL介绍</h4><p><img src="https://static.zhaoyh.com.cn/WEBRESOURCE203586ffd917e0ccc9ecb3faa9de7513.png" alt="image"></p>
+<h3 id="2-数据库选型"><a href="#2-数据库选型" class="headerlink" title="2. 数据库选型"></a>2. 数据库选型</h3><h4 id="2-1-按数据结构分类"><a href="#2-1-按数据结构分类" class="headerlink" title="2.1 按数据结构分类"></a>2.1 按数据结构分类</h4><ul>
+<li>传统关系型数据库，保证ACID特性，是当今主流的数据库类型，如Oracle、MySQL、PostgreSQL、SQLite、SQLServer；</li>
+<li>NoSQL数据库，NoSQL即Not Only SQL，NoSQL数据库指那些不使用关系模型、分布式、不保证遵循ACID原型的数据库。列式（HBase、Cassandra、ClickHouse），键值（Redis、Memcached），图数据库（Neo4J，TigerGraph），文档（MongoDB、CouchDB、ElasticSearch），时序（InfluxDB、Prometheus）；</li>
+<li>NewSQL数据库，NoSQL虽然在可扩展性和可用性方面表现优秀，但是无法满足事务一致性的要求。2011年Matthew Aslett提出了“NewSQL”术语用以定义新出现的“可横向扩展的OLTP关系型数据库”。MemSQL、VoltDB、NuoDB、TIDB；</li>
+<li>多模数据库，是一种可以在多个模型中存储和查询数据的数据库，为异构数据提供了较好的解决方案。数据库扩展原有模型的路径主要有四种：新存储方式+新数据模型、原存储方式+新数据模型、新接口+原存储模型、原存储模型；</li>
+</ul>
+<p><img src="https://static.zhaoyh.com.cn/WEBRESOURCEe76288a7b40eb52792f677021edc28f5.png" alt="image"></p>
+<p><img src="https://static.zhaoyh.com.cn/WEBRESOURCE07d121c1aad8080831c21702c1e83661.png" alt="image"></p>
+<h4 id="2-2-按部署模式分类"><a href="#2-2-按部署模式分类" class="headerlink" title="2.2 按部署模式分类"></a>2.2 按部署模式分类</h4><ul>
+<li>本地部署，在物理机、虚拟机上部署，最传统的方式；</li>
+<li>云托管数据库，云服务厂商负责管理与维护基础设施，并提供优化、备份、恢复、监控等全套解决方案。企业用户无需购买服务器、交换机等软硬件，后续也无需投入大量的人力成本去运维，可以更专注于企业的应用开发，如阿里云-RDS-MySQL版、腾讯云MySQL，云托管数据库与开源版数据库相比，是一种“开箱即用、弹性扩展、省钱省力、高度可用”的解决方案；</li>
+<li>云原生数据库，基于云环境设计的新型数据库，天生匹配云环境和分布式事务。其核心是存储与计算分离，同时还具备高性能、高可扩展、一致性、容错、易于管理和多云支持等特性。阿里云PolarDB、腾讯云TDSQL、华为云GaussDB</li>
+</ul>
+<p>上层需求驱动，底层技术支撑，存算分离，优化资源编排，云原生数据库是未来趋势：</p>
+<p>对于非云原生的数据库，大体的迁移步骤可参考下图：</p>
+<p><img src="https://static.zhaoyh.com.cn/WEBRESOURCEe1bf1678ad203d8f414ee067d4a18f02.png" alt="image"></p>
+<h4 id="2-3-按功能分类"><a href="#2-3-按功能分类" class="headerlink" title="2.3 按功能分类"></a>2.3 按功能分类</h4><ul>
+<li>OLTP事务型数据库，主要做实时事务处理，通常对规范化、实时性、稳定性、事务性、一致性、完整性等有要求，比如处理用户基本信息、处理订单合同、处理银行转账业务、企业的ERP系统和OA系统等；</li>
+<li>OLAP分析型数据库，主要来自数据仓库、数据集市或数据湖的数据，主要做历史数据分析，为商业决策提供支持，频率较低地，对大量数据，做读取、聚合、计算、分析，实时性要求不高，对吞吐能力要求较高；</li>
+<li>HTAP混合型数据库，随着数据价值的进一步挖掘，企业对数据库系统也提出了新的要求。现阶段企业为满足交易处理和分析的需求，往往采用OLTP+OLAP的组合方案。但二者之间往往存在时延，无法满足企业实时分析的需求；同时管理两个平台往往需要组建两支团队，运维成本高。 HTAP (Hybrid Transactional&#x2F;Analytical Processing) 混合型数据库基于新的计算存储框架，能够同时支撑OLTP和OLAP场景，避免传统架构中大量数据交互造成的资源浪费和冲突。此外，HTAP基于分布式架构，支持弹性扩容，可按需扩展吞吐或存储，轻松应对高并发、海量数据场景；</li>
+</ul>
+<p><img src="https://static.zhaoyh.com.cn/WEBRESOURCEe4894fb65ec55c99630d1552b25017fc.png" alt="image"></p>
+<p><img src="https://static.zhaoyh.com.cn/WEBRESOURCE3d07cfcdb964f8aa3680f8a9e2e26329.png" alt="image"></p>
+<h3 id="3-数据库连接池"><a href="#3-数据库连接池" class="headerlink" title="3. 数据库连接池"></a>3. 数据库连接池</h3><h4 id="3-1-连接池介绍"><a href="#3-1-连接池介绍" class="headerlink" title="3.1 连接池介绍"></a>3.1 连接池介绍</h4><p>数据库连接池负责分配、管理和释放数据库连接，它允许应用程序重复使用一个现有的数据库连接，而不是再重新建立一个。通过释放空闲时间超过最大空闲时间的数据库连接来避免因为没有释放数据库连接而引起的数据库连接遗漏。这项技术能明显提高对数据库操作的性能。</p>
+<p>连接池基本的思想是在系统初始化的时候，将数据库连接作为对象存储在内存中，当用户需要访问数据库时，并非建立一个新的连接，而是从连接池中取出一个已建立的空闲连接对象。使用完毕后，用户也并非将连接关闭，而是将连接放回连接池中，以供下一个请求访问使用。而连接的建立、断开都由连接池自身来管理。同时，还可以通过设置连接池的参数来控制连接池中的初始连接数、连接的上下限数以及每个连接的最大使用次数、最大空闲时间等等。也可以通过其自身的管理机制来监视数据库连接的数量、使用情况等。目前，市面上常见的数据库连接池组件主要有如下几个：</p>
+<ul>
+<li>C3P0，历史悠久，过于复杂，性能差，不推荐使用。由于一度是Hibernate内置的数据库连接池而被开发者熟知，但是由于性能和复杂度，官方已经放弃维护；</li>
+<li>DBCP，依赖Commons-Pool，性能差，属于Apache顶级项目Commons中的核心子项目，但DBCP并不是独立实现连接池功能的，它内部依赖于Commons-Pool项目；</li>
+<li>HikariCP，Spring Boot官方默认连接池；</li>
+<li>Druid，阿里巴巴开源的数据库连接池，深受企业级验证；</li>
+</ul>
+<p>Druid的方案及接入性能对比可参考如下：</p>
+<p><img src="https://static.zhaoyh.com.cn/WEBRESOURCE1d155fb3070155b3e964a578d353cfb2.png" alt="image"></p>
+<p>对于连接池来说，连接池本身的性能消耗在整个调用链路中通常占比不大，连接池的性能关键点是，连接是否LRU的方式重用，是否支持PSCache（PreparedStatementCache）才是性能的关键点。</p>
+<h4 id="3-2-连接池使用案例"><a href="#3-2-连接池使用案例" class="headerlink" title="3.2 连接池使用案例"></a>3.2 连接池使用案例</h4><p><img src="https://static.zhaoyh.com.cn/WEBRESOURCE72abbd13962dc3535648bf9dbcaf8a97.png" alt="image"></p>
+<p>以默认数据库连接池HikariCP为例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">spring.datasource.hikari.minimum-idle=5</span><br><span class="line">spring.datasource.hikari.maximum-pool-size=10</span><br><span class="line">spring.datasource.hikari.idle-timeout=600000</span><br><span class="line">spring.datasource.hikari.max-lifetime=540000</span><br><span class="line">spring.datasource.hikari.connection-timeout=3000</span><br><span class="line">spring.datasource.hikari.connection-test-query=SELECT 1</span><br></pre></td></tr></table></figure>
+
+<p>单个配置的含义：</p>
+<ul>
+<li><code>minimum-idle</code>，最小空闲连接数；</li>
+<li><code>maximum-pool-size</code>，最大连接数，包括闲置和使用中的连接；</li>
+<li><code>idle-timeout</code>，连接允许在池中闲置的最长时间；</li>
+<li><code>max-lifetime</code>，池中连接最长生命周期，即最大存活时间；</li>
+<li><code>connection-timeout</code>，等待来自池的连接的最大毫秒数；</li>
+<li><code>connection-test-query</code>，用于测试连接是否可用的查询语句，基本不需要配置；</li>
+</ul>
+<h3 id="4-ORM开发框架"><a href="#4-ORM开发框架" class="headerlink" title="4. ORM开发框架"></a>4. ORM开发框架</h3><h4 id="4-1-JDBC与ORM概念"><a href="#4-1-JDBC与ORM概念" class="headerlink" title="4.1 JDBC与ORM概念"></a>4.1 JDBC与ORM概念</h4><p>JDBC（Java DataBase Connectivity），是Java连接数据库操作的原生接口。JDBC对Java程序员而言是API，为数据库访问提供标准的接口。由各个数据库厂商及第三方中间件厂商依照JDBC规范为数据库的连接提供的标准方法。</p>
+<p><img src="https://static.zhaoyh.com.cn/202206131411437.png" alt="image"></p>
+<p>对象-关系映射（Object-Relational Mapping，简称ORM），ORM框架中是Java面向对象编程的思想完美体现。直白点说，ORM就是将代码里面的Java类与DB中的表进行映射，代码中对相关Java类的操作，即体现为DB中对相关数据库表的操作。</p>
+<p><img src="https://static.zhaoyh.com.cn/202206131358853.png" alt="image"></p>
+<h4 id="4-2-ORM框架选型"><a href="#4-2-ORM框架选型" class="headerlink" title="4.2 ORM框架选型"></a>4.2 ORM框架选型</h4><ul>
+<li>JdbcTemplate，原生模式，需要手写查询结果和Java类的映射；</li>
+<li>MyBatis，类似的框架Mybatis-plus，FastMyBatis，在中文开发界很流行；</li>
+<li>Spring-Data-JPA，全自动框架，一般来讲不需要写任何sql，建表的过程也是全自动的，需要写的话，也可以直接写在注解参数里，同时建表的过程也是全自动的，开发者只需要写好对应的类和相关注解；</li>
+</ul>
+<p>Spring Data Jpa是可以完全与数据库脱钩的，在代码迁移到其他数据库之后，只需要切换对应的Dialect就行了。而MyBatis由于所有SQL都是依赖数据库书写的，所以扩展性，迁移性比较差，则可能需要做更多的工作。</p>
+<p>Spring Data Jpa自动生成的sql比较不符合人们的阅读习惯，而MyBatis的Sql则与开发的开发习惯结合较密切，因此在出了问题debug的时候， MyBatis会方便一些。</p>
+<h4 id="4-3-Spring-Data-Jpa接入流程"><a href="#4-3-Spring-Data-Jpa接入流程" class="headerlink" title="4.3 Spring Data Jpa接入流程"></a>4.3 Spring Data Jpa接入流程</h4><p>首先添加依赖：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>配置文件引入数据库链接信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver</span><br><span class="line">spring.datasource.url=jdbc:mysql://xxx/YourDB?useUnicode=true&amp;characterEncoding=UTF-8</span><br><span class="line">spring.datasource.username=xx</span><br><span class="line">spring.datasource.password=xx</span><br></pre></td></tr></table></figure>
+
+<p>添加实体类，并制定数据表名：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Table(name = &quot;user_info&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserInfo</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="keyword">private</span> Long userId;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String userName;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String userPhone;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再新建一个操作数据的<code>Repository</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Repository</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserInfoRepository</span> <span class="keyword">extends</span> <span class="title class_">JpaRepository</span>&lt;UserInfo, Long&gt; &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来，直接操作这个Repository对该表进行增删改查操作即可。JPA也提供了对应的接口：</p>
+<p><img src="https://static.zhaoyh.com.cn/WEBRESOURCEec5ca2510fd9f842e68fce15ce2c286d.png" alt="image"></p>
+<h3 id="5-数据库与大数据技术"><a href="#5-数据库与大数据技术" class="headerlink" title="5. 数据库与大数据技术"></a>5. 数据库与大数据技术</h3><p>以Hadoop为代表的大数据技术以低成本的方式提供海量数据的开发和运行处理，但缺点是结构化能力较差，早期不支持SQL语句解析。随着大数据技术发展，基于Hadoop的数仓工具Hive开始提供SQL查询功能，但整体性能较差。随后支持SQL查询的工具（如Spark SQL）开始涌现，大数据技术的分析处理能力提升，结构化趋势明显。另一方面，数据库天然具备强结构化能力，尤其关系型数据库原生支持SQL查询，但早期存储成本高，对海量数据的支持能力不足。但随着对象存储（OSS）被广泛应用，其低成本、高可用、数据持久及按需付费的特点，让数据库产品能够应对轻体量的大数据场景。由此，随着数据技术的发展创新，数据库与大数据技术的边界不断模糊，二者互相延伸。我们认为传统大数据技术有着更为丰富的生态，但是对技术要求较高，相比较而言，从仓向湖的延伸路线，更适合传统企业和中小企业。</p>
+<p>数据库与大数据技术边界不断模糊，呈现融合趋势。</p>
+<p><img src="https://static.zhaoyh.com.cn/v2_93bf1c4ad26540e18920c1e7f7dd0f4d_img_000.png" alt="image"></p>
+<blockquote>
+<p>以上内容就是关于数据库开发入门级教程的全部内容了，谢谢你阅读到了这里！</p>
+</blockquote>
+<blockquote>
+<p>Author:zhaoyh</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/MyBatis/" rel="tag"># MyBatis</a>
+          
+            <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+          
+            <a href="/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/" rel="tag"># 大数据</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2023/02/20/%E8%81%8A%E4%B8%80%E8%81%8A%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/" rel="next" title="聊一聊单元测试">
+                <i class="fa fa-chevron-left"></i> 聊一聊单元测试
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMDY5Mi83MjQ3"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">45</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">58</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%A6%82%E8%BF%B0"><span class="nav-text">1. 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%80%E8%A6%81"><span class="nav-text">1.1 数据库简要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-%E5%8F%91%E5%B1%95%E5%8E%86%E7%A8%8B"><span class="nav-text">1.2 发展历程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-SQL%E4%BB%8B%E7%BB%8D"><span class="nav-text">1.3 SQL介绍</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%95%B0%E6%8D%AE%E5%BA%93%E9%80%89%E5%9E%8B"><span class="nav-text">2. 数据库选型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-%E6%8C%89%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%88%86%E7%B1%BB"><span class="nav-text">2.1 按数据结构分类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-%E6%8C%89%E9%83%A8%E7%BD%B2%E6%A8%A1%E5%BC%8F%E5%88%86%E7%B1%BB"><span class="nav-text">2.2 按部署模式分类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-%E6%8C%89%E5%8A%9F%E8%83%BD%E5%88%86%E7%B1%BB"><span class="nav-text">2.3 按功能分类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0"><span class="nav-text">3. 数据库连接池</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-%E8%BF%9E%E6%8E%A5%E6%B1%A0%E4%BB%8B%E7%BB%8D"><span class="nav-text">3.1 连接池介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-%E8%BF%9E%E6%8E%A5%E6%B1%A0%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8B"><span class="nav-text">3.2 连接池使用案例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-ORM%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6"><span class="nav-text">4. ORM开发框架</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-JDBC%E4%B8%8EORM%E6%A6%82%E5%BF%B5"><span class="nav-text">4.1 JDBC与ORM概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-ORM%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B"><span class="nav-text">4.2 ORM框架选型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-Spring-Data-Jpa%E6%8E%A5%E5%85%A5%E6%B5%81%E7%A8%8B"><span class="nav-text">4.3 Spring Data Jpa接入流程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8E%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF"><span class="nav-text">5. 数据库与大数据技术</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhaoyh</span>
+</div>
+
+
+<a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">京ICP备2022006929号-1</a>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

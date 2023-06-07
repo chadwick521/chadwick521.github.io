@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="RabbitMQ,负载均衡,集群," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="zhaoyh's blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="当你的RabbitMQ服务器遇到诸如内存崩溃或者断电等极端情况时，单节点是不能应对这些故障的。因此需要多节点集群部署来弹性应对故障。另外可以通过多节点部署，来扩展消息通信的吞吐量。  1. 集群搭建首先，我们不用关心RabbitMQ的集群策略、节点类型等问题，可以先手动把RabbitMQ的集群搭建好，再一步步地了解其原理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RabbitMQ集群架构搭建与高可用性实现">
+<meta property="og:url" content="http://blog.zhaoyh.com.cn/2018/06/19/RabbitMQ%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%AB%98%E5%8F%AF%E7%94%A8%E6%80%A7%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="zhaoyh&#39;s blog">
+<meta property="og:description" content="当你的RabbitMQ服务器遇到诸如内存崩溃或者断电等极端情况时，单节点是不能应对这些故障的。因此需要多节点集群部署来弹性应对故障。另外可以通过多节点部署，来扩展消息通信的吞吐量。  1. 集群搭建首先，我们不用关心RabbitMQ的集群策略、节点类型等问题，可以先手动把RabbitMQ的集群搭建好，再一步步地了解其原理。">
+<meta property="og:locale">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/1531902620506.jpg">
+<meta property="og:image" content="https://static.zhaoyh.com.cn/haproxy_rabbit.jpg">
+<meta property="article:published_time" content="2018-06-19T04:03:54.000Z">
+<meta property="article:modified_time" content="2023-06-07T00:55:37.976Z">
+<meta property="article:author" content="zhaoyh">
+<meta property="article:tag" content="RabbitMQ">
+<meta property="article:tag" content="负载均衡">
+<meta property="article:tag" content="集群">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://static.zhaoyh.com.cn/1531902620506.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://blog.zhaoyh.com.cn/2018/06/19/RabbitMQ集群架构搭建与高可用性实现/"/>
+
+
+
+
+
+  <title>RabbitMQ集群架构搭建与高可用性实现 | zhaoyh's blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d0ffab0524d814292602098d0adb98c6";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">zhaoyh's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://blog.zhaoyh.com.cn/2018/06/19/RabbitMQ%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84%E6%90%AD%E5%BB%BA%E4%B8%8E%E9%AB%98%E5%8F%AF%E7%94%A8%E6%80%A7%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="zhaoyh's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">RabbitMQ集群架构搭建与高可用性实现</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-19T12:03:54+08:00">
+                2018-06-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%B6%88%E6%81%AF%E4%B8%AD%E9%97%B4%E4%BB%B6/" itemprop="url" rel="index">
+                    <span itemprop="name">消息中间件</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>当你的RabbitMQ服务器遇到诸如内存崩溃或者断电等极端情况时，单节点是不能应对这些故障的。因此需要多节点集群部署来弹性应对故障。另外可以通过多节点部署，来扩展消息通信的吞吐量。</p>
+</blockquote>
+<h3 id="1-集群搭建"><a href="#1-集群搭建" class="headerlink" title="1. 集群搭建"></a>1. 集群搭建</h3><p>首先，我们不用关心RabbitMQ的集群策略、节点类型等问题，可以先手动把RabbitMQ的集群搭建好，再一步步地了解其原理。</p>
+<span id="more"></span>
+
+<h4 id="1-1-准备两个节点"><a href="#1-1-准备两个节点" class="headerlink" title="1.1 准备两个节点"></a>1.1 准备两个节点</h4><p>搭建的详细过程就不再叙述，具体可参考<a target="_blank" rel="noopener" href="http://note.youdao.com/noteshare?id=ccf5bf5eb8cea8ada9ba76d51d401be6">RabbitMQ安装</a>。</p>
+<p>我在两台机器上分别安装了RabbitMQ，在&#x2F;etc&#x2F;hostname里也分别配置了机器名：nc060、nc078，要保证两台机器互相能ping通。</p>
+<h4 id="1-2-共享Erlang-Cookie"><a href="#1-2-共享Erlang-Cookie" class="headerlink" title="1.2 共享Erlang Cookie"></a>1.2 共享Erlang Cookie</h4><p>erlang.cookie是erlang实现分布式通信的必要文件，erlang之间的共享通信要求分布式的每个节点上要保持相同的erlang.cookie文件，同时保证文件的权限是400。因此，先把两台RabbitMQ服务关闭，其次，我们把nc060和nc078的erlang.cookie设置成相同，我是把nc060上的erlang.cookie内容复制到nc078机器下。</p>
+<p>如果我们使用解压缩方式安装部署的RabbitMQ，那么这个文件会在$home&#x2F;.erlang.cookie下。<br>如果我们使用rpm或者yum等安装包方式进行安装的，那么这个文件会在&#x2F;var&#x2F;lib&#x2F;rabbitmq&#x2F;.erlang.cookie下。</p>
+<p>放心，到了这里很多人会懵，不要怕，我们已经完成了RabbitMQ集群部署的最难的部分了。</p>
+<h4 id="1-3-部署集群"><a href="#1-3-部署集群" class="headerlink" title="1.3 部署集群"></a>1.3 部署集群</h4><p>此时应保证两台装有RabbitMQ的机器具有相同的erlang.cookie内容。</p>
+<p>进入到nc060机器的RabbitMQ的sbin目录：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./rabbitmqctl join_cluster --ram rabbit@nc078</span><br></pre></td></tr></table></figure>
+
+<p>此时就加入到nc078机器下的集群了，并设置nc060为ram节点，至于什么是ram节点，可参考2.2节的内容。</p>
+<p>分别启动两台机器的RabbitMQ节点：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./rabbitmqctl start_app</span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./rabbitmq-server -detached</span><br></pre></td></tr></table></figure>
+
+<p>此时去RabbitMQ的web管理页面，会看到已经成功了：</p>
+<p><img src="https://static.zhaoyh.com.cn/1531902620506.jpg" alt="image"></p>
+<h3 id="2-相关说明"><a href="#2-相关说明" class="headerlink" title="2. 相关说明"></a>2. 相关说明</h3><p>接下来会对集群部署策略，和一些关键技术做一些介绍。</p>
+<h4 id="2-1-节点类型"><a href="#2-1-节点类型" class="headerlink" title="2.1 节点类型"></a>2.1 节点类型</h4><ul>
+<li>ram（内存）节点：将队列、交换机、绑定等数据存储在内存中，好处是存储和交换机生命之类的操作速度快，坏处是断电后数据会丢失。</li>
+<li>disk（磁盘）节点：将元数据存储在磁盘中，单节点的RabbitMQ只允许磁盘节点，防止重启RabbitMQ的时候，丢失配置信息。</li>
+</ul>
+<blockquote>
+<p>RabbitMQ要求在集群中至少有一个磁盘节点，所有其他节点可以是内存节点，当节点加入或者离开集群时，必须要将该变更通知到至少一个磁盘节点。如果集群中唯一的一个磁盘节点崩溃的话，集群可以继续路由消息，但是无法进行其他操作（增删改查队列、交换机、权限等），直到节点恢复。 </p>
+</blockquote>
+<h4 id="2-2-元数据"><a href="#2-2-元数据" class="headerlink" title="2.2 元数据"></a>2.2 元数据</h4><p>RabbitMQ会始终记录以下四种类型的内部元数据：</p>
+<ul>
+<li>队列元数据：队列名称及属性（是否持久化、自动删除等）。</li>
+<li>交换机元数据：交换机名称、属性、类型等。</li>
+<li>绑定元数据：将消息路由到队列。</li>
+<li>vhost元数据：命名空间属性。</li>
+</ul>
+<h4 id="2-3-集群模式"><a href="#2-3-集群模式" class="headerlink" title="2.3 集群模式"></a>2.3 集群模式</h4><ul>
+<li>普通模式：集群的默认模式，以本次搭建的集群（nc060，nc078）为例，nc060和nc078拥有相同的元数据，即交换机、队列、绑定等基础结构，但是消息实体只存在于一个节点。</li>
+<li>镜像模式：将需要消费的队列变为镜像队列，存在于集群的多个节点，这样就可以实现RabbitMQ的HA高可用性。作用就是消息实体会主动在镜像节点之间实现同步，而不是像普通模式那样，在consumer消费数据时临时读取。缺点就是，集群内部的同步通讯会占用网络带宽。</li>
+</ul>
+<h3 id="3-高可用性部署策略"><a href="#3-高可用性部署策略" class="headerlink" title="3. 高可用性部署策略"></a>3. 高可用性部署策略</h3><h4 id="3-1-镜像队列"><a href="#3-1-镜像队列" class="headerlink" title="3.1 镜像队列"></a>3.1 镜像队列</h4><p>此部分内容可参考官方文档：<a target="_blank" rel="noopener" href="http://www.rabbitmq.com/ha.html">http://www.rabbitmq.com/ha.html</a></p>
+<p>RabbitMQ镜像队列的模式如下列表：</p>
+<table>
+<thead>
+<tr>
+<th>ha-mode</th>
+<th>ha-params</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>exactly</td>
+<td>count</td>
+<td>镜像队列将会在集群上复制count份。如果节点数量少于count，队列会复制到所有节点上。如果节点数量大于count，有一个镜像节点crash后，其余节点也不会作为新的镜像节点。</td>
+</tr>
+<tr>
+<td>all</td>
+<td>无</td>
+<td>镜像队列将会在整个集群节点中复制。当一个新的节点加入集群后，也会在这个节点上复制一份镜像队列。</td>
+</tr>
+<tr>
+<td>nodes</td>
+<td>node names</td>
+<td>镜像队列会在node name中复制。如果这个node name不属于集群，不会触发错误。</td>
+</tr>
+</tbody></table>
+<p>设置镜像队列有两种方式，第一种是在代码里声明队列时设置参数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">map.put(<span class="string">&quot;x-ha-policy&quot;</span>, <span class="string">&quot;all&quot;</span>);</span><br><span class="line">channel.queueDeclare(QUEUE_NAME, <span class="literal">true</span>, <span class="literal">false</span>, <span class="literal">false</span>, map);</span><br></pre></td></tr></table></figure>
+
+<p>第二种是直接修改系统配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./rabbitmqctl set_policy ha-all &quot;^&quot; &#x27;&#123;&quot;ha-mode&quot;:&quot;all&quot;&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-RabbitMQ负载均衡部署"><a href="#3-2-RabbitMQ负载均衡部署" class="headerlink" title="3.2 RabbitMQ负载均衡部署"></a>3.2 RabbitMQ负载均衡部署</h4><p>在某台服务器上安装haproxy</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install haproxy</span><br></pre></td></tr></table></figure>
+
+<p>打开haproxy的配置文件，&#x2F;etc&#x2F;haproxy&#x2F;haproxy.cfg<br>加入以下配置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">//RabbitMQ链接监听</span><br><span class="line">listen rabbitmq_local_cluster 部署haproxy的机器IP:5670</span><br><span class="line">     mode tcp</span><br><span class="line">     balance roundrobin</span><br><span class="line">     server rabbit_nc078 nc078:5672 check inter 5000 rise 2 fall 3</span><br><span class="line">     server rabbit_nc060 nc060:5672 check inter 5000 rise 2 fall 3</span><br><span class="line"></span><br><span class="line">//web管理界面</span><br><span class="line">listen private_monitoring :8100</span><br><span class="line">     mode http</span><br><span class="line">     option httplog</span><br><span class="line">     stats enable</span><br><span class="line">     stats uri       /stats</span><br><span class="line">     stats refresh 10s</span><br><span class="line">     stats auth    user:pwd</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>启动haproxy：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service haproxy start</span><br></pre></td></tr></table></figure>
+
+<p>浏览器打开：haproxy的机器IP:8100&#x2F;stats，查看当前的RabbitMQ节点的状态：</p>
+<p><img src="https://static.zhaoyh.com.cn/haproxy_rabbit.jpg" alt="image"></p>
+<p>现在已经部署好了负载均衡服务，接下来就可以把你的消息生产者和消费者代码中的配置修改下，之前的RabbitMQ链接示例为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc060:5672 或者 nc078:5672</span><br></pre></td></tr></table></figure>
+
+<p>因为在haproxy中配置的端口为5670，现在可以统一修改为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">部署haproxy的机器IP:5670</span><br></pre></td></tr></table></figure>
+
+<p>至此已经完成了对RabbitMQ的集群搭建和高可用模式的初步探索，接下来就请你好好享受消息通信带来的便捷吧！</p>
+<blockquote>
+<p>以上内容就是关于RabbitMQ集群架构搭建与高可用性实现的全部内容了，谢谢你阅读到了这里！</p>
+</blockquote>
+<blockquote>
+<p>Author：zhaoyh</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/RabbitMQ/" rel="tag"># RabbitMQ</a>
+          
+            <a href="/tags/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/" rel="tag"># 负载均衡</a>
+          
+            <a href="/tags/%E9%9B%86%E7%BE%A4/" rel="tag"># 集群</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/21/%E5%9F%BA%E4%BA%8ERabbitMQ%E5%AE%9E%E7%8E%B0%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97/" rel="next" title="基于RabbitMQ实现延迟队列">
+                <i class="fa fa-chevron-left"></i> 基于RabbitMQ实现延迟队列
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/19/Spring-Cloud%E4%B9%8B%E6%B6%88%E6%81%AF%E6%80%BB%E7%BA%BF/" rel="prev" title="Spring Cloud之消息总线">
+                Spring Cloud之消息总线 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMDY5Mi83MjQ3"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="" />
+          <p class="site-author-name" itemprop="name"></p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">45</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">58</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA"><span class="nav-text">1. 集群搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-%E5%87%86%E5%A4%87%E4%B8%A4%E4%B8%AA%E8%8A%82%E7%82%B9"><span class="nav-text">1.1 准备两个节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-%E5%85%B1%E4%BA%ABErlang-Cookie"><span class="nav-text">1.2 共享Erlang Cookie</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-%E9%83%A8%E7%BD%B2%E9%9B%86%E7%BE%A4"><span class="nav-text">1.3 部署集群</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%9B%B8%E5%85%B3%E8%AF%B4%E6%98%8E"><span class="nav-text">2. 相关说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-%E8%8A%82%E7%82%B9%E7%B1%BB%E5%9E%8B"><span class="nav-text">2.1 节点类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-%E5%85%83%E6%95%B0%E6%8D%AE"><span class="nav-text">2.2 元数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F"><span class="nav-text">2.3 集群模式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E9%AB%98%E5%8F%AF%E7%94%A8%E6%80%A7%E9%83%A8%E7%BD%B2%E7%AD%96%E7%95%A5"><span class="nav-text">3. 高可用性部署策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-%E9%95%9C%E5%83%8F%E9%98%9F%E5%88%97"><span class="nav-text">3.1 镜像队列</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-RabbitMQ%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E9%83%A8%E7%BD%B2"><span class="nav-text">3.2 RabbitMQ负载均衡部署</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhaoyh</span>
+</div>
+
+
+<a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">京ICP备2022006929号-1</a>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
