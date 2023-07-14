@@ -95,12 +95,12 @@
 
 
 
-<meta name="description" content="1. 概述1.1 数据库简要数据是数据库中存储的基本对象，包括数字、图像、音频等形式，在进行逐级抽象后存储在数据库中。数据库是由特定软件，即数据库管理系统（DBMS）搭建、处理、维护的数据及数据间逻辑关系的集合体。它面向多种应用，可以被多个用户、多个应用程序所共享。DBMS是负责数据库搭建、使用和维护的大型系统软件，它对数据进行统一控制管理，以保证数据的完整性和安全性。数据库和数据库管理系统共同组">
+<meta name="description" content="1. 概述1.1 数据库定义数据是数据库中存储的基本对象，包括数字、图像、音频等形式，在进行逐级抽象后存储在数据库中。数据库是由特定软件，即数据库管理系统（DBMS）搭建、处理、维护的数据及数据间逻辑关系的集合体。它面向多种应用，可以被多个用户、多个应用程序所共享。DBMS是负责数据库搭建、使用和维护的大型系统软件，它对数据进行统一控制管理，以保证数据的完整性和安全性。数据库和数据库管理系统共同组">
 <meta property="og:type" content="article">
 <meta property="og:title" content="数据库开发入门级教程">
 <meta property="og:url" content="http://blog.zhaoyh.com.cn/2023/05/12/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E7%BA%A7%E6%95%99%E7%A8%8B/index.html">
 <meta property="og:site_name" content="zhaoyh&#39;s blog">
-<meta property="og:description" content="1. 概述1.1 数据库简要数据是数据库中存储的基本对象，包括数字、图像、音频等形式，在进行逐级抽象后存储在数据库中。数据库是由特定软件，即数据库管理系统（DBMS）搭建、处理、维护的数据及数据间逻辑关系的集合体。它面向多种应用，可以被多个用户、多个应用程序所共享。DBMS是负责数据库搭建、使用和维护的大型系统软件，它对数据进行统一控制管理，以保证数据的完整性和安全性。数据库和数据库管理系统共同组">
+<meta property="og:description" content="1. 概述1.1 数据库定义数据是数据库中存储的基本对象，包括数字、图像、音频等形式，在进行逐级抽象后存储在数据库中。数据库是由特定软件，即数据库管理系统（DBMS）搭建、处理、维护的数据及数据间逻辑关系的集合体。它面向多种应用，可以被多个用户、多个应用程序所共享。DBMS是负责数据库搭建、使用和维护的大型系统软件，它对数据进行统一控制管理，以保证数据的完整性和安全性。数据库和数据库管理系统共同组">
 <meta property="og:locale">
 <meta property="og:image" content="https://static.zhaoyh.com.cn/WEBRESOURCE5cf9dc32b1e3aaeeee15e2cf541e4e90.png">
 <meta property="og:image" content="https://static.zhaoyh.com.cn/v2_3ca12a6cf02044ca980811e489e23225_img_000.png">
@@ -118,7 +118,7 @@
 <meta property="og:image" content="https://static.zhaoyh.com.cn/WEBRESOURCEec5ca2510fd9f842e68fce15ce2c286d.png">
 <meta property="og:image" content="https://static.zhaoyh.com.cn/v2_93bf1c4ad26540e18920c1e7f7dd0f4d_img_000.png">
 <meta property="article:published_time" content="2023-05-12T08:04:38.000Z">
-<meta property="article:modified_time" content="2023-06-07T00:55:37.950Z">
+<meta property="article:modified_time" content="2023-07-14T10:17:13.688Z">
 <meta property="article:author" content="zhaoyh">
 <meta property="article:tag" content="MyBatis">
 <meta property="article:tag" content="数据库">
@@ -427,7 +427,7 @@
       
 
       
-        <h3 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h3><h4 id="1-1-数据库简要"><a href="#1-1-数据库简要" class="headerlink" title="1.1 数据库简要"></a>1.1 数据库简要</h4><p>数据是数据库中存储的基本对象，包括数字、图像、音频等形式，在进行逐级抽象后存储在数据库中。数据库是由特定软件，即数据库管理系统（DBMS）搭建、处理、维护的数据及数据间逻辑关系的集合体。它面向多种应用，可以被多个用户、多个应用程序所共享。DBMS是负责数据库搭建、使用和维护的大型系统软件，它对数据进行统一控制管理，以保证数据的完整性和安全性。数据库和数据库管理系统共同组成了数据库系统。</p>
+        <h3 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h3><h4 id="1-1-数据库定义"><a href="#1-1-数据库定义" class="headerlink" title="1.1 数据库定义"></a>1.1 数据库定义</h4><p>数据是数据库中存储的基本对象，包括数字、图像、音频等形式，在进行逐级抽象后存储在数据库中。数据库是由特定软件，即数据库管理系统（DBMS）搭建、处理、维护的数据及数据间逻辑关系的集合体。它面向多种应用，可以被多个用户、多个应用程序所共享。DBMS是负责数据库搭建、使用和维护的大型系统软件，它对数据进行统一控制管理，以保证数据的完整性和安全性。数据库和数据库管理系统共同组成了数据库系统。</p>
 <span id="more"></span>
 
 <p><img src="https://static.zhaoyh.com.cn/WEBRESOURCE5cf9dc32b1e3aaeeee15e2cf541e4e90.png" alt="image"></p>
@@ -570,6 +570,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2023/06/07/a-test-for-new/" rel="prev" title="a test for new">
+                a test for new <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -643,7 +647,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">45</span>
+                <span class="site-state-item-count">46</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -707,7 +711,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%A6%82%E8%BF%B0"><span class="nav-text">1. 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%80%E8%A6%81"><span class="nav-text">1.1 数据库简要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-%E5%8F%91%E5%B1%95%E5%8E%86%E7%A8%8B"><span class="nav-text">1.2 发展历程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-SQL%E4%BB%8B%E7%BB%8D"><span class="nav-text">1.3 SQL介绍</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%95%B0%E6%8D%AE%E5%BA%93%E9%80%89%E5%9E%8B"><span class="nav-text">2. 数据库选型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-%E6%8C%89%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%88%86%E7%B1%BB"><span class="nav-text">2.1 按数据结构分类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-%E6%8C%89%E9%83%A8%E7%BD%B2%E6%A8%A1%E5%BC%8F%E5%88%86%E7%B1%BB"><span class="nav-text">2.2 按部署模式分类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-%E6%8C%89%E5%8A%9F%E8%83%BD%E5%88%86%E7%B1%BB"><span class="nav-text">2.3 按功能分类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0"><span class="nav-text">3. 数据库连接池</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-%E8%BF%9E%E6%8E%A5%E6%B1%A0%E4%BB%8B%E7%BB%8D"><span class="nav-text">3.1 连接池介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-%E8%BF%9E%E6%8E%A5%E6%B1%A0%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8B"><span class="nav-text">3.2 连接池使用案例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-ORM%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6"><span class="nav-text">4. ORM开发框架</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-JDBC%E4%B8%8EORM%E6%A6%82%E5%BF%B5"><span class="nav-text">4.1 JDBC与ORM概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-ORM%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B"><span class="nav-text">4.2 ORM框架选型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-Spring-Data-Jpa%E6%8E%A5%E5%85%A5%E6%B5%81%E7%A8%8B"><span class="nav-text">4.3 Spring Data Jpa接入流程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8E%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF"><span class="nav-text">5. 数据库与大数据技术</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%A6%82%E8%BF%B0"><span class="nav-text">1. 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9A%E4%B9%89"><span class="nav-text">1.1 数据库定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-%E5%8F%91%E5%B1%95%E5%8E%86%E7%A8%8B"><span class="nav-text">1.2 发展历程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-SQL%E4%BB%8B%E7%BB%8D"><span class="nav-text">1.3 SQL介绍</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%95%B0%E6%8D%AE%E5%BA%93%E9%80%89%E5%9E%8B"><span class="nav-text">2. 数据库选型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-%E6%8C%89%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%88%86%E7%B1%BB"><span class="nav-text">2.1 按数据结构分类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-%E6%8C%89%E9%83%A8%E7%BD%B2%E6%A8%A1%E5%BC%8F%E5%88%86%E7%B1%BB"><span class="nav-text">2.2 按部署模式分类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-%E6%8C%89%E5%8A%9F%E8%83%BD%E5%88%86%E7%B1%BB"><span class="nav-text">2.3 按功能分类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0"><span class="nav-text">3. 数据库连接池</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-%E8%BF%9E%E6%8E%A5%E6%B1%A0%E4%BB%8B%E7%BB%8D"><span class="nav-text">3.1 连接池介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-%E8%BF%9E%E6%8E%A5%E6%B1%A0%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8B"><span class="nav-text">3.2 连接池使用案例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-ORM%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6"><span class="nav-text">4. ORM开发框架</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-JDBC%E4%B8%8EORM%E6%A6%82%E5%BF%B5"><span class="nav-text">4.1 JDBC与ORM概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-ORM%E6%A1%86%E6%9E%B6%E9%80%89%E5%9E%8B"><span class="nav-text">4.2 ORM框架选型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-Spring-Data-Jpa%E6%8E%A5%E5%85%A5%E6%B5%81%E7%A8%8B"><span class="nav-text">4.3 Spring Data Jpa接入流程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8E%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%8A%80%E6%9C%AF"><span class="nav-text">5. 数据库与大数据技术</span></a></li></ol></div>
             
 
           </div>
